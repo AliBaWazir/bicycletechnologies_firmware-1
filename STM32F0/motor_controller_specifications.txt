@@ -1,0 +1,28 @@
+V 0.1 				
+
+Project: Bike Computer
+Assigned to: Arjun
+
+Overview:
+The automatic transmission controller controls all aspects of the automatic transmission provides a facade interface to the rest of the system. It’s main job is to power and control the motors which actuate the gear cables. 
+There are two identical transmission modules. A module consists of a DC gearmotor, a carriage which holds the bulb of the wire under tension, and a feedback potentiometer.
+
+The controller first revision will test whether or not over current detection is sufficient for preventing the actuator from pulling the wire too hard, for example when the user is not pedalling but gear shifts are requested.
+
+Specifications:
+
+The controller shall restrict the carriage from travelling outside the potentiometer lever range under all circumstances. Travelling outside the range could cause major damage to the unit.
+The controller shall respond to “I’m alive” queries from the host (to detect attachment/detachment)
+The controller shall allow absolute positioning of the carriage using the motors and feedback from the potentiometer with at least 8 bit precision
+The controller shall store in nonvolatile memory gear setting information as received from the host
+The controller shall interrupt the hold processor when a new gear (based on memory) has been reached.
+The controller shall be responsive to polling requests asking for current positioning
+The controller shall manage the power supply to the motors as to reduce power consumption as much as possible
+The controller shall utilize an off the shelf motor driver IC that fits the application
+The controller shall accept a power supply ranging from 3.0 to 4.2 Volts and generate a 12 Volt supply for the motors.
+The controller shall measure the current going through the motors and intelligently detect overcurrent conditions and report these to the host through interrupt
+	
+
+More specifications may be added
+
+Potential Parts below:
