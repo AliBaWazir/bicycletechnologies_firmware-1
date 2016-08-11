@@ -1,4 +1,4 @@
-V 0.1 				
+V 0.2 				
 
 Project: Bike Computer
 Assigned to: Arjun
@@ -11,16 +11,18 @@ The controller first revision will test whether or not over current detection is
 
 Specifications:
 
-The controller shall restrict the carriage from travelling outside the potentiometer lever range under all circumstances. Travelling outside the range could cause major damage to the unit.
-The controller shall respond to “I’m alive” queries from the host (to detect attachment/detachment)
-The controller shall allow absolute positioning of the carriage using the motors and feedback from the potentiometer with at least 8 bit precision
-The controller shall store in nonvolatile memory gear setting information as received from the host
-The controller shall interrupt the hold processor when a new gear (based on memory) has been reached.
-The controller shall be responsive to polling requests asking for current positioning
-The controller shall manage the power supply to the motors as to reduce power consumption as much as possible
-The controller shall utilize an off the shelf motor driver IC that fits the application
-The controller shall accept a power supply ranging from 3.0 to 4.2 Volts and generate a 12 Volt supply for the motors.
-The controller shall measure the current going through the motors and intelligently detect overcurrent conditions and report these to the host through interrupt
+1. The controller shall restrict the carriage from travelling outside the potentiometer lever range under all circumstances. Travelling outside the range could cause major damage to the unit.
+2. The controller shall respond to “I’m alive” queries from the host (to detect attachment/detachment)
+3. The controller shall allow absolute positioning of the carriage using the motors and feedback from the potentiometer with at least 8 bit precision
+4. The controller shall store in non-volatile memory gear setting information as received from the host
+5. The controller shall interrupt the hold processor when a new gear (based on memory) has been reached.
+6. The controller shall be responsive to polling requests asking for current positioning
+7. The controller shall manage the power supply to the motors as to reduce power consumption as much as possible
+8. The controller shall utilize an off the shelf motor driver IC that fits the application
+9. The controller shall accept a power supply ranging from 3.0 to 4.2 Volts and generate a 12 Volt supply for the motors.
+10. The controller shall measure the current going through the motors and intelligently detect overcurrent conditions and report these to the host through interrupt
+11. The controller shall have support for 2 hall effect sensors to measure speed and cadence. It shall count pulses and compute current pulse rate and make these available for the master as data points.
+
 	
 
 More specifications may be added
