@@ -31,7 +31,7 @@
 .\objects\gui.o: .\ugfx\src/gos/gos_keil.h
 .\objects\gui.o: .\ugfx\src/gos/gos_cmsis.h
 .\objects\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\gui.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\RTOS\RTX\INC\cmsis_os.h
+.\objects\gui.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\RTOS\RTX\INC\cmsis_os.h
 .\objects\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\gui.o: .\ugfx\src/gos/gos_x_heap.h
