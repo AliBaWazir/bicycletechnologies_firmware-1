@@ -122,7 +122,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=-895,284,-485,830,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0)</Name>
+          <Name>(1010=0,284,410,830,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -137,7 +137,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
-          <Name>-U066DFF544949847067083217 -O207 -S0 -C0 -A0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC180000000 -TP21 -TDS8059 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20010000 -FC1000 -FN1 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM)</Name>
+          <Name>-U066DFF544949847067083217 -I0 -O207 -S0 -C0 -A0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC180000000 -TP21 -TDS8059 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20010000 -FC1000 -FN1 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -149,25 +149,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>91</LineNumber>
+          <LineNumber>148</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134255748</Address>
+          <Address>134265452</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\ugfx\drivers\gdisp\STM32LTDC\gdisp_lld_STM32LTDC.c</Filename>
+          <Filename>.\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\ugfx/drivers/gdisp/STM32LTDC/gdisp_lld_STM32LTDC.c\91</Expression>
+          <Expression></Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
           <LineNumber>538</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134223454</Address>
+          <Address>134223026</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -176,7 +176,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>ugfx\src\ginput/ginput_mouse.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\ugfx/src/ginput/ginput_mouse.c\538</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -225,7 +225,6 @@
       </DebugFlag>
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
-      <bLintAuto>0</bLintAuto>
       <DebugDescription>
         <Enable>1</Enable>
         <EnableLog>0</EnableLog>
@@ -246,6 +245,7 @@
       <FileNumber>1</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
@@ -258,6 +258,7 @@
       <FileNumber>2</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\gfxconf.h</PathWithFileName>
@@ -270,6 +271,7 @@
       <FileNumber>3</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\gui.c</PathWithFileName>
@@ -290,6 +292,7 @@
       <FileNumber>4</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ugfx\src\gfx_mk.c</PathWithFileName>
@@ -302,6 +305,7 @@
       <FileNumber>5</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ugfx\drivers\gdisp\STM32LTDC\gdisp_lld_STM32LTDC.c</PathWithFileName>
@@ -314,6 +318,7 @@
       <FileNumber>6</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ugfx\drivers\ginput\touch\FT6x06\gmouse_lld_FT6x06.c</PathWithFileName>
@@ -334,6 +339,7 @@
       <FileNumber>7</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32CubeF4\Drivers\BSP\Components\ft6x06\ft6x06.c</PathWithFileName>
@@ -346,6 +352,7 @@
       <FileNumber>8</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32CubeF4\Drivers\BSP\Components\otm8009a\otm8009a.c</PathWithFileName>
@@ -358,6 +365,7 @@
       <FileNumber>9</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery.c</PathWithFileName>
@@ -370,6 +378,7 @@
       <FileNumber>10</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery_lcd.c</PathWithFileName>
@@ -382,6 +391,7 @@
       <FileNumber>11</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery_sdram.c</PathWithFileName>
@@ -394,6 +404,7 @@
       <FileNumber>12</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
+      <Focus>1</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery_ts.c</PathWithFileName>
