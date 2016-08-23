@@ -18,14 +18,30 @@ GHandle ghLabel1;
 GHandle ghLabel2;
 GHandle ghLabel3;
 
+GHandle ghMapWindow;
+
 // Fonts
 font_t dejavu_sans_16;
 font_t dejavu_sans_10;
 font_t dejavu_sans_32_anti_aliased;
 font_t dejavu_sans_12_anti_aliased;
 
+
+static gdispImage myImage;
+static gdispImage myImage2;
+gdispImageError result;
+int x = 0;
+int y = 0;
+static GDisplay* pixmap;
+static pixel_t* surface;
+
+void drawTile(int xx, int yy);
+
+
 static void createPagePage0(void)
 {
+    
+    
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -42,7 +58,22 @@ static void createPagePage0(void)
 	wi.customParam = 0;
 	wi.customStyle = 0;
 	ghContainerPage0 = gwinContainerCreate(0, &wi, 0);
-
+    
+    //create map window
+    gwinSetDefaultBgColor(red_studio);
+    GWindowInit windowInitStruct;
+    windowInitStruct.x = 305;
+    windowInitStruct.y = 0;
+    windowInitStruct.width = 495;
+    windowInitStruct.height = 480;
+    windowInitStruct.show = TRUE;
+    windowInitStruct.parent = ghContainerPage0;
+    
+    ghMapWindow = gwinGWindowCreate(GDISP,NULL, &windowInitStruct);
+    
+    
+    
+    /*
 	// Create keyboard widget: ghKeyboard1
 	wi.g.show = TRUE;
 	wi.g.x = 0;
@@ -55,7 +86,7 @@ static void createPagePage0(void)
 	wi.customParam = 0;
 	wi.customStyle = 0;
 	ghKeyboard1 = gwinKeyboardCreate(0, &wi);
-
+*/
 	// Create label widget: ghLabel1
 	wi.g.show = TRUE;
 	wi.g.x = 30;
@@ -63,7 +94,7 @@ static void createPagePage0(void)
 	wi.g.width = 120;
 	wi.g.height = 20;
 	wi.g.parent = ghContainerPage0;
-	wi.text = "Sans 10";
+	wi.text = "WOW Texts!";
 	wi.customDraw = gwinLabelDrawJustifiedLeft;
 	wi.customParam = 0;
 	wi.customStyle = 0;
@@ -79,7 +110,7 @@ static void createPagePage0(void)
 	wi.g.width = 690;
 	wi.g.height = 30;
 	wi.g.parent = ghContainerPage0;
-	wi.text = "Sans 32 AA";
+	wi.text = "W00T 32 Km/h";
 	wi.customDraw = gwinLabelDrawJustifiedLeft;
 	wi.customParam = 0;
 	wi.customStyle = 0;
@@ -87,7 +118,7 @@ static void createPagePage0(void)
 	gwinLabelSetBorder(ghLabel2, FALSE);
 	gwinSetFont(ghLabel2, dejavu_sans_32_anti_aliased);
 	gwinRedraw(ghLabel2);
-
+/*
 	// Create label widget: ghLabel3
 	wi.g.show = TRUE;
 	wi.g.x = 30;
@@ -103,6 +134,8 @@ static void createPagePage0(void)
 	gwinLabelSetBorder(ghLabel3, FALSE);
 	gwinSetFont(ghLabel3, dejavu_sans_12_anti_aliased);
 	gwinRedraw(ghLabel3);
+    
+    */
 }
 
 void guiShowPage(unsigned pageIndex)
@@ -153,11 +186,49 @@ void guiEventLoop(void)
 	GEvent* pe;
 
 	while (1) {
+        
+        
+        gfxSleepMilliseconds(3);
+        //gdispGClear(GDISP, (LUMA2COLOR(0)));
+        gwinClear(ghMapWindow);
+        x=x+2;y=y+2;
+        for(int tempx = x+4*256; tempx>-256; tempx=tempx-256)
+        {
+            while(tempx > 4*256)
+            {
+                tempx=tempx-256;
+            }
+            for(int tempy = y+4*256; tempy>-256; tempy=tempy-256)
+            {   
+                while(tempy > 4*256)
+                {
+                    tempy=tempy-256;
+                }
+                //drawTile(tempx, tempy);
+                gwinDrawBox(ghMapWindow, tempx, tempy, 256, 256);
+                
+            }
+        }
+        //gwinRedraw(ghMapWindow);
+        
+        
 		// Get an event
 		pe = geventEventWait(&glistener, 0);
 		switch (pe->type) {
 		}
+        
+
 
 	}
+}
+
+void drawTile(int xx, int yy)
+{
+    coord_t	swidth, sheight;
+    swidth = gdispGetWidth();
+	sheight = gdispGetHeight();
+    gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
+	gdispImageDraw(&myImage, xx, yy, swidth, sheight, 0, 0);
+    gdispImageClose(&myImage);
 }
 

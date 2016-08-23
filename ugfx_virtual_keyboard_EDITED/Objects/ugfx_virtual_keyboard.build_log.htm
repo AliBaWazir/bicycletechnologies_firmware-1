@@ -27,16 +27,16 @@ Project File Date:  08/22/2016
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 2 (build 183)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F469NI Flash'
-compiling main.c...
-main.c(196): warning:  #111-D: statement is unreachable
-  	geventListenerInit(&glistener);
-main.c(135): warning:  #177-D: variable "i" was declared but never referenced
-      int i = 0;
-main.c(128): warning:  #177-D: variable "myImage2" was declared but never referenced
+compiling gui.c...
+gui.c(31): warning:  #177-D: variable "myImage2" was declared but never referenced
   static gdispImage myImage2;
-main.c: 3 warnings, 0 errors
+gui.c(35): warning:  #177-D: variable "pixmap" was declared but never referenced
+  static GDisplay* pixmap;
+gui.c(36): warning:  #177-D: variable "surface" was declared but never referenced
+  static pixel_t* surface;
+gui.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=55632 RO-data=154064 RW-data=480 ZI-data=255912  
+Program Size: Code=56708 RO-data=154176 RW-data=528 ZI-data=255968  
 FromELF: creating hex file...
 ".\Objects\ugfx_virtual_keyboard.axf" - 0 Error(s), 3 Warning(s).
 
@@ -154,7 +154,7 @@ Package Vendor: Keil
    * Component: Keil::Device:STM32Cube HAL:PWR:1.5.0
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

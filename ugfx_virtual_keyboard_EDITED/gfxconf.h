@@ -53,7 +53,7 @@
 #define GDISP_NEED_PIXELREAD TRUE
 #define GDISP_DEFAULT_ORIENTATION GDISP_ROTATE_0
 #define GDISP_STARTUP_COLOR WHITE
-
+#define GDISP_NEED_PIXMAP FALSE
 
 /********************************************************/
 /* Font stuff                                           */
