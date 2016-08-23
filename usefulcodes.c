@@ -9,7 +9,6 @@ while(1) {
             {
                 tempx=tempx-256;
             }
-            
             for(int tempy = y+4*256; tempy>-256; tempy=tempy-256)
             {   
                 while(tempy > 4*256)
@@ -21,3 +20,10 @@ while(1) {
             }
         }
 	}
+	
+// Draw Image
+
+gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
+    result = gdispImageCache(&myImage);
+	gdispImageDraw(&myImage, 0, 0, swidth, sheight, 0, 0);
+	gdispImageClose(&myImage);
