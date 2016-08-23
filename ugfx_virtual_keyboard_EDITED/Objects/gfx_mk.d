@@ -165,6 +165,7 @@
 .\objects\gfx_mk.o: ugfx\src\gfile/gfile_fs_ram.c
 .\objects\gfx_mk.o: ugfx\src\gfile/gfile_fs_rom.c
 .\objects\gfx_mk.o: .\romfs_files.h
+.\objects\gfx_mk.o: .\maptilebmp.h
 .\objects\gfx_mk.o: ugfx\src\gfile/gfile_fs_fatfs.c
 .\objects\gfx_mk.o: ugfx\src\gfile/gfile_fs_petitfs.c
 .\objects\gfx_mk.o: ugfx\src\gfile/gfile_fs_mem.c

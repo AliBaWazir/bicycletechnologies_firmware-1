@@ -122,9 +122,12 @@ void DSI_IRQHandler()
     BSP_LCD_DSI_IRQHandler();
 }
 #endif
-
+static gdispImage myImage;
+static gdispImage myImage2;
+gdispImageError result;
 int main (void)
-{	
+{	coord_t	swidth, sheight;
+    int i = 0;
 	// Cached enabled in stm32f4xx_hal_conf.h
     // CPU_CACHE_Enable();			// Enable the CPU Cache
     
@@ -135,8 +138,34 @@ int main (void)
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
-	// TODO: LED_Initialize();           // LED Initialization
+	
+    // Get the display dimensions
+	swidth = gdispGetWidth();
+	sheight = gdispGetHeight();
+ 
+	// Set up IO for our image
+	gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
+    result = gdispImageCache(&myImage);
+    
+    
+    if(result){
+        return 0;
+    }
+	//gdispImageDraw(&myImage, 0, 0, swidth, sheight, 0, 0);
+    
+	//gdispImageClose(&myImage);
+    
 
+ 
+	while(1) {
+		//gfxSleepMilliseconds(10);
+        i++;
+        //gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
+        gdispImageCache(&myImage);
+	gdispImageDraw(&myImage, i, i, swidth, sheight, 0, 0);
+	//gdispImageClose(&myImage);
+        
+	}
 	geventListenerInit(&glistener);
 	gwinAttachListener(&glistener);
 
