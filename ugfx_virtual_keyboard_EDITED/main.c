@@ -8,10 +8,12 @@
 
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
-
+void drawTile(int xx, int yy);
 uint32_t HAL_GetTick(void) { 
   return os_time; 
 }
+
+
 #endif
 
 /*******************************************************************************
@@ -125,8 +127,11 @@ void DSI_IRQHandler()
 static gdispImage myImage;
 static gdispImage myImage2;
 gdispImageError result;
+int x = 0;
+int y = 0;
+
 int main (void)
-{	coord_t	swidth, sheight;
+{	
     int i = 0;
 	// Cached enabled in stm32f4xx_hal_conf.h
     // CPU_CACHE_Enable();			// Enable the CPU Cache
@@ -140,17 +145,16 @@ int main (void)
 	gfxInit();					// Initialize the uGFX library
 	
     // Get the display dimensions
-	swidth = gdispGetWidth();
-	sheight = gdispGetHeight();
+	
  
 	// Set up IO for our image
 	gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
     result = gdispImageCache(&myImage);
     
     
-    if(result){
-        return 0;
-    }
+    //if(result){
+    //    return 0;
+    //}
 	//gdispImageDraw(&myImage, 0, 0, swidth, sheight, 0, 0);
     
 	//gdispImageClose(&myImage);
@@ -158,12 +162,35 @@ int main (void)
 
  
 	while(1) {
-		//gfxSleepMilliseconds(10);
-        i++;
-        //gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
-        gdispImageCache(&myImage);
-	gdispImageDraw(&myImage, i, i, swidth, sheight, 0, 0);
-	//gdispImageClose(&myImage);
+		gfxSleepMilliseconds(5);
+        gdispGClear(GDISP, (LUMA2COLOR(0)));
+        
+        x=x+4;y=y+4;
+        
+        for(int tempx = x+4*256; tempx>-256; tempx=tempx-256)
+        {
+            while(tempx > 4*256)
+            {
+                tempx=tempx-256;
+            }
+            
+            for(int tempy = y+4*256; tempy>-256; tempy=tempy-256)
+            {   
+                while(tempy > 4*256)
+                {
+                    tempy=tempy-256;
+                }
+                //drawTile(tempx, tempy);
+                gdispGDrawBox(GDISP, tempx, tempy, 256, 256, RGB2COLOR(0,128,128));
+                
+            }
+            
+            
+            
+        }
+        
+        
+
         
 	}
 	geventListenerInit(&glistener);
@@ -174,4 +201,14 @@ int main (void)
     while(1) {
 		guiEventLoop();
     }
+}
+
+void drawTile(int xx, int yy)
+{
+    coord_t	swidth, sheight;
+    swidth = gdispGetWidth();
+	sheight = gdispGetHeight();
+    gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
+	gdispImageDraw(&myImage, xx, yy, swidth, sheight, 0, 0);
+    gdispImageClose(&myImage);
 }
