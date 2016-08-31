@@ -1,7 +1,7 @@
 .\objects\stm32f4xx_hal_pwr_ex.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
 .\objects\stm32f4xx_hal_pwr_ex.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
-.\objects\stm32f4xx_hal_pwr_ex.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
-.\objects\stm32f4xx_hal_pwr_ex.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
+.\objects\stm32f4xx_hal_pwr_ex.o: C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
+.\objects\stm32f4xx_hal_pwr_ex.o: C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
 .\objects\stm32f4xx_hal_pwr_ex.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h
 .\objects\stm32f4xx_hal_pwr_ex.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h
 .\objects\stm32f4xx_hal_pwr_ex.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h

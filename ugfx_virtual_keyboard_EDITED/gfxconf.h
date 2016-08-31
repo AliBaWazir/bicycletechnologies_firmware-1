@@ -28,7 +28,7 @@
     #define GFX_COMPILER                             GFX_COMPILER_KEIL
     #define GFX_CPU                                  GFX_CPU_CORTEX_M4_FP
 	#define GFX_CPU_ENDIAN                           GFX_CPU_ENDIAN_LITTLE
-    #define GFX_OS_HEAP_SIZE                         20480
+    #define GFX_OS_HEAP_SIZE                         90000
     #define GFX_OS_NO_INIT                           TRUE
     #define GFX_OS_INIT_NO_WARNING                   TRUE
 //    #define GFX_OS_EXTRA_INIT_FUNCTION               myOSInitRoutine
@@ -53,7 +53,7 @@
 #define GDISP_NEED_PIXELREAD TRUE
 #define GDISP_DEFAULT_ORIENTATION GDISP_ROTATE_0
 #define GDISP_STARTUP_COLOR WHITE
-#define GDISP_NEED_PIXMAP FALSE
+#define GDISP_NEED_PIXMAP TRUE
 
 /********************************************************/
 /* Font stuff                                           */

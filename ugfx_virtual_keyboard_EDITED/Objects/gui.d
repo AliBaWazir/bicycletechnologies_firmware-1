@@ -45,6 +45,7 @@
 .\objects\gui.o: .\ugfx\drivers\gdisp\STM32LTDC\gdisp_lld_config.h
 .\objects\gui.o: .\ugfx\src/gdisp/gdisp_colors.h
 .\objects\gui.o: .\ugfx\src/gdisp/gdisp_image.h
+.\objects\gui.o: .\ugfx\src/gdisp/gdisp_pixmap.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_widget.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_slider.h
