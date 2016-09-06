@@ -47,12 +47,15 @@
 .\objects\gfx_mk.o: ugfx\src\../src/gdisp/gdisp_image.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_widget.h
+.\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_button.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_slider.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_label.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_list.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_keyboard.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_textedit.h
 .\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_container.h
+.\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_console.h
+.\objects\gfx_mk.o: ugfx\src\../src/gwin/gwin_image.h
 .\objects\gfx_mk.o: ugfx\src\../src/ginput/ginput.h
 .\objects\gfx_mk.o: ugfx\src\../src/ginput/ginput_mouse.h
 .\objects\gfx_mk.o: ugfx\src\../src/ginput/ginput_keyboard.h
@@ -91,6 +94,10 @@
 .\objects\gfx_mk.o: .\ugfx\src/gdisp/fonts/fonts.h
 .\objects\gfx_mk.o: .\ugfx\src/gdisp/fonts/DejaVuSans20_aa.c
 .\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\ugfx\src/gdisp/fonts/DejaVuSans24.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\ugfx\src/gdisp/fonts/DejaVuSans32.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_rlefont.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_bwfont.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_scaledfont.c
@@ -103,6 +110,7 @@
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_wordwrap.h
 .\objects\gfx_mk.o: ugfx\src\gdisp/gdisp.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/gdisp_driver.h
+.\objects\gfx_mk.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mcufont.h
 .\objects\gfx_mk.o: ugfx\src\gdisp/gdisp_fonts.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/gdisp_pixmap.c
@@ -123,6 +131,7 @@
 .\objects\gfx_mk.o: ugfx\src\gwin/gwin_widget.c
 .\objects\gfx_mk.o: ugfx\src\gwin/gwin_wm.c
 .\objects\gfx_mk.o: ugfx\src\gwin/gwin_console.c
+.\objects\gfx_mk.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
 .\objects\gfx_mk.o: ugfx\src\gwin/gwin_graph.c
 .\objects\gfx_mk.o: ugfx\src\gwin/gwin_button.c
 .\objects\gfx_mk.o: ugfx\src\gwin/gwin_slider.c

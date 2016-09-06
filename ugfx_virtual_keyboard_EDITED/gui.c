@@ -13,10 +13,17 @@ GListener glistener;
 
 // GHandles
 GHandle ghContainerPage0;
+GHandle container1;
+GHandle container2;
+GHandle container3;
 GHandle ghKeyboard1;
 GHandle ghLabel1;
 GHandle ghLabel2;
 GHandle ghLabel3;
+GHandle ghButton1;
+GHandle ghButton2;
+
+GHandle console1;
 
 GHandle ghMapWindow;
 
@@ -25,7 +32,6 @@ font_t dejavu_sans_16;
 font_t dejavu_sans_10;
 font_t dejavu_sans_32_anti_aliased;
 font_t dejavu_sans_12_anti_aliased;
-
 
 static gdispImage myImage;
 static gdispImage myImage2;
@@ -72,6 +78,44 @@ static void createPagePage0(void)
     ghMapWindow = gwinGWindowCreate(GDISP,NULL, &windowInitStruct);
     
     
+				// create container widget: ghContainerPage0
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 305;
+	wi.g.height = 480;
+	wi.g.parent = ghContainerPage0;
+	wi.text = "Container";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	container1 = gwinContainerCreate(0, &wi, 0);
+	
+				// create container widget: ghContainerPage0
+	wi.g.show = FALSE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 305;
+	wi.g.height = 480;
+	wi.g.parent = ghContainerPage0;
+	wi.text = "Container";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	container2 = gwinContainerCreate(0, &wi, 0);
+	
+					// create container widget: ghContainerPage0
+	wi.g.show = FALSE;
+	wi.g.x = 305;
+	wi.g.y = 0;
+	wi.g.width = 495;
+	wi.g.height = 480;
+	wi.g.parent = ghContainerPage0;
+	wi.text = "Container";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	container3 = gwinContainerCreate(0, &wi, 0);
     
     /*
 	// Create keyboard widget: ghKeyboard1
@@ -93,7 +137,7 @@ static void createPagePage0(void)
 	wi.g.y = 50;
 	wi.g.width = 120;
 	wi.g.height = 20;
-	wi.g.parent = ghContainerPage0;
+	wi.g.parent = container1;
 	wi.text = "WOW Texts!";
 	wi.customDraw = gwinLabelDrawJustifiedLeft;
 	wi.customParam = 0;
@@ -109,7 +153,7 @@ static void createPagePage0(void)
 	wi.g.y = 170;
 	wi.g.width = 690;
 	wi.g.height = 30;
-	wi.g.parent = ghContainerPage0;
+	wi.g.parent = container1;
 	wi.text = "W00T 32 Km/h";
 	wi.customDraw = gwinLabelDrawJustifiedLeft;
 	wi.customParam = 0;
@@ -118,6 +162,44 @@ static void createPagePage0(void)
 	gwinLabelSetBorder(ghLabel2, FALSE);
 	gwinSetFont(ghLabel2, dejavu_sans_32_anti_aliased);
 	gwinRedraw(ghLabel2);
+	
+	// create button widget: ghButton1
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 250;
+	wi.g.width = 305;
+	wi.g.height = 60;
+	wi.g.parent = container1;
+	wi.text = "SETTINGs1";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	ghButton1 = gwinButtonCreate(0, &wi);
+	
+		// create button widget: ghButton1
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 250;
+	wi.g.width = 305;
+	wi.g.height = 60;
+	wi.g.parent = container2;
+	wi.text = "SETTINGs2";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	ghButton2 = gwinButtonCreate(0, &wi);
+	
+	font_t font = gdispOpenFont("DejaVuSans24");
+	gwinSetDefaultFont(font);
+	GWindowInit consolewind;
+	consolewind.show = TRUE;
+	consolewind.x = 0;
+	consolewind.y = 0;
+	consolewind.width = gdispGetWidth();
+	consolewind.height = gdispGetHeight()/2;
+	consolewind.parent = container3;
+	console1 = gwinConsoleCreate(0, &consolewind);
+		
 /*
 	// Create label widget: ghLabel3
 	wi.g.show = TRUE;
@@ -172,19 +254,22 @@ void guiCreate(void)
 	gwinSetDefaultStyle(&white, FALSE);
 	gwinSetDefaultColor(black_studio);
 	gwinSetDefaultBgColor(white_studio);
-
+	
 	// Create all the display pages
 	createPagePage0();
 
 	// Select the default display page
 	guiShowPage(0);
 
+	gwinSetColor(console1, WHITE);
+	gwinSetBgColor(console1, BLACK);
+	
 }
 
 void guiEventLoop(void)
 {
 	GEvent* pe;
-
+	int i = 0;
 	while (1) {
         
         
@@ -215,10 +300,26 @@ void guiEventLoop(void)
 		// Get an event
 		pe = geventEventWait(&glistener, 0);
 		switch (pe->type) {
+			case GEVENT_GWIN_BUTTON:
+				if (((GEventGWinButton*)pe)->gwin == ghButton1) {
+					  gwinHide(ghMapWindow);
+					  gwinHide(container1);
+						gwinShow(container2);
+					  gwinShow(container3);
+				}else if (((GEventGWinButton*)pe)->gwin == ghButton2) {
+					  gwinHide(container3);
+					  gwinShow(ghMapWindow);
+					  gwinHide(container2);
+						gwinShow(container1);
+				}
+				break;
+			default:
+				break;
 		}
         
-
-
+		gwinPrintf(console1, "Hello \033buGFX\033B!\r\n");
+		gwinPrintf(console1, "Message Nr.: \0331\033b%d\033B\033C\r\n", i+1);
+		i++;
 	}
 }
 

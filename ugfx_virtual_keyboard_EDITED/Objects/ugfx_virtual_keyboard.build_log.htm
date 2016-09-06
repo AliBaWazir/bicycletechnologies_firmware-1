@@ -5,7 +5,7 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.20.0.0
 Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: JL GV, CarletonU, LIC=TA3WF-6FUXD-48VFA-1PZ8S-URX79-MVXG2
+License Information: maytham sabbagh, student, LIC=TA374-FMMAM-VIQ5N-YV1E5-VXYRA-DQUD0
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.20
@@ -21,24 +21,52 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TCM.DLL V1.14.9.0
  
 <h2>Project:</h2>
-C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\ugfx_virtual_keyboard.uvprojx
-Project File Date:  08/22/2016
+C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\ugfx_virtual_keyboard.uvprojx
+Project File Date:  09/06/2016
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 2 (build 183)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F469NI Flash'
 compiling gui.c...
-gui.c(31): warning:  #177-D: variable "myImage2" was declared but never referenced
+gui.c(37): warning:  #177-D: variable "myImage2" was declared but never referenced
   static gdispImage myImage2;
-gui.c(35): warning:  #177-D: variable "pixmap" was declared but never referenced
+gui.c(41): warning:  #177-D: variable "pixmap" was declared but never referenced
   static GDisplay* pixmap;
-gui.c(36): warning:  #177-D: variable "surface" was declared but never referenced
+gui.c(42): warning:  #177-D: variable "surface" was declared but never referenced
   static pixel_t* surface;
 gui.c: 3 warnings, 0 errors
+compiling gdisp_lld_STM32LTDC.c...
+compiling gmouse_lld_FT6x06.c...
+ugfx\drivers\ginput\touch\FT6x06\gmouse_lld_FT6x06.c(56): warning:  #1215-D: #warning directive: This driver could be interrupt driven
+          #warning This driver could be interrupt driven
+ugfx\drivers\ginput\touch\FT6x06\gmouse_lld_FT6x06.c(67): warning:  #1215-D: #warning directive: Look into (self-)calibration and error values
+      #warning Look into (self-)calibration and error values
+ugfx\drivers\ginput\touch\FT6x06\gmouse_lld_FT6x06.c: 2 warnings, 0 errors
+compiling main.c...
+main.c(131): warning:  #177-D: variable "i" was declared but never referenced
+      int i = 0;
+main.c: 1 warning, 0 errors
+compiling gfx_mk.c...
+ugfx\src\gdisp/gdisp_image_bmp.c(565): warning:  #68-D: integer conversion resulted in a change of sign
+  						return 
+DISP_IMAGE_ERR_BADDATA;
+ugfx\src\gwin/gwin.c(329): warning:  #111-D: statement is unreachable
+  		_gwinDrawEnd(gh);
+ugfx\src\gwin/gwin_list.c(705): warning:  #1215-D: #warning directive: "GWIN: Lists display better when GDISP_NEED_CONVEX_POLYGON is turned on"
+  			#warning "GWIN: Lists display better when GDISP_NEED_CONVEX_POLYGON is turned on"
+ugfx\src\gwin/gwin_keyboard.c(131): warning:  #61-D: integer operation result is out of range
+  		psl->srcflags |= 
+KEYSTATE_MISSED_EVENT;
+ugfx\src\gwin/gwin_keyboard.c(131): warning:  #68-D: integer conversion resulted in a change of sign
+  		psl->srcflags |= 
+KEYSTATE_MISSED_EVENT;
+.\romfs_files.h(7): warning:  #1-D: last line of file ends without a newline
+  #include "maptilebmp.h"
+ugfx\src\gfx_mk.c: 6 warnings, 0 errors
 linking...
-Program Size: Code=56708 RO-data=154176 RW-data=528 ZI-data=255968  
+Program Size: Code=78232 RO-data=161036 RW-data=552 ZI-data=255968  
 FromELF: creating hex file...
-".\Objects\ugfx_virtual_keyboard.axf" - 0 Error(s), 3 Warning(s).
+".\Objects\ugfx_virtual_keyboard.axf" - 0 Error(s), 12 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -56,22 +84,22 @@ Package Vendor: Keil
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
    * Component: Startup Version: 2.5.0
    * Component: STM32Cube Framework Version: 1.0.0
-   * Component: Classic Version: 1.5.0
-   * Component: DSI Version: 1.5.0
-   * Component: Cortex Version: 1.5.0
-   * Component: I2C Version: 1.5.0
-   * Component: GPIO Version: 1.5.0
-   * Component: DMA2D Version: 1.5.0
    * Component: DMA Version: 1.5.0
+   * Component: DMA2D Version: 1.5.0
+   * Component: Cortex Version: 1.5.0
+   * Component: GPIO Version: 1.5.0
+   * Component: DSI Version: 1.5.0
+   * Component: I2C Version: 1.5.0
    * Component: LTDC Version: 1.5.0
+   * Component: Classic Version: 1.5.0
    * Component: Common Version: 1.5.0
-   * Component: RCC Version: 1.5.0
    * Component: SDRAM Version: 1.5.0
+   * Component: RCC Version: 1.5.0
    * Component: PWR Version: 1.5.0
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE
-  C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx
+  C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE
+  C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
@@ -84,77 +112,77 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.0.0
 
    * Component: ARM::CMSIS:RTOS:Keil RTX:4.81.0
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Thread.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Mutex.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Timer.c
       Source file:   CMSIS\RTOS\RTX\SRC\ARM\SVC_Table.s
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MailQueue.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\main.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MemPool.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MsgQueue.c
-      Include file:  CMSIS\RTOS\RTX\UserCodeTemplates\osObjects.h
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Semaphore.c
       Include file:  CMSIS\RTOS\RTX\INC\cmsis_os.h
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MemPool.c
+      Include file:  CMSIS\RTOS\RTX\UserCodeTemplates\osObjects.h
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MailQueue.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MsgQueue.c
       Source file:   CMSIS\RTOS\RTX\Templates\RTX_Conf_CM.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Timer.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Semaphore.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Mutex.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Thread.c
       Library file:  CMSIS\RTOS\RTX\LIB\ARM\RTX_CM4.lib
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\main.c
 
    * Component: Keil::Device:Startup:2.5.0
-      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
-      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f469xx.s
       Source file:   MDK\Device\Source\ARM\STM32F4xx_OTP.s
+      Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f469xx.s
+      Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
 
    * Component: ::Device:STM32Cube Framework:1.0.0 (API)
-
-   * Component: Keil::Device:STM32Cube Framework:Classic:1.5.0
-      Include file:  MDK\Templates\Inc\main.h
-      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Include file:  CMSIS\Driver\Config\RTE_Device.h
-      Source file:   MDK\Templates\Src\stm32f4xx_it.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
-      Source file:   MDK\Templates\Src\main.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
-
-   * Component: Keil::Device:STM32Cube HAL:DSI:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dsi.c
-
-   * Component: Keil::Device:STM32Cube HAL:Cortex:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
-
-   * Component: Keil::Device:STM32Cube HAL:I2C:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
-
-   * Component: Keil::Device:STM32Cube HAL:GPIO:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
-
-   * Component: Keil::Device:STM32Cube HAL:DMA2D:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma2d.c
 
    * Component: Keil::Device:STM32Cube HAL:DMA:1.5.0
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
 
+   * Component: Keil::Device:STM32Cube HAL:DMA2D:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma2d.c
+
+   * Component: Keil::Device:STM32Cube HAL:Cortex:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
+
+   * Component: Keil::Device:STM32Cube HAL:GPIO:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
+
+   * Component: Keil::Device:STM32Cube HAL:DSI:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dsi.c
+
+   * Component: Keil::Device:STM32Cube HAL:I2C:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
+
    * Component: Keil::Device:STM32Cube HAL:LTDC:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc_ex.c
+
+   * Component: Keil::Device:STM32Cube Framework:Classic:1.5.0
+      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
+      Include file:  MDK\Templates\Inc\main.h
+      Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Source file:   MDK\Templates\Src\main.c
+      Include file:  CMSIS\Driver\Config\RTE_Device.h
+      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
+      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
 
    * Component: Keil::Device:STM32Cube HAL:Common:1.5.0
       Include file:  Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c
 
+   * Component: Keil::Device:STM32Cube HAL:SDRAM:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sdram.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
+
    * Component: Keil::Device:STM32Cube HAL:RCC:1.5.0
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
 
-   * Component: Keil::Device:STM32Cube HAL:SDRAM:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sdram.c
-
    * Component: Keil::Device:STM32Cube HAL:PWR:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
       Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
-Build Time Elapsed:  00:00:01
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

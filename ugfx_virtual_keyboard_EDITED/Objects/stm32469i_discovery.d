@@ -1,8 +1,8 @@
 .\objects\stm32469i_discovery.o: STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery.c
 .\objects\stm32469i_discovery.o: STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery.h
 .\objects\stm32469i_discovery.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
-.\objects\stm32469i_discovery.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
-.\objects\stm32469i_discovery.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
+.\objects\stm32469i_discovery.o: C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
+.\objects\stm32469i_discovery.o: C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
 .\objects\stm32469i_discovery.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h
 .\objects\stm32469i_discovery.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h
 .\objects\stm32469i_discovery.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h

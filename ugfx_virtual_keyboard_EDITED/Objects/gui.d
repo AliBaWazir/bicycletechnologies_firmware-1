@@ -47,12 +47,15 @@
 .\objects\gui.o: .\ugfx\src/gdisp/gdisp_image.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_widget.h
+.\objects\gui.o: .\ugfx\src/gwin/gwin_button.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_slider.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_label.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_list.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_keyboard.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_textedit.h
 .\objects\gui.o: .\ugfx\src/gwin/gwin_container.h
+.\objects\gui.o: .\ugfx\src/gwin/gwin_console.h
+.\objects\gui.o: .\ugfx\src/gwin/gwin_image.h
 .\objects\gui.o: .\ugfx\src/ginput/ginput.h
 .\objects\gui.o: .\ugfx\src/ginput/ginput_mouse.h
 .\objects\gui.o: .\ugfx\src/ginput/ginput_keyboard.h
