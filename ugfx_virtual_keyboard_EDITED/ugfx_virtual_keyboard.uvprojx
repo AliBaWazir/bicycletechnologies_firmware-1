@@ -392,6 +392,11 @@
               <FileType>1</FileType>
               <FilePath>.\gui.c</FilePath>
             </File>
+            <File>
+              <FileName>userfonts.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\userfonts.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

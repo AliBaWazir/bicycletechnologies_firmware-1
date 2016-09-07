@@ -17,6 +17,7 @@ extern GHandle ghContainerPage0;
 extern GHandle container1;
 extern GHandle container2;
 extern GHandle container3;
+extern GHandle containerlist;
 extern GHandle ghKeyboard1;
 extern GHandle ghLabel1;
 extern GHandle ghLabel2;
@@ -25,6 +26,8 @@ extern GHandle ghButton1;
 extern GHandle ghButton2;
 
 extern GHandle console1;
+extern GHandle ghList1;
+extern GHandle buttonlist;
 
 // Function Prototypes
 void guiCreate(void);

@@ -98,6 +98,17 @@
 .\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
 .\objects\gfx_mk.o: .\ugfx\src/gdisp/fonts/DejaVuSans32.c
 .\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\userfonts.h
+.\objects\gfx_mk.o: .\rsc/DejaVuSans16.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\rsc/DejaVuSans10.c
+.\objects\gfx_mk.o: .\ugfx\mf_bwfont.h
+.\objects\gfx_mk.o: .\rsc/DejaVuSans32_aa.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\rsc/DejaVuSans12_aa.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\rsc/cooper-black24.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_rlefont.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_bwfont.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_scaledfont.c

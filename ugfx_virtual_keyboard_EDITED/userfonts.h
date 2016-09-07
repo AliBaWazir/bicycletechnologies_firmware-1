@@ -2,3 +2,6 @@
 #include "rsc/DejaVuSans10.c"
 #include "rsc/DejaVuSans32_aa.c"
 #include "rsc/DejaVuSans12_aa.c"
+#include "rsc/cooper-black24.c"
+//#include "rsc/cooper-black32.c"
+//#include "rsc/cooper-black40.c"

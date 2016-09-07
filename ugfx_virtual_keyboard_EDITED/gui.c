@@ -14,8 +14,9 @@ GListener glistener;
 // GHandles
 GHandle ghContainerPage0;
 GHandle container1;
-GHandle container2;
+//GHandle container2;
 GHandle container3;
+GHandle containerlist;
 GHandle ghKeyboard1;
 GHandle ghLabel1;
 GHandle ghLabel2;
@@ -24,6 +25,8 @@ GHandle ghButton1;
 GHandle ghButton2;
 
 GHandle console1;
+GHandle ghList1;
+GHandle buttonlist;
 
 GHandle ghMapWindow;
 
@@ -91,7 +94,7 @@ static void createPagePage0(void)
 	wi.customStyle = 0;
 	container1 = gwinContainerCreate(0, &wi, 0);
 	
-				// create container widget: ghContainerPage0
+	/*			// create container widget: ghContainerPage0
 	wi.g.show = FALSE;
 	wi.g.x = 0;
 	wi.g.y = 0;
@@ -103,7 +106,7 @@ static void createPagePage0(void)
 	wi.customParam = 0;
 	wi.customStyle = 0;
 	container2 = gwinContainerCreate(0, &wi, 0);
-	
+	*/
 					// create container widget: ghContainerPage0
 	wi.g.show = FALSE;
 	wi.g.x = 305;
@@ -117,6 +120,20 @@ static void createPagePage0(void)
 	wi.customStyle = 0;
 	container3 = gwinContainerCreate(0, &wi, 0);
     
+						// create container widget: ghContainerPage0
+	wi.g.show = FALSE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 305;
+	wi.g.height = 480;
+	wi.g.parent = ghContainerPage0;
+	wi.text = "Container";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	containerlist = gwinContainerCreate(0, &wi, 0);	
+		
+		
     /*
 	// Create keyboard widget: ghKeyboard1
 	wi.g.show = TRUE;
@@ -176,7 +193,7 @@ static void createPagePage0(void)
 	wi.customStyle = 0;
 	ghButton1 = gwinButtonCreate(0, &wi);
 	
-		// create button widget: ghButton1
+	/*	// create button widget: ghButton1
 	wi.g.show = TRUE;
 	wi.g.x = 0;
 	wi.g.y = 250;
@@ -188,18 +205,67 @@ static void createPagePage0(void)
 	wi.customParam = 0;
 	wi.customStyle = 0;
 	ghButton2 = gwinButtonCreate(0, &wi);
-	
+	*/
 	font_t font = gdispOpenFont("DejaVuSans24");
-	gwinSetDefaultFont(font);
 	GWindowInit consolewind;
 	consolewind.show = TRUE;
 	consolewind.x = 0;
 	consolewind.y = 0;
-	consolewind.width = gdispGetWidth();
-	consolewind.height = gdispGetHeight()/2;
+	consolewind.width = 495;
+	consolewind.height = 480;
 	consolewind.parent = container3;
 	console1 = gwinConsoleCreate(0, &consolewind);
-		
+	gwinSetFont(console1, gdispOpenFont("DejaVuSans32"));
+	
+	// Create list widget: ghList1
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 300;
+	wi.g.height = 400;
+	wi.g.parent = containerlist;
+	wi.text = "List1";
+	wi.customDraw = gwinListDefaultDraw;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	ghList1 = gwinListCreate(0, &wi, FALSE);
+	font_t fontcoop = gdispOpenFont("cooper-black24");
+	gwinSetFont(ghList1, fontcoop);
+	gwinListSetScroll(ghList1, scrollSmooth);
+	gwinListAddItem(ghList1, "Item1", FALSE);
+	gwinListAddItem(ghList1, "Item2", FALSE);
+	gwinListAddItem(ghList1, "Item3", FALSE);
+	gwinListAddItem(ghList1, "Item4", FALSE);
+	gwinListAddItem(ghList1, "Item5", FALSE);
+	gwinListAddItem(ghList1, "Item6", FALSE);
+	gwinListAddItem(ghList1, "Item7", FALSE);
+	gwinListAddItem(ghList1, "Item8", FALSE);
+	gwinListAddItem(ghList1, "Item9", FALSE);
+	gwinListSetSelected(ghList1, 0, TRUE);
+	gwinListSetSelected(ghList1, 1, FALSE);
+	gwinListSetSelected(ghList1, 2, FALSE);
+	gwinListSetSelected(ghList1, 3, FALSE);
+	gwinListSetSelected(ghList1, 4, FALSE);
+	gwinListSetSelected(ghList1, 5, FALSE);
+	gwinListSetSelected(ghList1, 6, FALSE);
+	gwinListSetSelected(ghList1, 7, FALSE);
+	gwinListSetSelected(ghList1, 8, FALSE);
+	gdispCloseFont(fontcoop);
+		//gwinSetDefaultFont(font);
+		// create button widget: ghButton1
+	wi.g.show = TRUE;
+	wi.g.x = 50;
+	wi.g.y = 410;
+	wi.g.width = 200;
+	wi.g.height = 60;
+	wi.g.parent = containerlist;
+	wi.text = "SETTINGs2";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	buttonlist = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttonlist, gdispOpenFont("DejaVuSans32_aa"));
+	
 /*
 	// Create label widget: ghLabel3
 	wi.g.show = TRUE;
@@ -270,6 +336,7 @@ void guiEventLoop(void)
 {
 	GEvent* pe;
 	int i = 0;
+	int selectedItem = 0;
 	while (1) {
         
         
@@ -304,19 +371,60 @@ void guiEventLoop(void)
 				if (((GEventGWinButton*)pe)->gwin == ghButton1) {
 					  gwinHide(ghMapWindow);
 					  gwinHide(container1);
-						gwinShow(container2);
+						gwinShow(containerlist);
 					  gwinShow(container3);
-				}else if (((GEventGWinButton*)pe)->gwin == ghButton2) {
+				}else if (((GEventGWinButton*)pe)->gwin == buttonlist) {
 					  gwinHide(container3);
-					  gwinShow(ghMapWindow);
-					  gwinHide(container2);
+					  gwinHide(containerlist);
 						gwinShow(container1);
+					  gwinShow(ghMapWindow);
 				}
 				break;
 			default:
 				break;
 		}
-        
+		
+		if(gwinGetVisible(containerlist)){
+			selectedItem = gwinListGetSelected(ghList1);
+			switch(selectedItem){
+				case 1:
+					gwinHide(container3);
+					gwinShow(ghMapWindow);
+				  break;
+				case 2:
+					gwinHide(ghMapWindow);
+					gwinShow(container3);
+					break;
+				case 3:
+					gwinHide(container3);
+					gwinShow(ghMapWindow);
+				  break;
+				case 4:
+					gwinHide(ghMapWindow);
+					gwinShow(container3);
+					break;
+				case 5:
+					gwinHide(container3);
+					gwinShow(ghMapWindow);
+				  break;
+				case 6:
+					gwinHide(ghMapWindow);
+					gwinShow(container3);
+					break;
+				case 7:
+					gwinHide(container3);
+					gwinShow(ghMapWindow);
+				  break;
+				case 8:
+					gwinHide(ghMapWindow);
+					gwinShow(container3);
+					break;
+				default:
+					gwinHide(ghMapWindow);
+					gwinShow(container3);
+					break;
+			}
+		}
 		gwinPrintf(console1, "Hello \033buGFX\033B!\r\n");
 		gwinPrintf(console1, "Message Nr.: \0331\033b%d\033B\033C\r\n", i+1);
 		i++;
