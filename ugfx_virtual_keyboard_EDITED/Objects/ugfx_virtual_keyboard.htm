@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\ugfx_virtual_keyboard.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\ugfx_virtual_keyboard.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Wed Sep 07 13:40:29 2016
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Thu Sep 08 14:53:14 2016
 <BR><P>
 <H3>Maximum Stack Usage =        424 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -230,8 +230,8 @@ Function Pointers
  <LI><a href="#[dc]">main</a> from main.o(i.main) referenced from rtx_conf_cm.o(.constdata)
  <LI><a href="#[9e]">mf_bwfont_character_width</a> from gfx_mk.o(i.mf_bwfont_character_width) referenced from gfx_mk.o(.constdata)
  <LI><a href="#[9f]">mf_bwfont_render_character</a> from gfx_mk.o(i.mf_bwfont_render_character) referenced from gfx_mk.o(.constdata)
- <LI><a href="#[9c]">mf_rlefont_character_width</a> from gfx_mk.o(i.mf_rlefont_character_width) referenced 7 times from gfx_mk.o(.constdata)
- <LI><a href="#[9d]">mf_rlefont_render_character</a> from gfx_mk.o(i.mf_rlefont_render_character) referenced 7 times from gfx_mk.o(.constdata)
+ <LI><a href="#[9c]">mf_rlefont_character_width</a> from gfx_mk.o(i.mf_rlefont_character_width) referenced 8 times from gfx_mk.o(.constdata)
+ <LI><a href="#[9d]">mf_rlefont_render_character</a> from gfx_mk.o(i.mf_rlefont_render_character) referenced 8 times from gfx_mk.o(.constdata)
  <LI><a href="#[9b]">osThreadExit</a> from rt_cmsis.o(i.osThreadExit) referenced from rt_cmsis.o(i.svcThreadCreate)
  <LI><a href="#[db]">osTimerThread</a> from rt_cmsis.o(i.osTimerThread) referenced from rtx_conf_cm.o(.constdata)
  <LI><a href="#[9a]">os_idle_demon</a> from rtx_conf_cm.o(i.os_idle_demon) referenced from rt_task.o(i.rt_sys_init)
@@ -2920,7 +2920,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[236]"></a>guiEventLoop</STRONG> (Thumb, 520 bytes, Stack size 8 bytes, gui.o(i.guiEventLoop))
+<P><STRONG><a name="[236]"></a>guiEventLoop</STRONG> (Thumb, 410 bytes, Stack size 8 bytes, gui.o(i.guiEventLoop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 408<LI>Call Chain = guiEventLoop &rArr; gwinPrintf &rArr; gwinPutChar &rArr; gdispGDrawLine &rArr; line_clip &rArr; vline_clip &rArr; gdisp_lld_fill_area &rArr; BSP_LCD_FillRect &rArr; LL_FillBuffer &rArr; HAL_DMA2D_Start &rArr; DMA2D_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -4525,7 +4525,7 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[1ec]"></a>createPagePage0</STRONG> (Thumb, 1356 bytes, Stack size 80 bytes, gui.o(i.createPagePage0))
+<P><STRONG><a name="[1ec]"></a>createPagePage0</STRONG> (Thumb, 984 bytes, Stack size 80 bytes, gui.o(i.createPagePage0))
 <BR><BR>[Stack]<UL><LI>Max Depth = 248<LI>Call Chain = createPagePage0 &rArr; gwinGLabelCreate &rArr; getwidth &rArr; gdispGetStringWidth &rArr; gdispGetStringWidthCount &rArr; mf_get_string_width &rArr; mf_round_to_tab &rArr; mf_character_width
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit

@@ -130,7 +130,7 @@ static void createPagePage0(void)
 	wi.text = "Container";
 	wi.customDraw = 0;
 	wi.customParam = 0;
-	wi.customStyle = 0;
+	wi.customStyle = &midnight;
 	containerlist = gwinContainerCreate(0, &wi, 0);	
 		
 		
@@ -221,35 +221,25 @@ static void createPagePage0(void)
 	wi.g.show = TRUE;
 	wi.g.x = 0;
 	wi.g.y = 0;
-	wi.g.width = 300;
+	wi.g.width = 305;
 	wi.g.height = 400;
 	wi.g.parent = containerlist;
 	wi.text = "List1";
 	wi.customDraw = gwinListDefaultDraw;
 	wi.customParam = 0;
-	wi.customStyle = 0;
+	wi.customStyle = &midnight;
 	ghList1 = gwinListCreate(0, &wi, FALSE);
-	font_t fontcoop = gdispOpenFont("cooper-black24");
+	font_t fontcoop = gdispOpenFont("cooper-black32");
 	gwinSetFont(ghList1, fontcoop);
 	gwinListSetScroll(ghList1, scrollSmooth);
 	gwinListAddItem(ghList1, "Item1", FALSE);
 	gwinListAddItem(ghList1, "Item2", FALSE);
 	gwinListAddItem(ghList1, "Item3", FALSE);
 	gwinListAddItem(ghList1, "Item4", FALSE);
-	gwinListAddItem(ghList1, "Item5", FALSE);
-	gwinListAddItem(ghList1, "Item6", FALSE);
-	gwinListAddItem(ghList1, "Item7", FALSE);
-	gwinListAddItem(ghList1, "Item8", FALSE);
-	gwinListAddItem(ghList1, "Item9", FALSE);
 	gwinListSetSelected(ghList1, 0, TRUE);
 	gwinListSetSelected(ghList1, 1, FALSE);
 	gwinListSetSelected(ghList1, 2, FALSE);
 	gwinListSetSelected(ghList1, 3, FALSE);
-	gwinListSetSelected(ghList1, 4, FALSE);
-	gwinListSetSelected(ghList1, 5, FALSE);
-	gwinListSetSelected(ghList1, 6, FALSE);
-	gwinListSetSelected(ghList1, 7, FALSE);
-	gwinListSetSelected(ghList1, 8, FALSE);
 	gdispCloseFont(fontcoop);
 		//gwinSetDefaultFont(font);
 		// create button widget: ghButton1
@@ -262,9 +252,9 @@ static void createPagePage0(void)
 	wi.text = "SETTINGs2";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = 0;
+	wi.customStyle = &belize;
 	buttonlist = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttonlist, gdispOpenFont("DejaVuSans32_aa"));
+	gwinSetFont(buttonlist, gdispOpenFont("DejaVuSans32"));
 	
 /*
 	// Create label widget: ghLabel3
@@ -328,7 +318,7 @@ void guiCreate(void)
 	guiShowPage(0);
 
 	gwinSetColor(console1, WHITE);
-	gwinSetBgColor(console1, BLACK);
+	gwinSetBgColor(console1, HTML2COLOR(0x2980B9));
 	
 }
 
@@ -399,26 +389,6 @@ void guiEventLoop(void)
 					gwinHide(container3);
 					gwinShow(ghMapWindow);
 				  break;
-				case 4:
-					gwinHide(ghMapWindow);
-					gwinShow(container3);
-					break;
-				case 5:
-					gwinHide(container3);
-					gwinShow(ghMapWindow);
-				  break;
-				case 6:
-					gwinHide(ghMapWindow);
-					gwinShow(container3);
-					break;
-				case 7:
-					gwinHide(container3);
-					gwinShow(ghMapWindow);
-				  break;
-				case 8:
-					gwinHide(ghMapWindow);
-					gwinShow(container3);
-					break;
 				default:
 					gwinHide(ghMapWindow);
 					gwinShow(container3);

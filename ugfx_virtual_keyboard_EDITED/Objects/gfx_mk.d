@@ -109,6 +109,8 @@
 .\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
 .\objects\gfx_mk.o: .\rsc/cooper-black24.c
 .\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
+.\objects\gfx_mk.o: .\rsc/cooper-black32.c
+.\objects\gfx_mk.o: .\ugfx\mf_rlefont.h
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_rlefont.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_bwfont.c
 .\objects\gfx_mk.o: ugfx\src\gdisp/mcufont/mf_scaledfont.c
