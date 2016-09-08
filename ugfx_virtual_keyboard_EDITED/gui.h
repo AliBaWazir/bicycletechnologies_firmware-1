@@ -13,21 +13,21 @@
 extern GListener glistener;
 
 // GHandles
-extern GHandle ghContainerPage0;
-extern GHandle container1;
-extern GHandle container2;
-extern GHandle container3;
-extern GHandle containerlist;
-extern GHandle ghKeyboard1;
+extern GHandle mainContainer;
+extern GHandle dataContainer;
+extern GHandle consoleContainer;
+extern GHandle menuContainer;
+extern GHandle mapContainer;
 extern GHandle ghLabel1;
 extern GHandle ghLabel2;
 extern GHandle ghLabel3;
-extern GHandle ghButton1;
-extern GHandle ghButton2;
+extern GHandle menuButton;
 
-extern GHandle console1;
-extern GHandle ghList1;
-extern GHandle buttonlist;
+extern GHandle consoleWindow;
+extern GHandle menuList;
+extern GHandle returnButton;
+
+extern GHandle mapWindow;
 
 // Function Prototypes
 void guiCreate(void);
