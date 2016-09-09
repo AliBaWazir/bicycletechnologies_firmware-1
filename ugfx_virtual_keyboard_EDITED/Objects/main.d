@@ -2,8 +2,8 @@
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\main.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
-.\objects\main.o: C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
-.\objects\main.o: C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
+.\objects\main.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
+.\objects\main.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
 .\objects\main.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h
 .\objects\main.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h
 .\objects\main.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
@@ -80,7 +80,6 @@
 .\objects\main.o: .\ugfx\drivers\gdisp\STM32LTDC\gdisp_lld_config.h
 .\objects\main.o: .\ugfx\src/gdisp/gdisp_colors.h
 .\objects\main.o: .\ugfx\src/gdisp/gdisp_image.h
-.\objects\main.o: .\ugfx\src/gdisp/gdisp_pixmap.h
 .\objects\main.o: .\ugfx\src/gwin/gwin.h
 .\objects\main.o: .\ugfx\src/gwin/gwin_widget.h
 .\objects\main.o: .\ugfx\src/gwin/gwin_slider.h
@@ -97,7 +96,6 @@
 .\objects\main.o: .\ugfx\src/gadc/gadc.h
 .\objects\main.o: .\ugfx\src/gaudio/gaudio.h
 .\objects\main.o: gui.h
-.\objects\main.o: colors.h
 .\objects\main.o: .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery_lcd.h
 .\objects\main.o: .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\../Components/otm8009a/otm8009a.h
 .\objects\main.o: .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery.h

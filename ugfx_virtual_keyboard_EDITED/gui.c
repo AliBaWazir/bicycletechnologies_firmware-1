@@ -156,7 +156,6 @@ void guiShowPage(unsigned pageIndex)
 
 void guiCreate(void)
 {
-	/*
 	GWidgetInit wi;
 
 	// Prepare fonts
@@ -179,34 +178,20 @@ void guiCreate(void)
 
 	// Select the default display page
 	guiShowPage(0);
-	*/
 
 }
 
 void guiEventLoop(void)
 {
 	GEvent* pe;
-	
-	
-	coord_t		width, height;
-  coord_t		i, j;
 
-	width = gdispGetWidth();
-  height = gdispGetHeight();
-	pixmap = gdispPixmapCreate(800, 480);
-  surface = gdispPixmapGetBits(pixmap);
-	
-	
-	
 	while (1) {
         
         
-        gfxSleepMilliseconds(300);
+        gfxSleepMilliseconds(3);
         //gdispGClear(GDISP, (LUMA2COLOR(0)));
-        //gdispGClear(pixmap, black_studio);
-				gdispFillArea(0,0,800,480,black_studio);
+        gwinClear(ghMapWindow);
         x=x+2;y=y+2;
-		/*
         for(int tempx = x+4*256; tempx>-256; tempx=tempx-256)
         {
             while(tempx > 4*256)
@@ -220,18 +205,12 @@ void guiEventLoop(void)
                     tempy=tempy-256;
                 }
                 //drawTile(tempx, tempy);
-                gdispGDrawBox(pixmap, tempx, tempy, 256, 256, white_studio);
+                gwinDrawBox(ghMapWindow, tempx, tempy, 256, 256);
                 
             }
         }
-				
-				*/
-				
-				gdispGDrawLine(pixmap, 0, 0 ,700, 450, white_studio);
         //gwinRedraw(ghMapWindow);
-				surface[200]= RGB2COLOR(122,122,122);
-        gdispBlitArea(0, 0, 800, 480, surface);
-				
+        
         
 		// Get an event
 		pe = geventEventWait(&glistener, 0);

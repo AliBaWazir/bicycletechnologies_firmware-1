@@ -5,14 +5,7 @@
 #include "RTE_Components.h"
 #include "gfx.h"
 #include "gui.h"
-#include "colors.h"
-#define PIXMAP_WIDTH	200
-#define PIXMAP_HEIGHT	100
- 
-static GDisplay* pixmap;
-static pixel_t* surface;
 
-static gdispImage myImage;
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
 
@@ -135,7 +128,7 @@ void DSI_IRQHandler()
 
 int main (void)
 {	
-
+    int i = 0;
 	// Cached enabled in stm32f4xx_hal_conf.h
     // CPU_CACHE_Enable();			// Enable the CPU Cache
     
@@ -148,73 +141,6 @@ int main (void)
 	gfxInit();					// Initialize the uGFX library
 	
 
-	
-	coord_t		width, height;
-    coord_t		i, j;
- 
-    // Initialize and clear the display
-    gfxInit();
- 
-    // Get the screen size
-    width = gdispGetWidth();
-    height = gdispGetHeight();
- 
-    // Create a pixmap and get a pointer to the bits
-    pixmap = gdispPixmapCreate(PIXMAP_WIDTH, PIXMAP_HEIGHT);
-    surface = gdispPixmapGetBits(pixmap);
- 
-    // A pixmap can be treated either as a virtual display or as a memory framebuffer surface.
-    // We demonstrate writing to it using both methods.
- /*
-    // First demo drawing onto the surface directly
-    for(j = 0; j < PIXMAP_HEIGHT; j++)
-    	for(i = 0; i < PIXMAP_WIDTH; i++)
-    		surface[j*PIXMAP_WIDTH + i] = RGB2COLOR((uint8_t)j*2, 120, (uint8_t)j*2);//blue_studio;//RGB2COLOR(0, 255-i*(256/PIXMAP_WIDTH), j*(256/PIXMAP_HEIGHT));
- 
-    // Secondly, show drawing a line on it like a virtual display
-    gdispGDrawLine(pixmap, 0, 0, gdispGGetWidth(pixmap)-1, gdispGGetHeight(pixmap)-1, white_studio);
- */
-    i = j = 0;
-    while(TRUE) {
-    	// Clear the old position
-    	//
-			
-			gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
-			gdispGImageDraw(pixmap, &myImage, 0, 0, 200, 100, 0, 0);
-			gdispImageClose(&myImage);
- 
-    	// Change the position
-    	i += PIXMAP_WIDTH;
-    	if (i >= width) {
-    		i = 0;
-    		j +=PIXMAP_HEIGHT;
-    	}
-			
-			if(j >= height){
-				
-				gdispFillArea(0, 0, width, height, black_studio);
-				gfxSleepMilliseconds(100);
-				j = 0;
-			}
-			
-			
-			
-			
- 
-    	// Blit the pixmap to the real display at the new position
-    	gdispBlitArea(i, j, PIXMAP_WIDTH, PIXMAP_HEIGHT, surface);
- 
-    	// Wait
-    	gfxSleepMilliseconds(0);
-    }
- 
-    // Clean up
-    gdispPixmapDelete(pixmap);
-	
-	
-	
-	
-	
 	
 	geventListenerInit(&glistener);
 	gwinAttachListener(&glistener);
