@@ -42,7 +42,8 @@
 #define GDISP_NEED_CONTROL TRUE
 #define GDISP_NEED_VALIDATION TRUE
 #define GDISP_NEED_CLIP TRUE
-#define GDISP_NEED_ARC FALSE
+#define GDISP_NEED_ARC TRUE
+#define GDISP_NEED_SCROLL FALSE
 #define GDISP_NEED_CONVEX_POLYGON FALSE
 #define GDISP_NEED_IMAGE TRUE
 	#define GDISP_NEED_IMAGE_BMP TRUE
@@ -63,7 +64,10 @@
 #define GDISP_NEED_TEXT_KERNING FALSE
 #define GDISP_NEED_UTF8 FALSE
 #define GDISP_INCLUDE_FONT_DEJAVUSANS20_AA TRUE
-
+#define GDISP_INCLUDE_FONT_DEJAVUSANS32 TRUE
+#define GDISP_INCLUDE_FONT_DEJAVUSANS24 TRUE
+#define GDISP_INCLUDE_FONT_DEJAVUSANS10 TRUE
+#define GDISP_INCLUDE_USER_FONTS	TRUE
 
 /********************************************************/
 /* GWIN stuff                                           */
@@ -76,9 +80,12 @@
 
 #define GWIN_NEED_WIDGET TRUE
     #define GWIN_NEED_LABEL TRUE
+		#define GWIN_NEED_BUTTON TRUE
+				#define GWIN_BUTTON_LAZY_RELEASE FALSE
 #define GWIN_FOCUS_HIGHLIGHT_WIDTH                   3
     #define GWIN_NEED_SLIDER TRUE
     #define GWIN_NEED_LIST TRUE
+		#define GWIN_NEED_IMAGE TRUE
         #define GWIN_NEED_LIST_IMAGES FALSE
     #define GWIN_FLAT_STYLING TRUE
 
@@ -89,6 +96,10 @@
     #define GWIN_NEED_FRAME FALSE
     #define GWIN_NEED_TABSET FALSE
 
+#define GWIN_NEED_CONSOLE TRUE
+#define GWIN_CONSOLE_USE_FLOAT TRUE
+#define GWIN_CONSOLE_USE_HISTORY TRUE
+#define GWIN_CONSOLE_ESCSEQ TRUE
 
 /********************************************************/
 /* GTIMER stuff                                         */

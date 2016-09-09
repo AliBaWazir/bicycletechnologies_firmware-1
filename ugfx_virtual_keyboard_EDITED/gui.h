@@ -12,12 +12,29 @@
 // GListeners
 extern GListener glistener;
 
-// GHandles
-extern GHandle ghContainerPage0;
-extern GHandle ghKeyboard1;
+// GHandle
+// Main Container (Background layer0)
+extern GHandle mainContainer;
+
+// Data Container on the left side
+extern GHandle dataContainer;
 extern GHandle ghLabel1;
 extern GHandle ghLabel2;
 extern GHandle ghLabel3;
+extern GHandle menuButton;
+
+// Console Container 
+extern GHandle consoleContainer;
+extern GHandle consoleWindow;
+
+// Menu Container
+extern GHandle menuContainer;
+extern GHandle menuList;
+extern GHandle returnButton;
+
+// Map Container
+extern GHandle mapContainer;
+extern GHandle mapWindow;
 
 // Function Prototypes
 void guiCreate(void);

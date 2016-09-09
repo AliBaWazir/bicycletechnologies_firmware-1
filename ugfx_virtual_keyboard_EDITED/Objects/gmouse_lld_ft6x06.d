@@ -46,12 +46,15 @@
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gdisp/gdisp_image.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_widget.h
+.\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_button.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_slider.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_label.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_list.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_keyboard.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_textedit.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_container.h
+.\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_console.h
+.\objects\gmouse_lld_ft6x06.o: .\ugfx\src/gwin/gwin_image.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/ginput/ginput.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/ginput/ginput_mouse.h
 .\objects\gmouse_lld_ft6x06.o: .\ugfx\src/ginput/ginput_keyboard.h
@@ -64,8 +67,8 @@
 .\objects\gmouse_lld_ft6x06.o: .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery_ts.h
 .\objects\gmouse_lld_ft6x06.o: .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery.h
 .\objects\gmouse_lld_ft6x06.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
-.\objects\gmouse_lld_ft6x06.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
-.\objects\gmouse_lld_ft6x06.o: C:\Users\JL\Documents\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
+.\objects\gmouse_lld_ft6x06.o: C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx\stm32f4xx_hal_conf.h
+.\objects\gmouse_lld_ft6x06.o: C:\Users\Maytham\Documents\GitRepos\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\RTE_Components.h
 .\objects\gmouse_lld_ft6x06.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h
 .\objects\gmouse_lld_ft6x06.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h
 .\objects\gmouse_lld_ft6x06.o: C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h

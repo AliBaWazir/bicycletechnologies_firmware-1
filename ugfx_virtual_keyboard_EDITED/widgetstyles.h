@@ -63,6 +63,66 @@ const GWidgetStyle black = {
 	}
 };
 
+// WidgetStyle: Black
+const GWidgetStyle midnight = {
+	HTML2COLOR(0x2C3E50),              // background
+	HTML2COLOR(0x2A8FCD),              // focus
+
+	// Enabled color set
+	{
+		HTML2COLOR(0xF1C40F),         // text
+		HTML2COLOR(0xFFFFFF),         // edge
+		HTML2COLOR(0x2980B9),         // fill
+		HTML2COLOR(0x008000),         // progress (inactive area)
+	},
+
+	// Disabled color set
+	{
+		HTML2COLOR(0x808080),         // text
+		HTML2COLOR(0x404040),         // edge
+		HTML2COLOR(0x404040),         // fill
+		HTML2COLOR(0x004000),         // progress (active area)
+	},
+
+	// Pressed color set
+	{
+		HTML2COLOR(0xF1C40F),         // text
+		HTML2COLOR(0xC0C0C0),         // edge
+		HTML2COLOR(0xE0E0E0),         // fill
+		HTML2COLOR(0x008000),         // progress (active area)
+	}
+};
+
+// WidgetStyle: Black
+const GWidgetStyle belize = {
+	HTML2COLOR(0x2980B9),              // background
+	HTML2COLOR(0x2C3E50),              // focus
+
+	// Enabled color set
+	{
+		HTML2COLOR(0xFFFFFF),         // text
+		HTML2COLOR(0x2C3E50),         // edge
+		HTML2COLOR(0x2980B9),         // fill
+		HTML2COLOR(0x2C3E50),         // progress (inactive area)
+	},
+
+	// Disabled color set
+	{
+		HTML2COLOR(0xFFFFFF),         // text
+		HTML2COLOR(0x2980B9),         // edge
+		HTML2COLOR(0x2980B9),         // fill
+		HTML2COLOR(0x2C3E50),         // progress (active area)
+	},
+
+	// Pressed color set
+	{
+		HTML2COLOR(0xFFFFFF),         // text
+		HTML2COLOR(0x3498DB),         // edge
+		HTML2COLOR(0x3498DB),         // fill
+		HTML2COLOR(0x2C3E50),         // progress (active area)
+	}
+};
+
 
 #endif /* _WIDGET_STYLES_H */
 
