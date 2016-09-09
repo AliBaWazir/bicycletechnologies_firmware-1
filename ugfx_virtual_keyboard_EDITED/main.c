@@ -141,7 +141,6 @@ int main (void)
     
 	HAL_Init();					// Initialize the HAL Library
 	BSP_SDRAM_Init();			// Initialize BSP SDRAM
-	memset((void*)0xC0000000, 0xA0, 800*480*4 + 1024);
 	SystemClock_Config();		// Configure the System Clock
         
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
@@ -181,7 +180,7 @@ int main (void)
     	//
 			
 			gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
-			gdispGImageDraw(pixmap, &myImage, 0, 0, PIXMAP_WIDTH, PIXMAP_HEIGHT, 0, 0);
+			gdispGImageDraw(pixmap, &myImage, 0, 0, 200, 100, 0, 0);
 			gdispImageClose(&myImage);
  
     	// Change the position
