@@ -1,5 +1,5 @@
 Dependencies for Project 'ugfx_virtual_keyboard', Target 'STM32F469NI Flash': (DO NOT MODIFY !)
-F (.\main.c)(0x57C708F2)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\main.c)(0x57C6509F)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x56FEEB9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x56FEEB9E)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h)(0x57310C1E)
@@ -38,7 +38,7 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr_ex.h)(0x57310C1E)
 I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery_sdram.h)(0x57C5C70D)
 I (.\ugfx\gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (.\ugfx\src/gfx_compilers.h)(0x57C5C713)
 I (.\ugfx\src/gos/gos_options.h)(0x57C5C713)
 I (.\ugfx\src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -104,11 +104,11 @@ I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\../Components/otm8009a/otm8009a
 I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\stm32469i_discovery.h)(0x57C5C70D)
 I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\../../../Utilities/Fonts/fonts.h)(0x57C5C70D)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
-F (.\gfxconf.h)(0x57C6EF71)()
+F (.\gfxconf.h)(0x57C6458D)()
 F (.\gui.c)(0x57C5FA20)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gui.o --omf_browse .\objects\gui.crf --depend .\objects\gui.d)
 I (colors.h)(0x57C5C70E)
 I (.\ugfx\gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (.\ugfx\src/gfx_compilers.h)(0x57C5C713)
 I (.\ugfx\src/gos/gos_options.h)(0x57C5C713)
 I (.\ugfx\src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -172,7 +172,7 @@ I (widgetstyles.h)(0x57C5C714)
 I (gui.h)(0x57C5C70E)
 F (.\ugfx\drivers\gdisp\STM32LTDC\gdisp_lld_STM32LTDC.c)(0x57C5C712)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_lld_stm32ltdc.o --omf_browse .\objects\gdisp_lld_stm32ltdc.crf --depend .\objects\gdisp_lld_stm32ltdc.d)
 I (.\ugfx\gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (.\ugfx\src/gfx_compilers.h)(0x57C5C713)
 I (.\ugfx\src/gos/gos_options.h)(0x57C5C713)
 I (.\ugfx\src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -276,7 +276,7 @@ I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\../../../Utilities/Fonts/fonts.
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\drivers\ginput\touch\FT6x06\gmouse_lld_FT6x06.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gmouse_lld_ft6x06.o --omf_browse .\objects\gmouse_lld_ft6x06.crf --depend .\objects\gmouse_lld_ft6x06.d)
 I (.\ugfx\gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (.\ugfx\src/gfx_compilers.h)(0x57C5C713)
 I (.\ugfx\src/gos/gos_options.h)(0x57C5C713)
 I (.\ugfx\src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -383,7 +383,7 @@ I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\../Components/ft6x06/ft6x06.h)(
 I (.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery\../Components/ft6x06/../Common/ts.h)(0x57C5C70D)
 F (.\ugfx\src\gadc\gadc.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gadc.o --omf_browse .\objects\gadc.crf --depend .\objects\gadc.d)
 I (ugfx\src\gadc\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gadc\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gadc\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gadc\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -445,7 +445,7 @@ I (ugfx\src\gadc\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gadc\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gaudio\gaudio.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gaudio.o --omf_browse .\objects\gaudio.crf --depend .\objects\gaudio.d)
 I (ugfx\src\gaudio\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gaudio\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gaudio\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gaudio\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -505,9 +505,9 @@ I (ugfx\src\gaudio\../../src/ginput/ginput_toggle.h)(0x57C5C713)
 I (ugfx\src\gaudio\../../src/ginput/ginput_dial.h)(0x57C5C713)
 I (ugfx\src\gaudio\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gaudio\../../src/gaudio/gaudio.h)(0x57C5C713)
-F (.\ugfx\src\gdisp\gdisp.c)(0x57C65251)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp.o --omf_browse .\objects\gdisp.crf --depend .\objects\gdisp.d)
+F (.\ugfx\src\gdisp\gdisp.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp.o --omf_browse .\objects\gdisp.crf --depend .\objects\gdisp.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -580,7 +580,7 @@ I (ugfx\src\gdisp\mcufont/mf_scaledfont.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont/mf_wordwrap.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_fonts.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_fonts.o --omf_browse .\objects\gdisp_fonts.crf --depend .\objects\gdisp_fonts.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -651,7 +651,7 @@ I (ugfx\src\gdisp\mcufont/mf_scaledfont.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont/mf_wordwrap.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_image.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_image.o --omf_browse .\objects\gdisp_image.crf --depend .\objects\gdisp_image.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -714,7 +714,7 @@ I (ugfx\src\gdisp\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gdisp\gdisp_image_support.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_image_bmp.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_image_bmp.o --omf_browse .\objects\gdisp_image_bmp.crf --depend .\objects\gdisp_image_bmp.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -777,7 +777,7 @@ I (ugfx\src\gdisp\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gdisp\gdisp_image_support.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_image_gif.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_image_gif.o --omf_browse .\objects\gdisp_image_gif.crf --depend .\objects\gdisp_image_gif.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -839,7 +839,7 @@ I (ugfx\src\gdisp\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_image_jpg.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_image_jpg.o --omf_browse .\objects\gdisp_image_jpg.crf --depend .\objects\gdisp_image_jpg.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -901,7 +901,7 @@ I (ugfx\src\gdisp\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_image_native.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_image_native.o --omf_browse .\objects\gdisp_image_native.crf --depend .\objects\gdisp_image_native.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -963,7 +963,7 @@ I (ugfx\src\gdisp\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_image_png.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_image_png.o --omf_browse .\objects\gdisp_image_png.crf --depend .\objects\gdisp_image_png.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1025,7 +1025,7 @@ I (ugfx\src\gdisp\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\gdisp_pixmap.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdisp_pixmap.o --omf_browse .\objects\gdisp_pixmap.crf --depend .\objects\gdisp_pixmap.d)
 I (ugfx\src\gdisp\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1093,7 +1093,7 @@ I (ugfx\src\gdisp\mcufont\mf_font.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_encoding.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1157,7 +1157,7 @@ F (.\ugfx\src\gdisp\mcufont\mf_encoding.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.
 I (ugfx\src\gdisp\mcufont\mf_encoding.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1220,7 +1220,7 @@ I (ugfx\src\gdisp\mcufont\../../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gdisp\mcufont\mf_font.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\mf_font.o --omf_browse .\objects\mf_font.crf --depend .\objects\mf_font.d)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1295,7 +1295,7 @@ I (ugfx\src\gdisp\mcufont\mf_font.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_encoding.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1360,7 +1360,7 @@ F (.\ugfx\src\gdisp\mcufont\mf_kerning.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.f
 I (ugfx\src\gdisp\mcufont\mf_kerning.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1429,7 +1429,7 @@ I (ugfx\src\gdisp\mcufont\mf_font.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_encoding.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1495,7 +1495,7 @@ I (ugfx\src\gdisp\mcufont\mf_font.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_encoding.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1562,7 +1562,7 @@ I (ugfx\src\gdisp\mcufont\mf_font.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_encoding.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\mf_config.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdisp\mcufont\../../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1624,7 +1624,7 @@ I (ugfx\src\gdisp\mcufont\../../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gdisp\mcufont\../../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gdriver\gdriver.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gdriver.o --omf_browse .\objects\gdriver.crf --depend .\objects\gdriver.d)
 I (ugfx\src\gdriver\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gdriver\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gdriver\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gdriver\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1688,7 +1688,7 @@ I (ugfx\src\gdriver\gdriver.h)(0x57C5C713)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\gevent\gevent.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gevent.o --omf_browse .\objects\gevent.crf --depend .\objects\gevent.d)
 I (ugfx\src\gevent\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gevent\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gevent\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gevent\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1750,7 +1750,7 @@ I (ugfx\src\gevent\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gevent\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile.o --omf_browse .\objects\gfile.crf --depend .\objects\gfile.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1813,7 +1813,7 @@ I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gfile\gfile_fs.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fatfs_diskio_chibios.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fatfs_diskio_chibios.o --omf_browse .\objects\gfile_fatfs_diskio_chibios.crf --depend .\objects\gfile_fatfs_diskio_chibios.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1875,7 +1875,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fatfs_wrapper.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fatfs_wrapper.o --omf_browse .\objects\gfile_fatfs_wrapper.crf --depend .\objects\gfile_fatfs_wrapper.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1937,7 +1937,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_chibios.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_chibios.o --omf_browse .\objects\gfile_fs_chibios.crf --depend .\objects\gfile_fs_chibios.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -1999,7 +1999,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_fatfs.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_fatfs.o --omf_browse .\objects\gfile_fs_fatfs.crf --depend .\objects\gfile_fs_fatfs.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2061,7 +2061,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_mem.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_mem.o --omf_browse .\objects\gfile_fs_mem.crf --depend .\objects\gfile_fs_mem.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2123,7 +2123,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_native.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_native.o --omf_browse .\objects\gfile_fs_native.crf --depend .\objects\gfile_fs_native.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2185,7 +2185,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_petitfs.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_petitfs.o --omf_browse .\objects\gfile_fs_petitfs.crf --depend .\objects\gfile_fs_petitfs.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2247,7 +2247,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_ram.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_ram.o --omf_browse .\objects\gfile_fs_ram.crf --depend .\objects\gfile_fs_ram.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2309,7 +2309,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_fs_rom.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_rom.o --omf_browse .\objects\gfile_fs_rom.crf --depend .\objects\gfile_fs_rom.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2375,7 +2375,7 @@ I (.\romfs_files.h)(0x57C5C70E)
 I (.\maptilebmp.h)(0x57C5C70E)
 F (.\ugfx\src\gfile\gfile_fs_strings.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_fs_strings.o --omf_browse .\objects\gfile_fs_strings.crf --depend .\objects\gfile_fs_strings.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2437,7 +2437,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_petitfs_diskio_chibios.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_petitfs_diskio_chibios.o --omf_browse .\objects\gfile_petitfs_diskio_chibios.crf --depend .\objects\gfile_petitfs_diskio_chibios.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2499,7 +2499,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_petitfs_wrapper.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_petitfs_wrapper.o --omf_browse .\objects\gfile_petitfs_wrapper.crf --depend .\objects\gfile_petitfs_wrapper.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2561,7 +2561,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_printg.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_printg.o --omf_browse .\objects\gfile_printg.crf --depend .\objects\gfile_printg.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2623,7 +2623,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_scang.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_scang.o --omf_browse .\objects\gfile_scang.crf --depend .\objects\gfile_scang.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2685,7 +2685,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfile\gfile_stdio.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfile_stdio.o --omf_browse .\objects\gfile_stdio.crf --depend .\objects\gfile_stdio.d)
 I (ugfx\src\gfile\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gfile\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2747,7 +2747,7 @@ I (ugfx\src\gfile\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gfile\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gfx.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gfx.o --omf_browse .\objects\gfx.crf --depend .\objects\gfx.d)
 I (ugfx\src\../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2809,7 +2809,7 @@ I (ugfx\src\../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\ginput\ginput.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\ginput.o --omf_browse .\objects\ginput.crf --depend .\objects\ginput.d)
 I (ugfx\src\ginput\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\ginput\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2871,7 +2871,7 @@ I (ugfx\src\ginput\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\ginput\ginput_dial.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\ginput_dial.o --omf_browse .\objects\ginput_dial.crf --depend .\objects\ginput_dial.d)
 I (ugfx\src\ginput\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\ginput\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2933,7 +2933,7 @@ I (ugfx\src\ginput\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\ginput\ginput_keyboard.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\ginput_keyboard.o --omf_browse .\objects\ginput_keyboard.crf --depend .\objects\ginput_keyboard.d)
 I (ugfx\src\ginput\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\ginput\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -2995,7 +2995,7 @@ I (ugfx\src\ginput\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\ginput\ginput_keyboard_microcode.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\ginput_keyboard_microcode.o --omf_browse .\objects\ginput_keyboard_microcode.crf --depend .\objects\ginput_keyboard_microcode.d)
 I (ugfx\src\ginput\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\ginput\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3057,7 +3057,7 @@ I (ugfx\src\ginput\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\ginput\ginput_mouse.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\ginput_mouse.o --omf_browse .\objects\ginput_mouse.crf --depend .\objects\ginput_mouse.d)
 I (ugfx\src\ginput\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\ginput\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3122,7 +3122,7 @@ I (ugfx\src\ginput\../gdriver/gdriver.h)(0x57C5C713)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\ginput\ginput_toggle.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\ginput_toggle.o --omf_browse .\objects\ginput_toggle.crf --depend .\objects\ginput_toggle.d)
 I (ugfx\src\ginput\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\ginput\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3184,7 +3184,7 @@ I (ugfx\src\ginput\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\ginput\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gmisc\gmisc.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gmisc.o --omf_browse .\objects\gmisc.crf --depend .\objects\gmisc.d)
 I (ugfx\src\gmisc\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gmisc\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3246,7 +3246,7 @@ I (ugfx\src\gmisc\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gmisc\gmisc_arrayops.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gmisc_arrayops.o --omf_browse .\objects\gmisc_arrayops.crf --depend .\objects\gmisc_arrayops.d)
 I (ugfx\src\gmisc\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gmisc\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3308,7 +3308,7 @@ I (ugfx\src\gmisc\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gmisc\gmisc_matrix2d.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gmisc_matrix2d.o --omf_browse .\objects\gmisc_matrix2d.crf --depend .\objects\gmisc_matrix2d.d)
 I (ugfx\src\gmisc\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gmisc\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3370,7 +3370,7 @@ I (ugfx\src\gmisc\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gmisc\gmisc_trig.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gmisc_trig.o --omf_browse .\objects\gmisc_trig.crf --depend .\objects\gmisc_trig.d)
 I (ugfx\src\gmisc\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gmisc\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3432,7 +3432,7 @@ I (ugfx\src\gmisc\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gmisc\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_arduino.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_arduino.o --omf_browse .\objects\gos_arduino.crf --depend .\objects\gos_arduino.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3494,7 +3494,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_chibios.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_chibios.o --omf_browse .\objects\gos_chibios.crf --depend .\objects\gos_chibios.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3556,7 +3556,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_cmsis.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_cmsis.o --omf_browse .\objects\gos_cmsis.crf --depend .\objects\gos_cmsis.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3619,7 +3619,7 @@ I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\gos\gos_ecos.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_ecos.o --omf_browse .\objects\gos_ecos.crf --depend .\objects\gos_ecos.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3681,7 +3681,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_freertos.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_freertos.o --omf_browse .\objects\gos_freertos.crf --depend .\objects\gos_freertos.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3744,7 +3744,7 @@ I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\gos\gos_linux.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_linux.o --omf_browse .\objects\gos_linux.crf --depend .\objects\gos_linux.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3806,7 +3806,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_nios.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_nios.o --omf_browse .\objects\gos_nios.crf --depend .\objects\gos_nios.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3868,7 +3868,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_osx.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_osx.o --omf_browse .\objects\gos_osx.crf --depend .\objects\gos_osx.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3930,7 +3930,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_raw32.c)(0x57C5C713)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_raw32.o --omf_browse .\objects\gos_raw32.crf --depend .\objects\gos_raw32.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -3992,7 +3992,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_rawrtos.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_rawrtos.o --omf_browse .\objects\gos_rawrtos.crf --depend .\objects\gos_rawrtos.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4054,7 +4054,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_win32.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_win32.o --omf_browse .\objects\gos_win32.crf --depend .\objects\gos_win32.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4116,7 +4116,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gos\gos_x_heap.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --bss-threshold=0 --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_x_heap.o --omf_browse .\objects\gos_x_heap.crf --depend .\objects\gos_x_heap.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4179,7 +4179,7 @@ I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\gos\gos_x_threads.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gos_x_threads.o --omf_browse .\objects\gos_x_threads.crf --depend .\objects\gos_x_threads.d)
 I (ugfx\src\gos\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gos\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4241,7 +4241,7 @@ I (ugfx\src\gos\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gos\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gqueue\gqueue.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gqueue.o --omf_browse .\objects\gqueue.crf --depend .\objects\gqueue.d)
 I (ugfx\src\gqueue\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gqueue\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gqueue\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gqueue\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4303,7 +4303,7 @@ I (ugfx\src\gqueue\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gqueue\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gtimer\gtimer.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gtimer.o --omf_browse .\objects\gtimer.crf --depend .\objects\gtimer.d)
 I (ugfx\src\gtimer\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gtimer\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gtimer\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gtimer\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4365,7 +4365,7 @@ I (ugfx\src\gtimer\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gtimer\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin.o --omf_browse .\objects\gwin.crf --depend .\objects\gwin.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4429,7 +4429,7 @@ I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\gwin\gwin_button.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_button.o --omf_browse .\objects\gwin_button.crf --depend .\objects\gwin_button.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4491,7 +4491,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_checkbox.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_checkbox.o --omf_browse .\objects\gwin_checkbox.crf --depend .\objects\gwin_checkbox.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4553,7 +4553,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_console.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_console.o --omf_browse .\objects\gwin_console.crf --depend .\objects\gwin_console.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4615,7 +4615,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_container.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_container.o --omf_browse .\objects\gwin_container.crf --depend .\objects\gwin_container.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4678,7 +4678,7 @@ I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 F (.\ugfx\src\gwin\gwin_frame.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_frame.o --omf_browse .\objects\gwin_frame.crf --depend .\objects\gwin_frame.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4740,7 +4740,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_gl3d.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_gl3d.o --omf_browse .\objects\gwin_gl3d.crf --depend .\objects\gwin_gl3d.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4802,7 +4802,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_graph.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_graph.o --omf_browse .\objects\gwin_graph.crf --depend .\objects\gwin_graph.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4864,7 +4864,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_image.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_image.o --omf_browse .\objects\gwin_image.crf --depend .\objects\gwin_image.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4926,7 +4926,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_keyboard.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_keyboard.o --omf_browse .\objects\gwin_keyboard.crf --depend .\objects\gwin_keyboard.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -4990,7 +4990,7 @@ I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 I (ugfx\src\gwin\gwin_keyboard_layout.h)(0x57C5C714)
 F (.\ugfx\src\gwin\gwin_keyboard_layout.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_keyboard_layout.o --omf_browse .\objects\gwin_keyboard_layout.crf --depend .\objects\gwin_keyboard_layout.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5053,7 +5053,7 @@ I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gwin\gwin_keyboard_layout.h)(0x57C5C714)
 F (.\ugfx\src\gwin\gwin_label.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_label.o --omf_browse .\objects\gwin_label.crf --depend .\objects\gwin_label.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5116,7 +5116,7 @@ I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 F (.\ugfx\src\gwin\gwin_list.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_list.o --omf_browse .\objects\gwin_list.crf --depend .\objects\gwin_list.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5181,7 +5181,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x56FEEB9E)
 F (.\ugfx\src\gwin\gwin_progressbar.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_progressbar.o --omf_browse .\objects\gwin_progressbar.crf --depend .\objects\gwin_progressbar.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5243,7 +5243,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_radio.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_radio.o --omf_browse .\objects\gwin_radio.crf --depend .\objects\gwin_radio.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5305,7 +5305,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_slider.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_slider.o --omf_browse .\objects\gwin_slider.crf --depend .\objects\gwin_slider.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5368,7 +5368,7 @@ I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 F (.\ugfx\src\gwin\gwin_tabset.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_tabset.o --omf_browse .\objects\gwin_tabset.crf --depend .\objects\gwin_tabset.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5430,7 +5430,7 @@ I (ugfx\src\gwin\../../src/gadc/gadc.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gaudio/gaudio.h)(0x57C5C713)
 F (.\ugfx\src\gwin\gwin_textedit.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_textedit.o --omf_browse .\objects\gwin_textedit.crf --depend .\objects\gwin_textedit.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5494,7 +5494,7 @@ I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 F (.\ugfx\src\gwin\gwin_widget.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_widget.o --omf_browse .\objects\gwin_widget.crf --depend .\objects\gwin_widget.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)
@@ -5558,7 +5558,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x56FEEB9E)
 I (ugfx\src\gwin\gwin_class.h)(0x57C5C714)
 F (.\ugfx\src\gwin\gwin_wm.c)(0x57C5C714)(--c99 -c --cpu Cortex-M4.fp -D__RTX -g -O0 -Otime --apcs=interwork --split_sections -I . -I .\ugfx -I .\ugfx\drivers\gdisp\STM32LTDC -I .\ugfx\drivers\ginput\touch\FT5336 -I .\STM32CubeF4\Drivers\BSP\STM32469I-Discovery-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE-I C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE\Device\STM32F469NIHx-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\Include-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.0-Beta4\CMSIS\RTOS\RTX\INC-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\STM32F4xx_HAL_Driver\Inc-D__UVISION_VERSION="520" -D_RTE_ -DSTM32F469xx-o .\objects\gwin_wm.o --omf_browse .\objects\gwin_wm.crf --depend .\objects\gwin_wm.d)
 I (ugfx\src\gwin\../../gfx.h)(0x57C5C713)
-I (.\gfxconf.h)(0x57C6EF71)
+I (.\gfxconf.h)(0x57C6458D)
 I (ugfx\src\gwin\../../src/gfx_compilers.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gos/gos_options.h)(0x57C5C713)
 I (ugfx\src\gwin\../../src/gdriver/gdriver_options.h)(0x57C5C713)

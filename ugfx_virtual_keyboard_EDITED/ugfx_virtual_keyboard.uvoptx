@@ -149,6 +149,22 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>144</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134256578</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ugfx_virtual_keyboard\main.c\144</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>538</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>134223078</Address>
@@ -163,7 +179,7 @@
           <Expression>\\ugfx_virtual_keyboard\ugfx/src/ginput/ginput_mouse.c\538</Expression>
         </Bp>
         <Bp>
-          <Number>1</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>1431</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -179,7 +195,7 @@
           <Expression>\\ugfx_virtual_keyboard\../rt_CMSIS.c\1431</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>3</Number>
           <Type>0</Type>
           <LineNumber>1472</LineNumber>
           <EnabledFlag>0</EnabledFlag>
@@ -195,7 +211,7 @@
           <Expression>\\ugfx_virtual_keyboard\../rt_CMSIS.c\1472</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>4</Number>
           <Type>0</Type>
           <LineNumber>725</LineNumber>
           <EnabledFlag>1</EnabledFlag>

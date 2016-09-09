@@ -6,8 +6,8 @@
 #include "gfx.h"
 #include "gui.h"
 #include "colors.h"
-#define PIXMAP_WIDTH	800
-#define PIXMAP_HEIGHT	480
+#define PIXMAP_WIDTH	200
+#define PIXMAP_HEIGHT	100
  
 static GDisplay* pixmap;
 static pixel_t* surface;
@@ -176,31 +176,26 @@ int main (void)
     gdispGDrawLine(pixmap, 0, 0, gdispGGetWidth(pixmap)-1, gdispGGetHeight(pixmap)-1, white_studio);
  */
     i = j = 0;
-		
-		/*
-			gdispGDrawBox(pixmap, i+10, j+10, i+90, j+90, red_studio);
-			gdispGDrawStringBox(pixmap, i+10, j+10, i+90, j+90, "Hi",gdispOpenFont("DejaVuSans16"),blue_studio,justifyCenter );
-			*/
-    	// Change the position
-		
-		
-    while(TRUE) {			
-			gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
-			gdispGImageDraw(pixmap, &myImage, i, j, i+256, j+256, 0, 0);
-			gdispImageClose(&myImage);
+    while(TRUE) {
+    	// Clear the old position
+    	//
 			
-    	i += 255;
+			gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
+			gdispGImageDraw(pixmap, &myImage, 0, 0, PIXMAP_WIDTH, PIXMAP_HEIGHT, 0, 0);
+			gdispImageClose(&myImage);
+ 
+    	// Change the position
+    	i += PIXMAP_WIDTH;
     	if (i >= width) {
     		i = 0;
-    		j +=255;
+    		j +=PIXMAP_HEIGHT;
     	}
+			
 			if(j >= height){
-				gdispFillArea(0, 0, width, height, black_studio);
-				//gfxSleepMilliseconds(100);
-				i = 0;
-				j = 0;
-				gdispBlitArea(i, j, PIXMAP_WIDTH, PIXMAP_HEIGHT, surface);
 				
+				gdispFillArea(0, 0, width, height, black_studio);
+				gfxSleepMilliseconds(100);
+				j = 0;
 			}
 			
 			
@@ -208,7 +203,7 @@ int main (void)
 			
  
     	// Blit the pixmap to the real display at the new position
-    	//gdispBlitArea(i, j, PIXMAP_WIDTH, PIXMAP_HEIGHT, surface);
+    	gdispBlitArea(i, j, PIXMAP_WIDTH, PIXMAP_HEIGHT, surface);
  
     	// Wait
     	gfxSleepMilliseconds(0);
