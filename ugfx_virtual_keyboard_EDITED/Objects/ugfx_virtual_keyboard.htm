@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\ugfx_virtual_keyboard.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\ugfx_virtual_keyboard.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Thu Sep 08 16:02:47 2016
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060183: Last Updated: Fri Sep 09 09:15:52 2016
 <BR><P>
 <H3>Maximum Stack Usage =        424 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -229,10 +229,10 @@ Function Pointers
  <LI><a href="#[b2]">gwinSliderDraw_Std</a> from gfx_mk.o(i.gwinSliderDraw_Std) referenced from gfx_mk.o(.constdata)
  <LI><a href="#[c2]">gwinTexteditDefaultDraw</a> from gfx_mk.o(i.gwinTexteditDefaultDraw) referenced from gfx_mk.o(.constdata)
  <LI><a href="#[dc]">main</a> from main.o(i.main) referenced from rtx_conf_cm.o(.constdata)
- <LI><a href="#[9e]">mf_bwfont_character_width</a> from gfx_mk.o(i.mf_bwfont_character_width) referenced from gfx_mk.o(.constdata)
- <LI><a href="#[9f]">mf_bwfont_render_character</a> from gfx_mk.o(i.mf_bwfont_render_character) referenced from gfx_mk.o(.constdata)
- <LI><a href="#[9c]">mf_rlefont_character_width</a> from gfx_mk.o(i.mf_rlefont_character_width) referenced 8 times from gfx_mk.o(.constdata)
- <LI><a href="#[9d]">mf_rlefont_render_character</a> from gfx_mk.o(i.mf_rlefont_render_character) referenced 8 times from gfx_mk.o(.constdata)
+ <LI><a href="#[9c]">mf_bwfont_character_width</a> from gfx_mk.o(i.mf_bwfont_character_width) referenced from gfx_mk.o(.constdata)
+ <LI><a href="#[9d]">mf_bwfont_render_character</a> from gfx_mk.o(i.mf_bwfont_render_character) referenced from gfx_mk.o(.constdata)
+ <LI><a href="#[9e]">mf_rlefont_character_width</a> from gfx_mk.o(i.mf_rlefont_character_width) referenced 6 times from gfx_mk.o(.constdata)
+ <LI><a href="#[9f]">mf_rlefont_render_character</a> from gfx_mk.o(i.mf_rlefont_render_character) referenced 6 times from gfx_mk.o(.constdata)
  <LI><a href="#[9b]">osThreadExit</a> from rt_cmsis.o(i.osThreadExit) referenced from rt_cmsis.o(i.svcThreadCreate)
  <LI><a href="#[db]">osTimerThread</a> from rt_cmsis.o(i.osTimerThread) referenced from rtx_conf_cm.o(.constdata)
  <LI><a href="#[9a]">os_idle_demon</a> from rtx_conf_cm.o(i.os_idle_demon) referenced from rt_task.o(i.rt_sys_init)
@@ -798,14 +798,14 @@ Global Symbols
 <P><STRONG><a name="[19e]"></a>strlen</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, strlen.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = strlen
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
+<BR>[Called By]<UL><LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
 <LI><a href="#[19f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;resizeText
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TextEditMouseDown
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TextEditKeyboard
 </UL>
 
 <P><STRONG><a name="[18e]"></a>__aeabi_memcpy</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
+<BR><BR>[Called By]<UL><LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
 <LI><a href="#[24b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;scrollBuffer
 <LI><a href="#[19f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;resizeText
 <LI><a href="#[24a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;putCharInBuffer
@@ -1831,7 +1831,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwindowCreate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
+<BR>[Called By]<UL><LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
 <LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGLabelCreate
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGButtonCreate
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gcontainerCreate
@@ -1988,8 +1988,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinFlushRedraws
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListSetSelected
-<LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
+<BR>[Called By]<UL><LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListSetSelected
+<LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WM_Size
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WM_Redraw
 <LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WM_Raise
@@ -2024,7 +2024,7 @@ Global Symbols
 <LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxAlloc
 <LI><a href="#[1ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinWMAdd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGWindowCreate
+<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGWindowCreate
 <LI><a href="#[1ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGConsoleCreate
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwidgetCreate
 </UL>
@@ -2143,8 +2143,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[170]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxFree
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
-<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CalibrateMouse
+<BR>[Called By]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CalibrateMouse
 </UL>
 
 <P><STRONG><a name="[20b]"></a>gdispGBlitArea</STRONG> (Thumb, 340 bytes, Stack size 40 bytes, gfx_mk.o(i.gdispGBlitArea))
@@ -2509,7 +2508,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[220]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;matchfont
 <LI><a href="#[21f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_get_font_list
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 <LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createConsole
 <LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
 <LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CalibrateMouse
@@ -2723,7 +2722,7 @@ Global Symbols
 <P><STRONG><a name="[1e9]"></a>gfxAlloc</STRONG> (Thumb, 112 bytes, Stack size 12 bytes, gfx_mk.o(i.gfxAlloc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = gfxAlloc
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
+<BR>[Called By]<UL><LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
 <LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxRealloc
 <LI><a href="#[1c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdriverRegister
 <LI><a href="#[21b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispImageAlloc
@@ -2733,12 +2732,12 @@ Global Symbols
 <P><STRONG><a name="[170]"></a>gfxFree</STRONG> (Thumb, 100 bytes, Stack size 12 bytes, gfx_mk.o(i.gfxFree))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = gfxFree
 </UL>
-<BR>[Called By]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispCloseFont
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ListDestroy
+<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ListDestroy
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HistoryDestroy
 <LI><a href="#[22f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxRealloc
 <LI><a href="#[1c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdriverRegister
 <LI><a href="#[21d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispImageFree
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispCloseFont
 <LI><a href="#[1d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwindowCreate
 <LI><a href="#[1e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinDestroy
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwidgetDestroy
@@ -2785,7 +2784,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1eb]"></a>gfxQueueASyncInit</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, gfx_mk.o(i.gfxQueueASyncInit))
-<BR><BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
+<BR><BR>[Called By]<UL><LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
 <LI><a href="#[1e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwmInit
 </UL>
 
@@ -2796,7 +2795,7 @@ Global Symbols
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelInitialize
 <LI><a href="#[22d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxQueueASyncPutI
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
+<BR>[Called By]<UL><LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
 <LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WM_Raise
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WM_Add
 </UL>
@@ -2907,19 +2906,19 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gmouseInitDriver
 </UL>
 
-<P><STRONG><a name="[235]"></a>guiCreate</STRONG> (Thumb, 128 bytes, Stack size 40 bytes, gui.o(i.guiCreate))
+<P><STRONG><a name="[235]"></a>guiCreate</STRONG> (Thumb, 74 bytes, Stack size 40 bytes, gui.o(i.guiCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 248<LI>Call Chain = guiCreate &rArr; createData &rArr; gwinGLabelCreate &rArr; getwidth &rArr; gdispGetStringWidth &rArr; gdispGetStringWidthCount &rArr; mf_get_string_width &rArr; mf_round_to_tab &rArr; mf_character_width
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
 <LI><a href="#[237]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultStyle
 <LI><a href="#[236]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultFont
 <LI><a href="#[238]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultColor
-<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultBgColor
+<LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultBgColor
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispOpenFont
 <LI><a href="#[239]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiShowPage
-<LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createPagePage0
-<LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
-<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMainContainer
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
 <LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createConsole
 </UL>
@@ -3031,7 +3030,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[1a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetVisible
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwidgetCreate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
 </UL>
 
@@ -3050,9 +3049,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[1a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetVisible
 <LI><a href="#[1c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gcontainerCreate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createPagePage0
-<LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
-<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMainContainer
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
 <LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createConsole
 </UL>
@@ -3070,23 +3069,23 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
 </UL>
 
-<P><STRONG><a name="[1fa]"></a>gwinGListCreate</STRONG> (Thumb, 84 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinGListCreate))
+<P><STRONG><a name="[1fb]"></a>gwinGListCreate</STRONG> (Thumb, 84 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinGListCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = gwinGListCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetVisible
 <LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxQueueASyncInit
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwidgetCreate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 </UL>
 
-<P><STRONG><a name="[1f8]"></a>gwinGWindowCreate</STRONG> (Thumb, 42 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinGWindowCreate))
+<P><STRONG><a name="[1f9]"></a>gwinGWindowCreate</STRONG> (Thumb, 42 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinGWindowCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = gwinGWindowCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetVisible
 <LI><a href="#[1d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwindowCreate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<BR>[Called By]<UL><LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
 </UL>
 
 <P><STRONG><a name="[13a]"></a>gwinGetDefaultBgColor</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinGetDefaultBgColor))
@@ -3166,7 +3165,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
 </UL>
 
-<P><STRONG><a name="[1fc]"></a>gwinListAddItem</STRONG> (Thumb, 142 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinListAddItem))
+<P><STRONG><a name="[1fd]"></a>gwinListAddItem</STRONG> (Thumb, 142 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinListAddItem))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = gwinListAddItem &rArr; gfxQueueASyncPut &rArr; osKernelInitialize &rArr; svcKernelInitialize &rArr; svcThreadCreate &rArr; rt_tsk_create &rArr; rt_init_context &rArr; rt_init_stack
 </UL>
 <BR>[Calls]<UL><LI><a href="#[18e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -3175,7 +3174,7 @@ Global Symbols
 <LI><a href="#[1e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gfxAlloc
 <LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinUpdate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 </UL>
 
 <P><STRONG><a name="[83]"></a>gwinListDefaultDraw</STRONG> (Thumb, 768 bytes, Stack size 72 bytes, gfx_mk.o(i.gwinListDefaultDraw))
@@ -3198,16 +3197,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[23a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiEventLoop
 </UL>
 
-<P><STRONG><a name="[1fb]"></a>gwinListSetScroll</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinListSetScroll))
-<BR><BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<P><STRONG><a name="[1fc]"></a>gwinListSetScroll</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinListSetScroll))
+<BR><BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 </UL>
 
-<P><STRONG><a name="[1fd]"></a>gwinListSetSelected</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinListSetSelected))
+<P><STRONG><a name="[1fe]"></a>gwinListSetSelected</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, gfx_mk.o(i.gwinListSetSelected))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = gwinListSetSelected &rArr; _gwinUpdate &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinUpdate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 </UL>
 
 <P><STRONG><a name="[23f]"></a>gwinPrintf</STRONG> (Thumb, 746 bytes, Stack size 112 bytes, gfx_mk.o(i.gwinPrintf))
@@ -3267,9 +3266,9 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[244]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinLabelDraw
 </UL>
 
-<P><STRONG><a name="[1f7]"></a>gwinSetDefaultBgColor</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinSetDefaultBgColor))
+<P><STRONG><a name="[1f8]"></a>gwinSetDefaultBgColor</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinSetDefaultBgColor))
 <BR><BR>[Called By]<UL><LI><a href="#[237]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultStyle
-<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
 <LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
 </UL>
 
@@ -3284,7 +3283,7 @@ Global Symbols
 <P><STRONG><a name="[237]"></a>gwinSetDefaultStyle</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, gfx_mk.o(i.gwinSetDefaultStyle))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = gwinSetDefaultStyle &rArr; gwinSetStyle &rArr; _gwinUpdate &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultBgColor
+<BR>[Calls]<UL><LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultBgColor
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinRedraw
 <LI><a href="#[24d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetStyle
 <LI><a href="#[1a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGetNextWindow
@@ -3302,8 +3301,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1f0]"></a>gwinSetFont</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinSetFont))
-<BR><BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
-<LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
+<BR><BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
 <LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createConsole
 </UL>
 
@@ -3321,8 +3319,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[1e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinRippleVisibility
 <LI><a href="#[1a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gwinFlushRedraws
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGWindowCreate
-<LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
+<BR>[Called By]<UL><LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGWindowCreate
+<LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
 <LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGLabelCreate
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGContainerCreate
 <LI><a href="#[1ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGConsoleCreate
@@ -3359,9 +3357,9 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> gfx_mk.o(.constdata)
 </UL>
 <P><STRONG><a name="[1ed]"></a>gwinWidgetClearInit</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, gfx_mk.o(i.gwinWidgetClearInit))
-<BR><BR>[Called By]<UL><LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createPagePage0
-<LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
-<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<BR><BR>[Called By]<UL><LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMenu
+<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMap
+<LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createMainContainer
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createData
 <LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;createConsole
 <LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
@@ -3387,8 +3385,8 @@ Global Symbols
 <P><STRONG><a name="[254]"></a>isrSemaphoreRelease</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, rt_cmsis.o(i.isrSemaphoreRelease))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[256]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;isr_sem_send
-<LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<BR>[Calls]<UL><LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<LI><a href="#[256]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;isr_sem_send
 </UL>
 <BR>[Called By]<UL><LI><a href="#[232]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
 </UL>
@@ -3438,7 +3436,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rtx_conf_cm.o(.constdata)
 </UL>
-<P><STRONG><a name="[9e]"></a>mf_bwfont_character_width</STRONG> (Thumb, 38 bytes, Stack size 24 bytes, gfx_mk.o(i.mf_bwfont_character_width))
+<P><STRONG><a name="[9c]"></a>mf_bwfont_character_width</STRONG> (Thumb, 38 bytes, Stack size 24 bytes, gfx_mk.o(i.mf_bwfont_character_width))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = mf_bwfont_character_width &rArr; find_char_range
 </UL>
 <BR>[Calls]<UL><LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_width
@@ -3446,7 +3444,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> gfx_mk.o(.constdata)
 </UL>
-<P><STRONG><a name="[9f]"></a>mf_bwfont_render_character</STRONG> (Thumb, 58 bytes, Stack size 48 bytes, gfx_mk.o(i.mf_bwfont_render_character))
+<P><STRONG><a name="[9d]"></a>mf_bwfont_render_character</STRONG> (Thumb, 58 bytes, Stack size 48 bytes, gfx_mk.o(i.mf_bwfont_render_character))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = mf_bwfont_render_character &rArr; render_char
 </UL>
 <BR>[Calls]<UL><LI><a href="#[25b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;render_char
@@ -3511,14 +3509,14 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[260]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;render_right
 </UL>
 
-<P><STRONG><a name="[9c]"></a>mf_rlefont_character_width</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, gfx_mk.o(i.mf_rlefont_character_width))
+<P><STRONG><a name="[9e]"></a>mf_rlefont_character_width</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, gfx_mk.o(i.mf_rlefont_character_width))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = mf_rlefont_character_width &rArr; find_glyph
 </UL>
 <BR>[Calls]<UL><LI><a href="#[261]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_glyph
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> gfx_mk.o(.constdata)
 </UL>
-<P><STRONG><a name="[9d]"></a>mf_rlefont_render_character</STRONG> (Thumb, 112 bytes, Stack size 56 bytes, gfx_mk.o(i.mf_rlefont_render_character))
+<P><STRONG><a name="[9f]"></a>mf_rlefont_render_character</STRONG> (Thumb, 112 bytes, Stack size 56 bytes, gfx_mk.o(i.mf_rlefont_render_character))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = mf_rlefont_render_character &rArr; write_glyph_codeword &rArr; write_ref_dictentry &rArr; write_ref_codeword &rArr; write_rle_dictentry &rArr; write_pixels
 </UL>
 <BR>[Calls]<UL><LI><a href="#[262]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_glyph_codeword
@@ -4162,8 +4160,8 @@ Global Symbols
 <P><STRONG><a name="[89]"></a>svcDelay</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, rt_cmsis.o(i.svcDelay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = svcDelay &rArr; rt_dly_wait &rArr; rt_block &rArr; rt_put_dly
 </UL>
-<BR>[Calls]<UL><LI><a href="#[271]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_dly_wait
-<LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_ms2tick
+<BR>[Calls]<UL><LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_ms2tick
+<LI><a href="#[271]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_dly_wait
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rt_cmsis.o(i.osDelay)
 </UL>
@@ -4206,8 +4204,8 @@ Global Symbols
 <P><STRONG><a name="[8d]"></a>svcMessageGet</STRONG> (Thumb, 58 bytes, Stack size 24 bytes, rt_cmsis.o(i.svcMessageGet))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = svcMessageGet &rArr; rt_mbx_wait &rArr; rt_dispatch &rArr; rt_put_prio
 </UL>
-<BR>[Calls]<UL><LI><a href="#[27a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_mbx_wait
-<LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_ms2tick
+<BR>[Calls]<UL><LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_ms2tick
+<LI><a href="#[27a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_mbx_wait
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rt_cmsis.o(i.osMessageGet)
 </UL>
@@ -4223,8 +4221,8 @@ Global Symbols
 <P><STRONG><a name="[8f]"></a>svcMutexDelete</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, rt_cmsis.o(i.svcMutexDelete))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = svcMutexDelete &rArr; rt_mut_delete &rArr; rt_dispatch &rArr; rt_put_prio
 </UL>
-<BR>[Calls]<UL><LI><a href="#[27b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_mut_delete
-<LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<BR>[Calls]<UL><LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<LI><a href="#[27b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_mut_delete
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rt_cmsis.o(i.osMutexDelete)
 </UL>
@@ -4257,17 +4255,17 @@ Global Symbols
 <P><STRONG><a name="[93]"></a>svcSemaphoreRelease</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, rt_cmsis.o(i.svcSemaphoreRelease))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = svcSemaphoreRelease &rArr; rt_sem_send &rArr; rt_dispatch &rArr; rt_put_prio
 </UL>
-<BR>[Calls]<UL><LI><a href="#[280]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_sem_send
-<LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<BR>[Calls]<UL><LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<LI><a href="#[280]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_sem_send
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rt_cmsis.o(i.osSemaphoreRelease)
 </UL>
 <P><STRONG><a name="[94]"></a>svcSemaphoreWait</STRONG> (Thumb, 50 bytes, Stack size 16 bytes, rt_cmsis.o(i.svcSemaphoreWait))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = svcSemaphoreWait &rArr; rt_sem_wait &rArr; rt_block &rArr; rt_put_dly
 </UL>
-<BR>[Calls]<UL><LI><a href="#[281]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_sem_wait
-<LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_ms2tick
+<BR>[Calls]<UL><LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_ms2tick
 <LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_id2obj
+<LI><a href="#[281]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_sem_wait
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rt_cmsis.o(i.osSemaphoreWait)
 </UL>
@@ -4293,9 +4291,9 @@ Global Symbols
 <P><STRONG><a name="[97]"></a>svcThreadTerminate</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, rt_cmsis.o(i.svcThreadTerminate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = svcThreadTerminate &rArr; rt_tsk_delete &rArr; rt_dispatch &rArr; rt_put_prio
 </UL>
-<BR>[Calls]<UL><LI><a href="#[28c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_tsk_delete
+<BR>[Calls]<UL><LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_tid2ptcb
+<LI><a href="#[28c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_tsk_delete
 <LI><a href="#[29a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_free_mem
-<LI><a href="#[29b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_tid2ptcb
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> rt_cmsis.o(i.osThreadExit)
 </UL>
@@ -4317,8 +4315,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = sysTimerTick &rArr; isrMessagePut &rArr; isr_mbx_send &rArr; rt_psq_enq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[279]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_error
-<LI><a href="#[251]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;isrMessagePut
 <LI><a href="#[29c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_timer_insert
+<LI><a href="#[251]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;isrMessagePut
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_systick
 </UL>
@@ -4543,8 +4541,8 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[1ec]"></a>createConsole</STRONG> (Thumb, 166 bytes, Stack size 64 bytes, gui.o(i.createConsole))
-<BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = createConsole &rArr; gwinGContainerCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
+<P><STRONG><a name="[1ec]"></a>createConsole</STRONG> (Thumb, 176 bytes, Stack size 56 bytes, gui.o(i.createConsole))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = createConsole &rArr; gwinGContainerCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
 <LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetFont
@@ -4555,11 +4553,10 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
 </UL>
 
-<P><STRONG><a name="[1f1]"></a>createData</STRONG> (Thumb, 344 bytes, Stack size 40 bytes, gui.o(i.createData))
+<P><STRONG><a name="[1f1]"></a>createData</STRONG> (Thumb, 320 bytes, Stack size 40 bytes, gui.o(i.createData))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = createData &rArr; gwinGLabelCreate &rArr; getwidth &rArr; gdispGetStringWidth &rArr; gdispGetStringWidthCount &rArr; mf_get_string_width &rArr; mf_round_to_tab &rArr; mf_character_width
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
-<LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetFont
 <LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinRedraw
 <LI><a href="#[1f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinLabelSetBorder
 <LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGLabelCreate
@@ -4569,39 +4566,38 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
 </UL>
 
-<P><STRONG><a name="[1f6]"></a>createMap</STRONG> (Thumb, 148 bytes, Stack size 56 bytes, gui.o(i.createMap))
+<P><STRONG><a name="[1f6]"></a>createMainContainer</STRONG> (Thumb, 78 bytes, Stack size 40 bytes, gui.o(i.createMainContainer))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = createMainContainer &rArr; gwinGContainerCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
+</UL>
+<BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
+<LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGContainerCreate
+</UL>
+<BR>[Called By]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
+</UL>
+
+<P><STRONG><a name="[1f7]"></a>createMap</STRONG> (Thumb, 148 bytes, Stack size 56 bytes, gui.o(i.createMap))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = createMap &rArr; gwinGWindowCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
-<LI><a href="#[1f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultBgColor
-<LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGWindowCreate
+<LI><a href="#[1f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetDefaultBgColor
+<LI><a href="#[1f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGWindowCreate
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGContainerCreate
 </UL>
 <BR>[Called By]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
 </UL>
 
-<P><STRONG><a name="[1f9]"></a>createMenu</STRONG> (Thumb, 372 bytes, Stack size 48 bytes, gui.o(i.createMenu))
-<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = createMenu &rArr; gwinListAddItem &rArr; gfxQueueASyncPut &rArr; osKernelInitialize &rArr; svcKernelInitialize &rArr; svcThreadCreate &rArr; rt_tsk_create &rArr; rt_init_context &rArr; rt_init_stack
+<P><STRONG><a name="[1fa]"></a>createMenu</STRONG> (Thumb, 366 bytes, Stack size 40 bytes, gui.o(i.createMenu))
+<BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = createMenu &rArr; gwinListAddItem &rArr; gfxQueueASyncPut &rArr; osKernelInitialize &rArr; svcKernelInitialize &rArr; svcThreadCreate &rArr; rt_tsk_create &rArr; rt_init_context &rArr; rt_init_stack
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
 <LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinSetFont
-<LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListSetSelected
-<LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListSetScroll
-<LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
-<LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
+<LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListSetSelected
+<LI><a href="#[1fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListSetScroll
+<LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinListAddItem
+<LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGListCreate
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGContainerCreate
 <LI><a href="#[1f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGButtonCreate
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispOpenFont
-<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispCloseFont
-</UL>
-<BR>[Called By]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
-</UL>
-
-<P><STRONG><a name="[1fe]"></a>createPagePage0</STRONG> (Thumb, 78 bytes, Stack size 40 bytes, gui.o(i.createPagePage0))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = createPagePage0 &rArr; gwinGContainerCreate &rArr; gwinSetVisible &rArr; _gwinFlushRedraws &rArr; gfxSemSignal &rArr; gfxSemSignalI &rArr; osSemaphoreRelease &rArr; isrSemaphoreRelease &rArr; isr_sem_send &rArr; rt_psq_enq
-</UL>
-<BR>[Calls]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinWidgetClearInit
-<LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gwinGContainerCreate
 </UL>
 <BR>[Called By]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;guiCreate
 </UL>
@@ -4642,7 +4638,6 @@ Local Symbols
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispOpenFont
 <LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispGGetWidth
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispGGetHeight
-<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispCloseFont
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetMouseReading
 <LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CalibrationTransform
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CalibrationCrossDraw
@@ -4653,6 +4648,7 @@ Local Symbols
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispGFillStringBox
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispGFillArea
 <LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispGClear
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gdispCloseFont
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_gmousePostInitDriver
 </UL>
@@ -5205,15 +5201,15 @@ Local Symbols
 <P><STRONG><a name="[259]"></a>find_char_range</STRONG> (Thumb, 56 bytes, Stack size 20 bytes, gfx_mk.o(i.find_char_range))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = find_char_range
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_render_character
-<LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_character_width
+<BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_render_character
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_character_width
 </UL>
 
 <P><STRONG><a name="[261]"></a>find_glyph</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, gfx_mk.o(i.find_glyph))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = find_glyph
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_rlefont_render_character
-<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_rlefont_character_width
+<BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_rlefont_render_character
+<LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_rlefont_character_width
 </UL>
 
 <P><STRONG><a name="[209]"></a>ftoa</STRONG> (Thumb, 126 bytes, Stack size 64 bytes, gfx_mk.o(i.ftoa))
@@ -5246,7 +5242,7 @@ Local Symbols
 
 <P><STRONG><a name="[25a]"></a>get_width</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, gfx_mk.o(i.get_width))
 <BR><BR>[Called By]<UL><LI><a href="#[25b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;render_char
-<LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_character_width
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_character_width
 </UL>
 
 <P><STRONG><a name="[224]"></a>getheight</STRONG> (Thumb, 18 bytes, Stack size 16 bytes, gfx_mk.o(i.getheight))
@@ -5347,7 +5343,7 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_width
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_render_character
+<BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_bwfont_render_character
 </UL>
 
 <P><STRONG><a name="[25f]"></a>render_left</STRONG> (Thumb, 100 bytes, Stack size 56 bytes, gfx_mk.o(i.render_left))
@@ -5438,7 +5434,7 @@ Local Symbols
 <BR>[Calls]<UL><LI><a href="#[2a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_ref_dictentry
 <LI><a href="#[2a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_ref_codeword
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_rlefont_render_character
+<BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mf_rlefont_render_character
 </UL>
 
 <P><STRONG><a name="[29f]"></a>write_pixels</STRONG> (Thumb, 104 bytes, Stack size 24 bytes, gfx_mk.o(i.write_pixels))

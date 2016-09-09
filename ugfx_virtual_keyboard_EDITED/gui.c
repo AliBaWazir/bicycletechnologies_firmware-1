@@ -11,31 +11,31 @@
 // GListeners
 GListener glistener;
 
-// GHandles
+// GHandle
+// Main Container (Background layer 0)
 GHandle mainContainer;
+
+// Data Container on the left side
 GHandle dataContainer;
-GHandle consoleContainer;
-GHandle menuContainer;
-GHandle mapContainer;
 GHandle ghLabel1;
 GHandle ghLabel2;
 GHandle ghLabel3;
 GHandle menuButton;
 
+// Console Container 
+GHandle consoleContainer;
 GHandle consoleWindow;
+
+// Menu Container
+GHandle menuContainer;
 GHandle menuList;
 GHandle returnButton;
 
+// Map Container
+GHandle mapContainer;
 GHandle mapWindow;
 
-// Fonts
-font_t dejavu_sans_16;
-font_t dejavu_sans_10;
-font_t dejavu_sans_32_anti_aliased;
-font_t dejavu_sans_12_anti_aliased;
-
 static gdispImage myImage;
-static gdispImage myImage2;
 gdispImageError result;
 int x = 0;
 int y = 0;
@@ -45,7 +45,7 @@ static pixel_t* surface;
 void drawTile(int xx, int yy);
 
 
-static void createPagePage0(void)
+static void createMainContainer(void)
 {
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -127,7 +127,6 @@ static void createData(void)
 	wi.customStyle = 0;
 	ghLabel1 = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(ghLabel1, FALSE);
-	gwinSetFont(ghLabel1, dejavu_sans_10);
 	gwinRedraw(ghLabel1);
 
 	// Create label widget: ghLabel2
@@ -143,7 +142,6 @@ static void createData(void)
 	wi.customStyle = 0;
 	ghLabel2 = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(ghLabel2, FALSE);
-	gwinSetFont(ghLabel2, dejavu_sans_32_anti_aliased);
 	gwinRedraw(ghLabel2);
 	
 	// create button widget: menuButton
@@ -179,7 +177,6 @@ static void createConsole(void)
 	consoleContainer = gwinContainerCreate(0, &wi, 0);
 	
 	// create button widget: menuButton
-	font_t font = gdispOpenFont("DejaVuSans24");
 	GWindowInit consolewind;
 	consolewind.show = TRUE;
 	consolewind.x = 0;
@@ -189,6 +186,8 @@ static void createConsole(void)
 	consolewind.parent = consoleContainer;
 	consoleWindow = gwinConsoleCreate(0, &consolewind);
 	gwinSetFont(consoleWindow, gdispOpenFont("DejaVuSans32"));
+	gwinSetColor(consoleWindow, WHITE);
+	gwinSetBgColor(consoleWindow, HTML2COLOR(0x2980B9));
 }
 
 static void createMenu(void)
@@ -221,8 +220,7 @@ static void createMenu(void)
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
 	menuList = gwinListCreate(0, &wi, FALSE);
-	font_t fontcoop = gdispOpenFont("cooper-black32");
-	gwinSetFont(menuList, fontcoop);
+	gwinSetFont(menuList, gdispOpenFont("Georgia60"));
 	gwinListSetScroll(menuList, scrollSmooth);
 	gwinListAddItem(menuList, "Item1", FALSE);
 	gwinListAddItem(menuList, "Item2", FALSE);
@@ -232,7 +230,7 @@ static void createMenu(void)
 	gwinListSetSelected(menuList, 1, FALSE);
 	gwinListSetSelected(menuList, 2, FALSE);
 	gwinListSetSelected(menuList, 3, FALSE);
-	gdispCloseFont(fontcoop);
+
 
 	// create button widget: menuButton
 	wi.g.show = TRUE;
@@ -246,8 +244,7 @@ static void createMenu(void)
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	returnButton = gwinButtonCreate(0, &wi);
-	gwinSetFont(returnButton, gdispOpenFont("DejaVuSans32"));
-
+	gwinSetFont(returnButton, gdispOpenFont("Georgia40"));
 }
 
 void guiShowPage(unsigned pageIndex)
@@ -270,23 +267,15 @@ void guiCreate(void)
 {
 	GWidgetInit wi;
 
-	// Prepare fonts
-	dejavu_sans_16 = gdispOpenFont("DejaVuSans16");
-	dejavu_sans_10 = gdispOpenFont("DejaVuSans10");
-	dejavu_sans_32_anti_aliased = gdispOpenFont("DejaVuSans32_aa");
-	dejavu_sans_12_anti_aliased = gdispOpenFont("DejaVuSans12_aa");
-
-	// Prepare images
-
 	// GWIN settings
 	gwinWidgetClearInit(&wi);
-	gwinSetDefaultFont(dejavu_sans_16);
+	gwinSetDefaultFont(gdispOpenFont("DejaVuSans16"));
 	gwinSetDefaultStyle(&white, FALSE);
 	gwinSetDefaultColor(black_studio);
 	gwinSetDefaultBgColor(white_studio);
 	
 	// Create all the display pages
-	createPagePage0();
+	createMainContainer();
 	createMap();
 	createData();
 	createConsole();
@@ -294,9 +283,6 @@ void guiCreate(void)
 
 	// Select the default display page
 	guiShowPage(0);
-
-	gwinSetColor(consoleWindow, WHITE);
-	gwinSetBgColor(consoleWindow, HTML2COLOR(0x2980B9));
 }
 
 void guiEventLoop(void)
