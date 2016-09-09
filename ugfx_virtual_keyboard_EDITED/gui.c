@@ -17,9 +17,9 @@ GHandle mainContainer;
 
 // Data Container on the left side
 GHandle dataContainer;
-GHandle ghLabel1;
-GHandle ghLabel2;
-GHandle ghLabel3;
+GHandle speedLabel;
+GHandle rpmLabel;
+GHandle batteryLabel;
 GHandle menuButton;
 
 // Console Container 
@@ -44,13 +44,12 @@ static pixel_t* surface;
 
 void drawTile(int xx, int yy);
 
-
 static void createMainContainer(void)
 {
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 	
-	// create container widget: ghContainerPage0
+	// create container widget: mainContainer
 	wi.g.show = FALSE;
 	wi.g.x = 0;
 	wi.g.y = 0;
@@ -70,14 +69,14 @@ static void createMap(void)
 	gwinWidgetClearInit(&wi);
 
 		
-	// create container widget: ghContainerPage0
+	// create container widget: mapContainer
 	wi.g.show = TRUE;
 	wi.g.x = 305;
 	wi.g.y = 0;
 	wi.g.width = 495;
 	wi.g.height = 480;
 	wi.g.parent = mainContainer;
-	wi.text = "Container";
+	wi.text = "mapContainer";
 	wi.customDraw = 0;
 	wi.customParam = 0;
 	wi.customStyle = 0;
@@ -101,7 +100,7 @@ static void createData(void)
 	gwinWidgetClearInit(&wi);
 
 		
-	// create container widget: ghContainerPage0
+	// create container widget: dataContainer
 	wi.g.show = TRUE;
 	wi.g.x = 0;
 	wi.g.y = 0;
@@ -111,51 +110,71 @@ static void createData(void)
 	wi.text = "Container";
 	wi.customDraw = 0;
 	wi.customParam = 0;
-	wi.customStyle = 0;
+	wi.customStyle = &midnight;
 	dataContainer = gwinContainerCreate(0, &wi, 0);
 	
-	// Create label widget: ghLabel1
+	// Create label widget: speedLabel
 	wi.g.show = TRUE;
-	wi.g.x = 30;
-	wi.g.y = 50;
-	wi.g.width = 120;
-	wi.g.height = 20;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 305;
+	wi.g.height = 113;
 	wi.g.parent = dataContainer;
-	wi.text = "WOW Texts!";
-	wi.customDraw = gwinLabelDrawJustifiedLeft;
+	wi.text = "24 km/h";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = 0;
-	ghLabel1 = gwinLabelCreate(0, &wi);
-	gwinLabelSetBorder(ghLabel1, FALSE);
-	gwinRedraw(ghLabel1);
+	wi.customStyle = &midnight;
+	speedLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(speedLabel, TRUE);
+	gwinSetFont(speedLabel, gdispOpenFont("Georgia60"));
+	gwinRedraw(speedLabel);
 
-	// Create label widget: ghLabel2
+	// Create label widget: rpmLabel
 	wi.g.show = TRUE;
-	wi.g.x = 30;
-	wi.g.y = 170;
-	wi.g.width = 690;
-	wi.g.height = 30;
+	wi.g.x = 0;
+	wi.g.y = 114;
+	wi.g.width = 305;
+	wi.g.height = 71;
 	wi.g.parent = dataContainer;
-	wi.text = "W00T 32 Km/h";
-	wi.customDraw = gwinLabelDrawJustifiedLeft;
+	wi.text = "69 RPM";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = 0;
-	ghLabel2 = gwinLabelCreate(0, &wi);
-	gwinLabelSetBorder(ghLabel2, FALSE);
-	gwinRedraw(ghLabel2);
+	wi.customStyle = &midnight;
+	rpmLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(rpmLabel, TRUE);
+	gwinSetFont(rpmLabel, gdispOpenFont("Georgia40"));
+	gwinRedraw(rpmLabel);
+	
+	// Create label widget: batteryLabel
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 366;
+	wi.g.width = 117;
+	wi.g.height = 114;
+	wi.g.parent = dataContainer;
+	wi.text = "100%";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	batteryLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(batteryLabel, TRUE);
+	gwinSetFont(batteryLabel, gdispOpenFont("Georgia40"));
+	gwinRedraw(batteryLabel);
 	
 	// create button widget: menuButton
 	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 250;
-	wi.g.width = 305;
-	wi.g.height = 60;
+	wi.g.x = 126; // 117 + 9
+	wi.g.y = 373; // 366 + 7
+	wi.g.width = 170;
+	wi.g.height = 100;
 	wi.g.parent = dataContainer;
-	wi.text = "Settings";
+  wi.text = "Settings";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = 0;
+	wi.customStyle = &belize;
 	menuButton = gwinButtonCreate(0, &wi);
+	gwinSetFont(menuButton, gdispOpenFont("Georgia36"));
+	gwinRedraw(menuButton);
 }
 
 static void createConsole(void)
@@ -163,20 +182,20 @@ static void createConsole(void)
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
-	// create container widget: ghContainerPage0
+	// create container widget: consoleContainer
 	wi.g.show = FALSE;
 	wi.g.x = 305;
 	wi.g.y = 0;
 	wi.g.width = 495;
 	wi.g.height = 480;
 	wi.g.parent = mainContainer;
-	wi.text = "Container";
+	wi.text = "consoleContainer";
 	wi.customDraw = 0;
 	wi.customParam = 0;
 	wi.customStyle = 0;
 	consoleContainer = gwinContainerCreate(0, &wi, 0);
 	
-	// create button widget: menuButton
+	// create button widget: consoleWindow
 	GWindowInit consolewind;
 	consolewind.show = TRUE;
 	consolewind.x = 0;
@@ -195,7 +214,7 @@ static void createMenu(void)
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
-	// create container widget: ghContainerPage0
+	// create container widget: menuContainer
 	wi.g.show = FALSE;
 	wi.g.x = 0;
 	wi.g.y = 0;

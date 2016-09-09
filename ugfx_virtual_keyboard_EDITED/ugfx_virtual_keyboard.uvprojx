@@ -397,6 +397,46 @@
               <FileType>5</FileType>
               <FilePath>.\userfonts.h</FilePath>
             </File>
+            <File>
+              <FileName>colors.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\colors.h</FilePath>
+            </File>
+            <File>
+              <FileName>gfxconf_old.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gfxconf_old.h</FilePath>
+            </File>
+            <File>
+              <FileName>gui.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gui.h</FilePath>
+            </File>
+            <File>
+              <FileName>maptilebmp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\maptilebmp.h</FilePath>
+            </File>
+            <File>
+              <FileName>romfs_files.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\romfs_files.h</FilePath>
+            </File>
+            <File>
+              <FileName>user_colors.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\user_colors.h</FilePath>
+            </File>
+            <File>
+              <FileName>user_styles.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\user_styles.h</FilePath>
+            </File>
+            <File>
+              <FileName>widgetstyles.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\widgetstyles.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

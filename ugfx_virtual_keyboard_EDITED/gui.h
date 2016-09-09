@@ -18,9 +18,9 @@ extern GHandle mainContainer;
 
 // Data Container on the left side
 extern GHandle dataContainer;
-extern GHandle ghLabel1;
-extern GHandle ghLabel2;
-extern GHandle ghLabel3;
+extern GHandle speedLabel;
+extern GHandle rpmLabel;
+extern GHandle batteryLabel;
 extern GHandle menuButton;
 
 // Console Container 

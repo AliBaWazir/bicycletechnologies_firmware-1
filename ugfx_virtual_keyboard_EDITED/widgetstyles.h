@@ -70,7 +70,7 @@ const GWidgetStyle midnight = {
 
 	// Enabled color set
 	{
-		HTML2COLOR(0xF1C40F),         // text
+		HTML2COLOR(0xFFF300),         // text
 		HTML2COLOR(0xFFFFFF),         // edge
 		HTML2COLOR(0x2980B9),         // fill
 		HTML2COLOR(0x008000),         // progress (inactive area)
@@ -86,7 +86,7 @@ const GWidgetStyle midnight = {
 
 	// Pressed color set
 	{
-		HTML2COLOR(0xF1C40F),         // text
+		HTML2COLOR(0xFFF300),         // text
 		HTML2COLOR(0xC0C0C0),         // edge
 		HTML2COLOR(0xE0E0E0),         // fill
 		HTML2COLOR(0x008000),         // progress (active area)
