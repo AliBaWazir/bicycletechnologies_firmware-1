@@ -36,27 +36,27 @@ Package Vendor: ARM
                 ::CMSIS:RTOS:1.0 (API)
                 CMSIS (Cortex Microcontroller Software Interface Standard)
    * Component: RTOS Version: 1.0
-   * Component: CORE Version: 5.0.0
    * Component: Keil RTX Version: 4.81.0
+   * Component: CORE Version: 5.0.0
 
 Package Vendor: Keil
                 http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.9.0.pack
-                Keil::Device:STM32Cube HAL:Common:1.5.0
+                ::Device:STM32Cube Framework:1.0.0 (API)
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
-   * Component: Common Version: 1.5.0
-   * Component: Cortex Version: 1.5.0
-   * Component: Classic Version: 1.5.0
-   * Component: PWR Version: 1.5.0
-   * Component: RCC Version: 1.5.0
-   * Component: DMA2D Version: 1.5.0
-   * Component: LTDC Version: 1.5.0
-   * Component: DSI Version: 1.5.0
-   * Component: I2C Version: 1.5.0
-   * Component: DMA Version: 1.5.0
-   * Component: GPIO Version: 1.5.0
-   * Component: SDRAM Version: 1.5.0
    * Component: STM32Cube Framework Version: 1.0.0
    * Component: Startup Version: 2.5.0
+   * Component: DMA Version: 1.5.0
+   * Component: DMA2D Version: 1.5.0
+   * Component: DSI Version: 1.5.0
+   * Component: Classic Version: 1.5.0
+   * Component: Common Version: 1.5.0
+   * Component: Cortex Version: 1.5.0
+   * Component: LTDC Version: 1.5.0
+   * Component: I2C Version: 1.5.0
+   * Component: PWR Version: 1.5.0
+   * Component: SDRAM Version: 1.5.0
+   * Component: RCC Version: 1.5.0
+   * Component: GPIO Version: 1.5.0
 
 <h2>Collection of Component include folders:</h2>
   C:\Users\JL\Documents\GitHub\bicycletechnologies_firmware\ugfx_virtual_keyboard_EDITED\RTE
@@ -70,71 +70,22 @@ Package Vendor: Keil
 
    * Component: ::CMSIS:RTOS:1.0 (API)
 
-   * Component: ARM::CMSIS:CORE:5.0.0
-
    * Component: ARM::CMSIS:RTOS:Keil RTX:4.81.0
-      Include file:  CMSIS\RTOS\RTX\INC\cmsis_os.h
-      Include file:  CMSIS\RTOS\RTX\UserCodeTemplates\osObjects.h
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\main.c
       Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MailQueue.c
-      Source file:   CMSIS\RTOS\RTX\Templates\RTX_Conf_CM.c
       Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MemPool.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MsgQueue.c
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Mutex.c
       Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Semaphore.c
-      Source file:   CMSIS\RTOS\RTX\SRC\ARM\SVC_Table.s
-      Library file:  CMSIS\RTOS\RTX\LIB\ARM\RTX_CM4.lib
-      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Timer.c
+      Include file:  CMSIS\RTOS\RTX\INC\cmsis_os.h
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Mutex.c
       Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Thread.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\Timer.c
+      Source file:   CMSIS\RTOS\RTX\SRC\ARM\SVC_Table.s
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\main.c
+      Source file:   CMSIS\RTOS\RTX\UserCodeTemplates\MsgQueue.c
+      Source file:   CMSIS\RTOS\RTX\Templates\RTX_Conf_CM.c
+      Include file:  CMSIS\RTOS\RTX\UserCodeTemplates\osObjects.h
+      Library file:  CMSIS\RTOS\RTX\LIB\ARM\RTX_CM4.lib
 
-   * Component: Keil::Device:STM32Cube HAL:Common:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c
-      Include file:  Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
-
-   * Component: Keil::Device:STM32Cube HAL:Cortex:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
-
-   * Component: Keil::Device:STM32Cube Framework:Classic:1.5.0
-      Include file:  CMSIS\Driver\Config\RTE_Device.h
-      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
-      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
-      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
-      Source file:   MDK\Templates\Src\stm32f4xx_it.c
-      Source file:   MDK\Templates\Src\main.c
-      Include file:  MDK\Templates\Inc\main.h
-
-   * Component: Keil::Device:STM32Cube HAL:PWR:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
-
-   * Component: Keil::Device:STM32Cube HAL:RCC:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
-
-   * Component: Keil::Device:STM32Cube HAL:DMA2D:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma2d.c
-
-   * Component: Keil::Device:STM32Cube HAL:LTDC:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc_ex.c
-
-   * Component: Keil::Device:STM32Cube HAL:DSI:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dsi.c
-
-   * Component: Keil::Device:STM32Cube HAL:I2C:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
-
-   * Component: Keil::Device:STM32Cube HAL:DMA:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c
-
-   * Component: Keil::Device:STM32Cube HAL:GPIO:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
-
-   * Component: Keil::Device:STM32Cube HAL:SDRAM:1.5.0
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sdram.c
-      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
+   * Component: ARM::CMSIS:CORE:5.0.0
 
    * Component: ::Device:STM32Cube Framework:1.0.0 (API)
 
@@ -143,6 +94,55 @@ Package Vendor: Keil
       Include file:  Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f469xx.s
       Source file:   Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c
+
+   * Component: Keil::Device:STM32Cube HAL:DMA:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c
+
+   * Component: Keil::Device:STM32Cube HAL:DMA2D:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma2d.c
+
+   * Component: Keil::Device:STM32Cube HAL:DSI:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dsi.c
+
+   * Component: Keil::Device:STM32Cube Framework:Classic:1.5.0
+      Include file:  CMSIS\Driver\Config\RTE_Device.h
+      Include file:  MDK\Templates\Inc\main.h
+      Source file:   MDK\Templates\Src\stm32f4xx_hal_msp.c
+      Include file:  MDK\Templates\Inc\stm32f4xx_hal_conf.h
+      Include file:  MDK\Templates\Inc\stm32f4xx_it.h
+      Source file:   MDK\Templates\Src\stm32f4xx_it.c
+      Source file:   MDK\Templates\Src\main.c
+
+   * Component: Keil::Device:STM32Cube HAL:Common:1.5.0
+      Include file:  Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c
+
+   * Component: Keil::Device:STM32Cube HAL:Cortex:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c
+
+   * Component: Keil::Device:STM32Cube HAL:LTDC:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc.c
+
+   * Component: Keil::Device:STM32Cube HAL:I2C:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c
+
+   * Component: Keil::Device:STM32Cube HAL:PWR:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c
+
+   * Component: Keil::Device:STM32Cube HAL:SDRAM:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sdram.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c
+
+   * Component: Keil::Device:STM32Cube HAL:RCC:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c
+
+   * Component: Keil::Device:STM32Cube HAL:GPIO:1.5.0
+      Source file:   Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c
 Build Time Elapsed:  00:00:02
 </pre>
 </body>
