@@ -8,6 +8,8 @@
 #include "widgetstyles.h"
 #include "gui.h"
 
+#include <stdio.h>
+
 // GListeners
 GListener glistener;
 
@@ -34,6 +36,9 @@ GHandle returnButton;
 // Map Container
 GHandle mapContainer;
 GHandle mapWindow;
+
+int speed;
+char speedout[50];
 
 static gdispImage myImage;
 gdispImageError result;
@@ -98,7 +103,6 @@ static void createData(void)
 {
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
-
 		
 	// create container widget: dataContainer
 	wi.g.show = TRUE;
@@ -113,6 +117,8 @@ static void createData(void)
 	wi.customStyle = &midnight;
 	dataContainer = gwinContainerCreate(0, &wi, 0);
 	
+	speed = 0;
+	sprintf(speedout, "%d km/h", speed);
 	// Create label widget: speedLabel
 	wi.g.show = TRUE;
 	wi.g.x = 0;
@@ -120,7 +126,7 @@ static void createData(void)
 	wi.g.width = 305;
 	wi.g.height = 113;
 	wi.g.parent = dataContainer;
-	wi.text = "24 km/h";
+	wi.text = speedout;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
@@ -309,8 +315,19 @@ void guiEventLoop(void)
 	GEvent* pe;
 	int i = 0;
 	int selectedItem = 0;
+	int count = 0;
 	while (1) {
-        
+     if(count == 50){
+				count = 0;
+			  speed++;
+			  if(speed == 200){
+					speed = 0;
+				}
+			  sprintf(speedout, "%d km/h", speed);
+			  gwinSetText(speedLabel, speedout, TRUE);
+		 }else{
+				count++;
+		 }			 
         
         gfxSleepMilliseconds(3);
         //gdispGClear(GDISP, (LUMA2COLOR(0)));
