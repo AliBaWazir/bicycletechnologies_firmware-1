@@ -39,6 +39,10 @@ extern GHandle mapWindow;
 // Bluetooth Container
 extern GHandle bluetoothContainer;
 extern GHandle bluetoothSearchContainer;
+extern GHandle bluetoothSearchingContainer;
+extern GHandle bluetoothSearchingLabel;
+extern GHandle bluetoothDevicesContainer;
+extern GHandle bluetoothDevicesList;
 extern GHandle bluetoothSearchButton;
 
 extern int speed;

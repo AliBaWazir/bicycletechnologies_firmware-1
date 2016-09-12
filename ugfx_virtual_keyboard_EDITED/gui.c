@@ -40,6 +40,10 @@ GHandle mapWindow;
 // Bluetooth Container
 GHandle bluetoothContainer;
 GHandle bluetoothSearchContainer;
+GHandle bluetoothSearchingContainer;
+GHandle bluetoothSearchingLabel;
+GHandle bluetoothDevicesContainer;
+GHandle bluetoothDevicesList;
 GHandle bluetoothSearchButton;
 
 int speed;
@@ -289,7 +293,7 @@ static void createBluetooth(void)
 	wi.text = "bluetoothContainer";
 	wi.customDraw = 0;
 	wi.customParam = 0;
-	wi.customStyle = 0;
+	wi.customStyle = &midnight;
 	bluetoothContainer = gwinContainerCreate(0, &wi, 0);
 	
 	// create container widget: bluetoothSearchContainer
@@ -305,7 +309,84 @@ static void createBluetooth(void)
 	wi.customStyle = &midnight;
 	bluetoothSearchContainer = gwinContainerCreate(0, &wi, 0);
 	
-	// create button widget: menuButton
+	// create container widget: bluetoothSearchingContainer
+	wi.g.show = FALSE;
+	wi.g.x = 0;
+	wi.g.y = 150;
+	wi.g.width = 495;
+	wi.g.height = 330;
+	wi.g.parent = bluetoothContainer;
+	wi.text = "bluetoothSearchingContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	bluetoothSearchingContainer = gwinContainerCreate(0, &wi, 0);
+	
+	// Create label widget: bluetoothSearchingLabel
+	wi.g.show = TRUE;
+	wi.g.x = 45;
+	wi.g.y = 100;
+	wi.g.width = 405;
+	wi.g.height = 100;
+	wi.g.parent = bluetoothSearchingContainer;
+	wi.text = "Searching";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	bluetoothSearchingLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(bluetoothSearchingLabel, TRUE);
+	gwinSetFont(bluetoothSearchingLabel, gdispOpenFont("Georgia60"));
+	gwinRedraw(bluetoothSearchingLabel);
+	
+	// create container widget: bluetoothDevicesContainer
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 150;
+	wi.g.width = 495;
+	wi.g.height = 330;
+	wi.g.parent = bluetoothContainer;
+	wi.text = "bluetoothDevicesContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	bluetoothDevicesContainer = gwinContainerCreate(0, &wi, 0);
+	
+  // Create list widget: bluetoothDevicesList
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 495;
+	wi.g.height = 330;
+	wi.g.parent = bluetoothDevicesContainer;
+	wi.text = "bluetoothDevicesList";
+	wi.customDraw = gwinListDefaultDraw;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	bluetoothDevicesList = gwinListCreate(0, &wi, TRUE);
+	gwinSetFont(bluetoothDevicesList, gdispOpenFont("Georgia60"));
+	gwinListSetScroll(bluetoothDevicesList, scrollSmooth);
+	gwinListAddItem(bluetoothDevicesList, "Device 0", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 1", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 2", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 3", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 4", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 5", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 6", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 7", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 8", FALSE);
+	gwinListAddItem(bluetoothDevicesList, "Device 9", FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 0, TRUE);
+	gwinListSetSelected(bluetoothDevicesList, 1, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 2, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 3, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 4, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 5, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 6, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 7, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 8, FALSE);
+	gwinListSetSelected(bluetoothDevicesList, 9, FALSE);
+	
+	// create button widget: bluetoothSearchButton
 	wi.g.show = TRUE;
 	wi.g.x = 150;
 	wi.g.y = 25;
@@ -365,6 +446,7 @@ void guiEventLoop(void)
 	int i = 0;
 	int selectedItem = 0;
 	int count = 0;
+	int bluetoothTimeout = 0;
 	while (1) {
      if(count == 50){
 				count = 0;
@@ -376,7 +458,15 @@ void guiEventLoop(void)
 			  gwinSetText(speedLabel, speedout, TRUE);
 		 }else{
 				count++;
-		 }			 
+		 }	
+
+			if(bluetoothTimeout == 1000){
+				gwinHide(bluetoothSearchingContainer);
+				gwinShow(bluetoothDevicesContainer);
+				bluetoothTimeout=0;
+			}else{
+				bluetoothTimeout++;
+			}
         
         gfxSleepMilliseconds(3);
         //gdispGClear(GDISP, (LUMA2COLOR(0)));
@@ -416,6 +506,9 @@ void guiEventLoop(void)
 					  gwinHide(menuContainer);
 						gwinShow(dataContainer);
 					  gwinShow(mapContainer);
+				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
+					  gwinHide(bluetoothDevicesContainer);
+						gwinShow(bluetoothSearchingContainer);
 				}
 				break;
 			default:
