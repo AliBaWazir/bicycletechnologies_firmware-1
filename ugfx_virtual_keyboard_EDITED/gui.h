@@ -36,8 +36,13 @@ extern GHandle returnButton;
 extern GHandle mapContainer;
 extern GHandle mapWindow;
 
+// Bluetooth Container
+extern GHandle bluetoothContainer;
+extern GHandle bluetoothSearchContainer;
+extern GHandle bluetoothSearchButton;
+
 extern int speed;
-extern char speedout[50];
+extern char speedout[10];
 
 // Function Prototypes
 void guiCreate(void);

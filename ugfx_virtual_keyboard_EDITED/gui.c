@@ -37,8 +37,13 @@ GHandle returnButton;
 GHandle mapContainer;
 GHandle mapWindow;
 
+// Bluetooth Container
+GHandle bluetoothContainer;
+GHandle bluetoothSearchContainer;
+GHandle bluetoothSearchButton;
+
 int speed;
-char speedout[50];
+char speedout[10];
 
 static gdispImage myImage;
 gdispImageError result;
@@ -245,17 +250,14 @@ static void createMenu(void)
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
 	menuList = gwinListCreate(0, &wi, FALSE);
-	gwinSetFont(menuList, gdispOpenFont("Georgia60"));
+	gwinSetFont(menuList, gdispOpenFont("Georgia40"));
 	gwinListSetScroll(menuList, scrollSmooth);
-	gwinListAddItem(menuList, "Item1", FALSE);
-	gwinListAddItem(menuList, "Item2", FALSE);
-	gwinListAddItem(menuList, "Item3", FALSE);
-	gwinListAddItem(menuList, "Item4", FALSE);
+	gwinListAddItem(menuList, "Bluetooth", FALSE);
+	gwinListAddItem(menuList, "Gears Settings", FALSE);
+	gwinListAddItem(menuList, "Gears Status", FALSE);
 	gwinListSetSelected(menuList, 0, TRUE);
 	gwinListSetSelected(menuList, 1, FALSE);
 	gwinListSetSelected(menuList, 2, FALSE);
-	gwinListSetSelected(menuList, 3, FALSE);
-
 
 	// create button widget: menuButton
 	wi.g.show = TRUE;
@@ -270,6 +272,52 @@ static void createMenu(void)
 	wi.customStyle = &belize;
 	returnButton = gwinButtonCreate(0, &wi);
 	gwinSetFont(returnButton, gdispOpenFont("Georgia40"));
+}
+
+static void createBluetooth(void)
+{
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+
+	// create container widget: bluetoothContainer
+	wi.g.show = FALSE;
+	wi.g.x = 305;
+	wi.g.y = 0;
+	wi.g.width = 495;
+	wi.g.height = 480;
+	wi.g.parent = mainContainer;
+	wi.text = "bluetoothContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = 0;
+	bluetoothContainer = gwinContainerCreate(0, &wi, 0);
+	
+	// create container widget: bluetoothSearchContainer
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 495;
+	wi.g.height = 150;
+	wi.g.parent = bluetoothContainer;
+	wi.text = "bluetoothSearchContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	bluetoothSearchContainer = gwinContainerCreate(0, &wi, 0);
+	
+	// create button widget: menuButton
+	wi.g.show = TRUE;
+	wi.g.x = 150;
+	wi.g.y = 25;
+	wi.g.width = 195;
+	wi.g.height = 100;
+	wi.g.parent = bluetoothSearchContainer;
+	wi.text = "Search";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	bluetoothSearchButton = gwinButtonCreate(0, &wi);
+	gwinSetFont(bluetoothSearchButton, gdispOpenFont("Georgia40"));
 }
 
 void guiShowPage(unsigned pageIndex)
@@ -305,6 +353,7 @@ void guiCreate(void)
 	createData();
 	createConsole();
 	createMenu();
+	createBluetooth();
 
 	// Select the default display page
 	guiShowPage(0);
@@ -376,21 +425,25 @@ void guiEventLoop(void)
 		if(gwinGetVisible(menuContainer)){
 			selectedItem = gwinListGetSelected(menuList);
 			switch(selectedItem){
+				case 0:
+					gwinHide(mapContainer);
+				  gwinHide(consoleContainer);
+					gwinShow(bluetoothContainer);
+					break;
 				case 1:
 					gwinHide(consoleContainer);
+				  gwinHide(bluetoothContainer);
 					gwinShow(mapContainer);
 				  break;
 				case 2:
 					gwinHide(mapContainer);
+				  gwinHide(bluetoothContainer);
 					gwinShow(consoleContainer);
 					break;
-				case 3:
-					gwinHide(consoleContainer);
-					gwinShow(mapContainer);
-				  break;
 				default:
 					gwinHide(mapContainer);
-					gwinShow(consoleContainer);
+				  gwinHide(consoleContainer);
+					gwinHide(bluetoothContainer);
 					break;
 			}
 		}
