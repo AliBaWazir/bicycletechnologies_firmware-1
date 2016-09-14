@@ -47,7 +47,6 @@ GHandle bluetoothDevicesList;
 GHandle bluetoothSearchButton;
 
 // GearsSettings Container
-GHandle gearSettingContainer;
 GHandle numberOfGearsContainer;
 GHandle numberOfGearsLabel;
 GHandle numberOfGearsFrontLabel;
@@ -79,6 +78,10 @@ GHandle gearsStatusContainer;
 GHandle gearStatusLabel;
 GHandle gearStatusFrontLabel;
 GHandle gearStatusBackLabel;
+
+int gearFrontSettings[5];
+int gearBackSettings[10];
+char gearBuffer[5];
 
 int speed;
 char speedout[10];
@@ -292,11 +295,15 @@ static void createMenu(void)
 	gwinListSetScroll(menuList, scrollSmooth);
 	gwinListAddItem(menuList, "Bluetooth", FALSE);
 	gwinListAddItem(menuList, "Gears Settings", FALSE);
+	gwinListAddItem(menuList, "Teeth Settings", FALSE);
 	gwinListAddItem(menuList, "Gears Status", FALSE);
+	gwinListAddItem(menuList, "Console", FALSE);
 	gwinListSetSelected(menuList, 0, TRUE);
 	gwinListSetSelected(menuList, 1, FALSE);
 	gwinListSetSelected(menuList, 2, FALSE);
-
+	gwinListSetSelected(menuList, 3, FALSE);
+  gwinListSetSelected(menuList, 4, FALSE);
+	
 	// create button widget: menuButton
 	wi.g.show = TRUE;
 	wi.g.x = 50;
@@ -440,26 +447,13 @@ static void createGearsSettings(void)
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
-	// create container widget: gearSettingContainer
+	// create container widget: numberOfGearsContainer
 	wi.g.show = FALSE;
 	wi.g.x = 305;
 	wi.g.y = 0;
 	wi.g.width = 495;
 	wi.g.height = 480;
 	wi.g.parent = mainContainer;
-	wi.text = "gearSettingContainer";
-	wi.customDraw = 0;
-	wi.customParam = 0;
-	wi.customStyle = &midnight;
-	gearSettingContainer = gwinContainerCreate(0, &wi, 0);
-	
-	// create container widget: numberOfGearsContainer
-	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 0;
-	wi.g.width = 495;
-	wi.g.height = 190;
-	wi.g.parent = gearSettingContainer;
 	wi.text = "numberOfGearsContainer";
 	wi.customDraw = 0;
 	wi.customParam = 0;
@@ -470,8 +464,8 @@ static void createGearsSettings(void)
 	wi.g.show = TRUE;
 	wi.g.x = 20;
 	wi.g.y = 10;
-	wi.g.width = 220;
-	wi.g.height = 30;
+	wi.g.width = 280;
+	wi.g.height = 60;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "Number of Gears";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -479,14 +473,14 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	numberOfGearsLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsLabel, TRUE);
-	gwinSetFont(numberOfGearsLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsLabel, gdispOpenFont("Georgia36"));
 	
 	// Create label widget: numberOfGearsFrontLabel
 	wi.g.show = TRUE;
 	wi.g.x = 20;
-	wi.g.y = 50;
-	wi.g.width = 150;
-	wi.g.height = 30;
+	wi.g.y = 80;
+	wi.g.width = 160;
+	wi.g.height = 60;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "Front";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -494,14 +488,14 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	numberOfGearsFrontLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsFrontLabel, TRUE);
-  gwinSetFont(numberOfGearsFrontLabel, gdispOpenFont("Georgia24"));
+  gwinSetFont(numberOfGearsFrontLabel, gdispOpenFont("Georgia36"));
 	
 	// Create label widget: numberOfGearsBackLabel
 	wi.g.show = TRUE;
-	wi.g.x = 210;
-	wi.g.y = 50;
-	wi.g.width = 150;
-	wi.g.height = 30;
+	wi.g.x = 220;
+	wi.g.y = 80;
+	wi.g.width = 160;
+	wi.g.height = 60;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "Back";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -509,115 +503,123 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	numberOfGearsBackLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsBackLabel, TRUE);
-	gwinSetFont(numberOfGearsBackLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsBackLabel, gdispOpenFont("Georgia36"));
 	
 	// Create label widget: numberOfGearsFNumberLabel
 	wi.g.show = TRUE;
-	wi.g.x = 50;
-	wi.g.y = 120;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 60;
+	wi.g.y = 160;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
-	wi.text = "99";
+	sprintf(gearBuffer, "%d", gearFrontSettings[0]);
+	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsFNumberLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsFNumberLabel, TRUE);
-	gwinSetFont(numberOfGearsFNumberLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsFNumberLabel, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfGearsFPlus
 	wi.g.show = TRUE;
-	wi.g.x = 100;
-	wi.g.y = 100;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 60;
+	wi.g.y = 260;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "+";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsFPlus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfGearsFPlus, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsFPlus, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfGearsFMinus
 	wi.g.show = TRUE;
-	wi.g.x = 100;
-	wi.g.y = 140;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 60;
+	wi.g.y = 345;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "-";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsFMinus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfGearsFMinus, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsFMinus, gdispOpenFont("Georgia36"));
 
 	// Create label widget: numberOfGearsBNumberLabel
 	wi.g.show = TRUE;
-	wi.g.x = 240;
-	wi.g.y = 120;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 260;
+	wi.g.y = 160;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
-	wi.text = "99";
+	sprintf(gearBuffer, "%d", gearBackSettings[0]);
+	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsBNumberLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsBNumberLabel, TRUE);
-	gwinSetFont(numberOfGearsBNumberLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsBNumberLabel, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfGearsBPlus
 	wi.g.show = TRUE;
-	wi.g.x = 290;
-	wi.g.y = 100;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 260;
+	wi.g.y = 260;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "+";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsBPlus = gwinButtonCreate(0, &wi);
-  gwinSetFont(numberOfGearsBPlus, gdispOpenFont("Georgia24"));
+  gwinSetFont(numberOfGearsBPlus, gdispOpenFont("Georgia36"));
 	
 	// create button widget: numberOfGearsBMinus
 	wi.g.show = TRUE;
-	wi.g.x = 290;
-	wi.g.y = 140;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 260;
+	wi.g.y = 345;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "-";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsBMinus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfGearsBMinus, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfGearsBMinus, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfGearsEnter
 	wi.g.show = TRUE;
-	wi.g.x = 410;
-	wi.g.y = 100;
-	wi.g.width = 70;
-	wi.g.height = 70;
+	wi.g.x = 380;
+	wi.g.y = 350;
+	wi.g.width = 100;
+	wi.g.height = 100;
 	wi.g.parent = numberOfGearsContainer;
 	wi.text = "Enter";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfGearsEnter = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfGearsEnter, gdispOpenFont("Georgia24"));
-	
+	gwinSetFont(numberOfGearsEnter, gdispOpenFont("Georgia36"));	
+}
+
+static void createTeethSettings(void)
+{
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+
 	// create container widget: numberofTeethContainer
-	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 190;
+	wi.g.show = FALSE;
+	wi.g.x = 305;
+	wi.g.y = 0;
 	wi.g.width = 495;
-	wi.g.height = 190;
-	wi.g.parent = gearSettingContainer;
+	wi.g.height = 480;
+	wi.g.parent = mainContainer;
 	wi.text = "numberofTeethContainer";
 	wi.customDraw = 0;
 	wi.customParam = 0;
@@ -811,14 +813,20 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	numberOfTeethEnter = gwinButtonCreate(0, &wi);
 	gwinSetFont(numberOfTeethEnter, gdispOpenFont("Georgia24"));
-	
+}
+
+static void createGearsStatus(void)
+{
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+
   // create container widget: gearsStatusContainer
-	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 380;
+	wi.g.show = FALSE;
+	wi.g.x = 305;
+	wi.g.y = 0;
 	wi.g.width = 495;
-	wi.g.height = 100;
-	wi.g.parent = gearSettingContainer;
+	wi.g.height = 480;
+	wi.g.parent = mainContainer;
 	wi.text = "gearsStatusContainer";
 	wi.customDraw = 0;
 	wi.customParam = 0;
@@ -898,6 +906,9 @@ void guiCreate(void)
 	gwinSetDefaultColor(black_studio);
 	gwinSetDefaultBgColor(white_studio);
 	
+	gearFrontSettings[0]=0;
+	gearBackSettings[0]=0;
+	
 	// Create all the display pages
 	createMainContainer();
 	createMap();
@@ -906,6 +917,8 @@ void guiCreate(void)
 	createConsole();
 	createBluetooth();
 	createGearsSettings();
+	createTeethSettings();
+	createGearsStatus();
 	
 	// Select the default display page
 	guiShowPage(0);
@@ -914,8 +927,6 @@ void guiCreate(void)
 void guiEventLoop(void)
 {
 	GEvent* pe;
-	int i = 0;
-	int selectedItem = 0;
 	int count = 0;
 	int bluetoothTimeout = 0;
 	while (1) {
@@ -931,7 +942,7 @@ void guiEventLoop(void)
 				count++;
 		 }	
 
-			if(bluetoothTimeout == 1000){
+			if((bluetoothTimeout > 1000) && gwinGetVisible(bluetoothContainer)){
 				gwinHide(bluetoothSearchingContainer);
 				gwinShow(bluetoothDevicesContainer);
 				bluetoothTimeout=0;
@@ -967,19 +978,39 @@ void guiEventLoop(void)
 		pe = geventEventWait(&glistener, 0);
 		switch (pe->type) {
 			case GEVENT_GWIN_BUTTON:
-				if (((GEventGWinButton*)pe)->gwin == menuButton) {
-					  gwinHide(mapContainer);
-					  gwinHide(dataContainer);
+				if (((GEventGWinButton*)pe)->gwin == menuButton) {					
+						gwinHide(mapContainer);
+						gwinHide(dataContainer);
 						gwinShow(menuContainer);
-					  gwinShow(consoleContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
-					  gwinHide(consoleContainer);
-					  gwinHide(menuContainer);
+						gwinHide(consoleContainer);
+						gwinHide(numberOfGearsContainer);
+						gwinHide(numberofTeethContainer);
+						gwinHide(gearsStatusContainer);
+						gwinHide(bluetoothContainer);
+						gwinHide(menuContainer);
 						gwinShow(dataContainer);
-					  gwinShow(mapContainer);
+				  	gwinShow(mapContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
 					  gwinHide(bluetoothDevicesContainer);
 						gwinShow(bluetoothSearchingContainer);
+					  bluetoothTimeout=0;
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFPlus) {
+						gearFrontSettings[0]++;
+						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
+						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFMinus) {
+						gearFrontSettings[0]--;
+						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
+						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBPlus) {
+						gearBackSettings[0]++;
+						sprintf(gearBuffer, "%d", gearBackSettings[0]);
+						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBMinus) {
+						gearBackSettings[0]--;
+						sprintf(gearBuffer, "%d", gearBackSettings[0]);
+						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
 				}
 				break;
 			default:
@@ -987,37 +1018,55 @@ void guiEventLoop(void)
 		}
 		
 		if(gwinGetVisible(menuContainer)){
-			selectedItem = gwinListGetSelected(menuList);
-			switch(selectedItem){
+			gwinPrintf(consoleWindow, "Selected Item: \0331\033b%d\033B\033C\r\n", gwinListGetSelected(menuList));
+			switch(gwinListGetSelected(menuList)){
 				case 0:
-					gwinHide(mapContainer);
-				  gwinHide(consoleContainer);
-				  gwinHide(gearSettingContainer);
-					gwinShow(bluetoothContainer);
+					gwinHide(numberOfGearsContainer);
+					gwinHide(numberofTeethContainer);
+					gwinHide(gearsStatusContainer);
+					gwinHide(consoleContainer);
+				  if(!gwinGetVisible(bluetoothContainer)){
+						gwinShow(bluetoothContainer);
+					}
 					break;
 				case 1:
-					gwinHide(mapContainer);
-				  gwinHide(consoleContainer);
-				  gwinHide(bluetoothContainer);
-				  gwinShow(gearSettingContainer);
+					gwinHide(bluetoothContainer);
+					gwinHide(numberofTeethContainer);
+					gwinHide(gearsStatusContainer);
+					gwinHide(consoleContainer);
+					if(!gwinGetVisible(numberOfGearsContainer)){
+						gwinShow(numberOfGearsContainer);
+					}
 				  break;
 				case 2:
-					gwinHide(mapContainer);
-				  gwinHide(gearSettingContainer);
-				  gwinHide(bluetoothContainer);
-					gwinShow(consoleContainer);
+					gwinHide(numberOfGearsContainer);
+					gwinHide(bluetoothContainer);
+					gwinHide(gearsStatusContainer);
+					gwinHide(consoleContainer);
+					if(!gwinGetVisible(numberofTeethContainer)){
+						gwinShow(numberofTeethContainer);
+					}
 					break;
-				//default:
-					//gwinHide(mapContainer);
-				  //gwinHide(gearSettingContainer);
-				  //gwinHide(consoleContainer);
-					//gwinHide(bluetoothContainer);
-					//break;
+				case 3:
+					gwinHide(numberOfGearsContainer);
+					gwinHide(bluetoothContainer);
+					gwinHide(numberofTeethContainer);
+					gwinHide(consoleContainer);
+					if(!gwinGetVisible(gearsStatusContainer)){
+						gwinShow(gearsStatusContainer);
+					}
+					break;
+				case 4:
+					gwinHide(numberOfGearsContainer);
+					gwinHide(bluetoothContainer);
+					gwinHide(numberofTeethContainer);
+					gwinHide(gearsStatusContainer);
+					if(!gwinGetVisible(consoleContainer)){
+						gwinShow(consoleContainer);
+					}
+					break;
 			}
 		}
-		gwinPrintf(consoleWindow, "Hello \033buGFX\033B!\r\n");
-		gwinPrintf(consoleWindow, "Message Nr.: \0331\033b%d\033B\033C\r\n", i+1);
-		i++;
 	}
 }
 

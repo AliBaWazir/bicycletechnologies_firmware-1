@@ -46,7 +46,6 @@ extern GHandle bluetoothDevicesList;
 extern GHandle bluetoothSearchButton;
 
 // GearsSettings Container
-extern GHandle gearSettingContainer;
 extern GHandle numberOfGearsContainer;
 extern GHandle numberOfGearsLabel;
 extern GHandle numberOfGearsFrontLabel;
@@ -59,6 +58,7 @@ extern GHandle numberOfGearsBPlus;
 extern GHandle numberOfGearsBMinus;
 extern GHandle numberOfGearsEnter;
 
+// numberOfTeeth Container
 extern GHandle numberofTeethContainer;
 extern GHandle numberOfTeethSelectorLabel;
 extern GHandle numberOfTeethGearLabel;
@@ -74,6 +74,7 @@ extern GHandle numberOfTeethTNumberPlus;
 extern GHandle numberOfTeethTNumberMinus;
 extern GHandle numberOfTeethEnter;
 
+// gearsStatus Container
 extern GHandle gearsStatusContainer;
 extern GHandle gearStatusLabel;
 extern GHandle gearStatusFrontLabel;
