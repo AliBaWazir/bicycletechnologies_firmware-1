@@ -57,7 +57,6 @@ GHandle numberOfGearsFMinus;
 GHandle numberOfGearsBNumberLabel;
 GHandle numberOfGearsBPlus;
 GHandle numberOfGearsBMinus;
-GHandle numberOfGearsEnter;
 
 GHandle numberofTeethContainer;
 GHandle numberOfTeethSelectorLabel;
@@ -79,9 +78,18 @@ GHandle gearStatusLabel;
 GHandle gearStatusFrontLabel;
 GHandle gearStatusBackLabel;
 
-int gearFrontSettings[5];
-int gearBackSettings[10];
+#define MAXIMUM_FRONT_GEARS 4
+#define MAXIMUM_BACK_GEARS 9
+#define MAXIMUM_TEETH 35
+#define MINIMUM_TEETH 25
+
+int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
+int gearBackSettings[MAXIMUM_BACK_GEARS+1];
 char gearBuffer[5];
+
+int currentGearSide;
+int currentGearTeethWindow;
+int currentTeethTeethWindow;
 
 int speed;
 char speedout[10];
@@ -119,7 +127,6 @@ static void createMap(void)
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
-		
 	// create container widget: mapContainer
 	wi.g.show = TRUE;
 	wi.g.x = 305;
@@ -477,7 +484,7 @@ static void createGearsSettings(void)
 	
 	// Create label widget: numberOfGearsFrontLabel
 	wi.g.show = TRUE;
-	wi.g.x = 20;
+	wi.g.x = 65;
 	wi.g.y = 80;
 	wi.g.width = 160;
 	wi.g.height = 60;
@@ -492,7 +499,7 @@ static void createGearsSettings(void)
 	
 	// Create label widget: numberOfGearsBackLabel
 	wi.g.show = TRUE;
-	wi.g.x = 220;
+	wi.g.x = 270;
 	wi.g.y = 80;
 	wi.g.width = 160;
 	wi.g.height = 60;
@@ -507,7 +514,7 @@ static void createGearsSettings(void)
 	
 	// Create label widget: numberOfGearsFNumberLabel
 	wi.g.show = TRUE;
-	wi.g.x = 60;
+	wi.g.x = 105;
 	wi.g.y = 160;
 	wi.g.width = 80;
 	wi.g.height = 80;
@@ -523,7 +530,7 @@ static void createGearsSettings(void)
 
 	// create button widget: numberOfGearsFPlus
 	wi.g.show = TRUE;
-	wi.g.x = 60;
+	wi.g.x = 105;
 	wi.g.y = 260;
 	wi.g.width = 80;
 	wi.g.height = 80;
@@ -531,13 +538,13 @@ static void createGearsSettings(void)
 	wi.text = "+";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfGearsFPlus = gwinButtonCreate(0, &wi);
 	gwinSetFont(numberOfGearsFPlus, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfGearsFMinus
 	wi.g.show = TRUE;
-	wi.g.x = 60;
+	wi.g.x = 105;
 	wi.g.y = 345;
 	wi.g.width = 80;
 	wi.g.height = 80;
@@ -545,13 +552,13 @@ static void createGearsSettings(void)
 	wi.text = "-";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfGearsFMinus = gwinButtonCreate(0, &wi);
 	gwinSetFont(numberOfGearsFMinus, gdispOpenFont("Georgia36"));
 
 	// Create label widget: numberOfGearsBNumberLabel
 	wi.g.show = TRUE;
-	wi.g.x = 260;
+	wi.g.x = 310;
 	wi.g.y = 160;
 	wi.g.width = 80;
 	wi.g.height = 80;
@@ -567,7 +574,7 @@ static void createGearsSettings(void)
 
 	// create button widget: numberOfGearsBPlus
 	wi.g.show = TRUE;
-	wi.g.x = 260;
+	wi.g.x = 310;
 	wi.g.y = 260;
 	wi.g.width = 80;
 	wi.g.height = 80;
@@ -575,13 +582,13 @@ static void createGearsSettings(void)
 	wi.text = "+";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfGearsBPlus = gwinButtonCreate(0, &wi);
   gwinSetFont(numberOfGearsBPlus, gdispOpenFont("Georgia36"));
 	
 	// create button widget: numberOfGearsBMinus
 	wi.g.show = TRUE;
-	wi.g.x = 260;
+	wi.g.x = 310;
 	wi.g.y = 345;
 	wi.g.width = 80;
 	wi.g.height = 80;
@@ -589,23 +596,9 @@ static void createGearsSettings(void)
 	wi.text = "-";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfGearsBMinus = gwinButtonCreate(0, &wi);
 	gwinSetFont(numberOfGearsBMinus, gdispOpenFont("Georgia36"));
-
-	// create button widget: numberOfGearsEnter
-	wi.g.show = TRUE;
-	wi.g.x = 380;
-	wi.g.y = 350;
-	wi.g.width = 100;
-	wi.g.height = 100;
-	wi.g.parent = numberOfGearsContainer;
-	wi.text = "Enter";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	numberOfGearsEnter = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfGearsEnter, gdispOpenFont("Georgia36"));	
 }
 
 static void createTeethSettings(void)
@@ -629,9 +622,9 @@ static void createTeethSettings(void)
 	// Create label widget: numberOfTeethSelectorLabel
 	wi.g.show = TRUE;
 	wi.g.x = 20;
-	wi.g.y = 10;
-	wi.g.width = 220;
-	wi.g.height = 30;
+	wi.g.y = 5;
+	wi.g.width = 350;
+	wi.g.height = 60;
 	wi.g.parent = numberofTeethContainer;
 	wi.text = "Select Front or Back";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -639,14 +632,57 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	numberOfTeethSelectorLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfTeethSelectorLabel, TRUE);
-	gwinSetFont(numberOfTeethSelectorLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethSelectorLabel, gdispOpenFont("Georgia36"));
+	
+	// create button widget: numberOfTeethF
+	wi.g.show = TRUE;
+	wi.g.x = 65;
+	wi.g.y = 70;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = numberofTeethContainer;
+	wi.text = "F";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	numberOfTeethF = gwinButtonCreate(0, &wi);
+	gwinSetFont(numberOfTeethF, gdispOpenFont("Georgia36"));
+
+	// create button widget: numberOfTeethB
+	wi.g.show = TRUE;
+	wi.g.x = 150;
+	wi.g.y = 70;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = numberofTeethContainer;
+	wi.text = "B";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	numberOfTeethB = gwinButtonCreate(0, &wi);
+	gwinSetFont(numberOfTeethB, gdispOpenFont("Georgia36"));
+
+	// Create label widget: numberOfTeethFBLabel
+	wi.g.show = TRUE;
+	wi.g.x = 240;
+	wi.g.y = 70;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = numberofTeethContainer;
+	wi.text = (currentGearSide == 0 ? "F" : "B");
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	numberOfTeethFBLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(numberOfTeethFBLabel, TRUE);
+	gwinSetFont(numberOfTeethFBLabel, gdispOpenFont("Georgia36"));
 	
 	// Create label widget: numberOfTeethGearLabel
 	wi.g.show = TRUE;
-	wi.g.x = 20;
-	wi.g.y = 50;
-	wi.g.width = 150;
-	wi.g.height = 30;
+	wi.g.x = 40;
+	wi.g.y = 155;
+	wi.g.width = 160;
+	wi.g.height = 60;
 	wi.g.parent = numberofTeethContainer;
 	wi.text = "Gear";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -654,165 +690,125 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	numberOfTeethGearLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfTeethGearLabel, TRUE);
-	gwinSetFont(numberOfTeethGearLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethGearLabel, gdispOpenFont("Georgia36"));
 	
 	// Create label widget: numberOfTeethLabel
 	wi.g.show = TRUE;
-	wi.g.x = 210;
-	wi.g.y = 50;
-	wi.g.width = 200;
-	wi.g.height = 30;
+	wi.g.x = 240;
+	wi.g.y = 155;
+	wi.g.width = 160;
+	wi.g.height = 60;
 	wi.g.parent = numberofTeethContainer;
-	wi.text = "Number of Teeth";
+	wi.text = "Teeth";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfTeethLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfTeethLabel, TRUE);
-	gwinSetFont(numberOfTeethLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethLabel, gdispOpenFont("Georgia36"));
 	
 	// Create label widget: numberOfTeethGNumber
 	wi.g.show = TRUE;
-	wi.g.x = 50;
-	wi.g.y = 110;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 90;
+	wi.g.y = 220;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
-	wi.text = "99";
+	sprintf(gearBuffer, "%d", currentGearTeethWindow);
+	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfTeethGNumber = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfTeethGNumber, TRUE);
-	gwinSetFont(numberOfTeethGNumber, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethGNumber, gdispOpenFont("Georgia36"));
+	gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 	
 	// create button widget: numberOfTeethGNumberPlus
 	wi.g.show = TRUE;
-	wi.g.x = 100;
-	wi.g.y = 90;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 90;
+	wi.g.y = 305;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
 	wi.text = "+";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfTeethGNumberPlus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethGNumberPlus, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethGNumberPlus, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfTeethGNumberMinus
 	wi.g.show = TRUE;
-	wi.g.x = 100;
-	wi.g.y = 130;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 90;
+	wi.g.y = 390;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
 	wi.text = "-";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfTeethGNumberMinus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethGNumberMinus, gdispOpenFont("Georgia24"));
-
-	// create button widget: numberOfTeethF
-	wi.g.show = TRUE;
-	wi.g.x = 250;
-	wi.g.y = 10;
-	wi.g.width = 40;
-	wi.g.height = 40;
-	wi.g.parent = numberofTeethContainer;
-	wi.text = "F";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	numberOfTeethF = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethF, gdispOpenFont("Georgia24"));
-
-	// create button widget: numberOfTeethB
-	wi.g.show = TRUE;
-	wi.g.x = 290;
-	wi.g.y = 10;
-	wi.g.width = 40;
-	wi.g.height = 40;
-	wi.g.parent = numberofTeethContainer;
-	wi.text = "B";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	numberOfTeethB = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethB, gdispOpenFont("Georgia24"));
-
-	// Create label widget: numberOfTeethFBLabel
-	wi.g.show = TRUE;
-	wi.g.x = 340;
-	wi.g.y = 10;
-	wi.g.width = 40;
-	wi.g.height = 40;
-	wi.g.parent = numberofTeethContainer;
-	wi.text = "F";
-	wi.customDraw = gwinLabelDrawJustifiedCenter;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	numberOfTeethFBLabel = gwinLabelCreate(0, &wi);
-	gwinLabelSetBorder(numberOfTeethFBLabel, TRUE);
-	gwinSetFont(numberOfTeethFBLabel, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethGNumberMinus, gdispOpenFont("Georgia36"));
 
 	// Create label widget: numberOfTeethTNumber
 	wi.g.show = TRUE;
-	wi.g.x = 240;
-	wi.g.y = 110;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 280;
+	wi.g.y = 220;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
-	wi.text = "99";
+	sprintf(gearBuffer, "%d", currentTeethTeethWindow);
+	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	numberOfTeethTNumber = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfTeethTNumber, TRUE);
-	gwinSetFont(numberOfTeethTNumber, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethTNumber, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfTeethTNumberPlus
 	wi.g.show = TRUE;
-	wi.g.x = 290;
-	wi.g.y = 90;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 280;
+	wi.g.y = 305;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
 	wi.text = "+";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfTeethTNumberPlus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethTNumberPlus, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethTNumberPlus, gdispOpenFont("Georgia36"));
 
 	// create button widget: numberOfTeethTNumberMinus
 	wi.g.show = TRUE;
-	wi.g.x = 290;
-	wi.g.y = 130;
-	wi.g.width = 40;
-	wi.g.height = 40;
+	wi.g.x = 280;
+	wi.g.y = 390;
+	wi.g.width = 80;
+	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
 	wi.text = "-";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfTeethTNumberMinus = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethTNumberMinus, gdispOpenFont("Georgia24"));
-
+	gwinSetFont(numberOfTeethTNumberMinus, gdispOpenFont("Georgia36"));
+	
 	// create button widget: numberOfTeethEnter
 	wi.g.show = TRUE;
-	wi.g.x = 410;
-	wi.g.y = 90;
-	wi.g.width = 70;
-	wi.g.height = 70;
+	wi.g.x = 390;
+	wi.g.y = 300;
+	wi.g.width = 90;
+	wi.g.height = 90;
 	wi.g.parent = numberofTeethContainer;
-	wi.text = "Enter";
+	wi.text = "Save";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.customStyle = &black;
 	numberOfTeethEnter = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethEnter, gdispOpenFont("Georgia24"));
+	gwinSetFont(numberOfTeethEnter, gdispOpenFont("Georgia36"));
 }
 
 static void createGearsStatus(void)
@@ -879,6 +875,22 @@ static void createGearsStatus(void)
 	gwinSetFont(gearStatusBackLabel, gdispOpenFont("Georgia24"));
 }
 
+void saveTeethSettings(){
+	if(currentGearSide == 0){
+		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_FRONT_GEARS)){
+			gearFrontSettings[currentGearTeethWindow] = currentTeethTeethWindow;
+			currentGearSide = 1;
+			gwinSetText(numberOfTeethFBLabel, "B", TRUE);
+		}
+	}else if(currentGearSide == 1){
+		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_BACK_GEARS)){
+			gearBackSettings[currentGearTeethWindow] = currentTeethTeethWindow;
+			currentGearSide = 0;
+			gwinSetText(numberOfTeethFBLabel, "F", TRUE);
+		}
+	}
+}
+
 void guiShowPage(unsigned pageIndex)
 {
 	// Hide all pages
@@ -906,8 +918,12 @@ void guiCreate(void)
 	gwinSetDefaultColor(black_studio);
 	gwinSetDefaultBgColor(white_studio);
 	
-	gearFrontSettings[0]=0;
-	gearBackSettings[0]=0;
+	gearFrontSettings[0] = 1;
+	gearBackSettings[0] = 1;
+	
+	currentGearSide = 0;
+	currentGearTeethWindow = 1;
+	currentTeethTeethWindow = 25;
 	
 	// Create all the display pages
 	createMainContainer();
@@ -996,21 +1012,73 @@ void guiEventLoop(void)
 						gwinShow(bluetoothSearchingContainer);
 					  bluetoothTimeout=0;
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFPlus) {
-						gearFrontSettings[0]++;
+						if(gearFrontSettings[0] != MAXIMUM_FRONT_GEARS){
+							gearFrontSettings[0]++;
+						}
 						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
 						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFMinus) {
-						gearFrontSettings[0]--;
+					  if(gearFrontSettings[0] != 1){
+							gearFrontSettings[0]--;
+						}
 						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
 						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBPlus) {
-						gearBackSettings[0]++;
+						if(gearBackSettings[0] != MAXIMUM_BACK_GEARS){
+							gearBackSettings[0]++;
+						}
 						sprintf(gearBuffer, "%d", gearBackSettings[0]);
 						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
-				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBMinus) {
-						gearBackSettings[0]--;
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBMinus){ 
+						if(gearBackSettings[0] != 1){
+							gearBackSettings[0]--;
+						}
 						sprintf(gearBuffer, "%d", gearBackSettings[0]);
 						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethF){ 
+						currentGearSide = 0;
+						gwinSetText(numberOfTeethFBLabel, "F", TRUE);
+						if(currentGearTeethWindow > gearFrontSettings[0]){
+							currentGearTeethWindow = gearFrontSettings[0];
+							sprintf(gearBuffer, "%d", currentGearTeethWindow);
+							gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
+						}
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethB){ 
+						currentGearSide = 1;
+						gwinSetText(numberOfTeethFBLabel, "B", TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethGNumberPlus) {
+						if(currentGearSide == 0){
+							if(currentGearTeethWindow < gearFrontSettings[0]){
+								currentGearTeethWindow++;
+							}
+						}else if(currentGearSide == 1){
+							if(currentGearTeethWindow < gearBackSettings[0]){
+								currentGearTeethWindow++;
+							}
+						}
+					  
+						sprintf(gearBuffer, "%d", currentGearTeethWindow);
+						gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethGNumberMinus) {
+					  if(currentGearTeethWindow != 1){
+							currentGearTeethWindow--;
+						}
+						sprintf(gearBuffer, "%d", currentGearTeethWindow);
+						gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethTNumberPlus) {
+					  if(currentTeethTeethWindow != MAXIMUM_TEETH){
+							currentTeethTeethWindow++;
+						}
+						sprintf(gearBuffer, "%d", currentTeethTeethWindow);
+						gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethTNumberMinus) {
+					  if(currentTeethTeethWindow != MINIMUM_TEETH){
+							currentTeethTeethWindow--;
+						}
+						sprintf(gearBuffer, "%d", currentTeethTeethWindow);
+						gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethEnter) {
+					  saveTeethSettings();
 				}
 				break;
 			default:

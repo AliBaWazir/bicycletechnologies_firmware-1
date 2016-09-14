@@ -56,7 +56,6 @@ extern GHandle numberOfGearsFMinus;
 extern GHandle numberOfGearsBNumberLabel;
 extern GHandle numberOfGearsBPlus;
 extern GHandle numberOfGearsBMinus;
-extern GHandle numberOfGearsEnter;
 
 // numberOfTeeth Container
 extern GHandle numberofTeethContainer;
