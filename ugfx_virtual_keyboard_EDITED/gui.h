@@ -65,8 +65,8 @@ extern GHandle numberOfTeethLabel;
 extern GHandle numberOfTeethGNumber;
 extern GHandle numberOfTeethGNumberPlus;
 extern GHandle numberOfTeethGNumberMinus;
-extern GHandle numberOfTeethF;
-extern GHandle numberOfTeethB;
+extern GHandle numberOfTeethFrontButton;
+extern GHandle numberOfTeethBackButton;
 extern GHandle numberOfTeethFBLabel;
 extern GHandle numberOfTeethTNumber;
 extern GHandle numberOfTeethTNumberPlus;
@@ -78,6 +78,20 @@ extern GHandle gearsStatusContainer;
 extern GHandle gearStatusLabel;
 extern GHandle gearStatusFrontLabel;
 extern GHandle gearStatusBackLabel;
+
+#define MAXIMUM_FRONT_GEARS 4
+#define MAXIMUM_BACK_GEARS 9
+#define MAXIMUM_TEETH 35
+#define MINIMUM_TEETH 25
+
+extern int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
+extern int gearBackSettings[MAXIMUM_BACK_GEARS+1];
+extern char gearBuffer[5];
+
+extern int currentGearSide;
+extern int currentGearTeethWindow;
+extern int currentTeethTeethWindow;
+extern int oldMenuSelectedItem;
 
 extern int speed;
 extern char speedout[10];

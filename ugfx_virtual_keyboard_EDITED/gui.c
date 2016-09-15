@@ -9,6 +9,7 @@
 #include "gui.h"
 
 #include <stdio.h>
+#include <string.h>
 
 // GListeners
 GListener glistener;
@@ -65,8 +66,8 @@ GHandle numberOfTeethLabel;
 GHandle numberOfTeethGNumber;
 GHandle numberOfTeethGNumberPlus;
 GHandle numberOfTeethGNumberMinus;
-GHandle numberOfTeethF;
-GHandle numberOfTeethB;
+GHandle numberOfTeethFrontButton;
+GHandle numberOfTeethBackButton;
 GHandle numberOfTeethFBLabel;
 GHandle numberOfTeethTNumber;
 GHandle numberOfTeethTNumberPlus;
@@ -78,11 +79,6 @@ GHandle gearStatusLabel;
 GHandle gearStatusFrontLabel;
 GHandle gearStatusBackLabel;
 
-#define MAXIMUM_FRONT_GEARS 4
-#define MAXIMUM_BACK_GEARS 9
-#define MAXIMUM_TEETH 35
-#define MINIMUM_TEETH 25
-
 int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
 int gearBackSettings[MAXIMUM_BACK_GEARS+1];
 char gearBuffer[5];
@@ -90,6 +86,7 @@ char gearBuffer[5];
 int currentGearSide;
 int currentGearTeethWindow;
 int currentTeethTeethWindow;
+int oldMenuSelectedItem;
 
 int speed;
 char speedout[10];
@@ -310,6 +307,7 @@ static void createMenu(void)
 	gwinListSetSelected(menuList, 2, FALSE);
 	gwinListSetSelected(menuList, 3, FALSE);
   gwinListSetSelected(menuList, 4, FALSE);
+	oldMenuSelectedItem = -1;
 	
 	// create button widget: menuButton
 	wi.g.show = TRUE;
@@ -519,6 +517,7 @@ static void createGearsSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
+	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 	sprintf(gearBuffer, "%d", gearFrontSettings[0]);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -527,6 +526,7 @@ static void createGearsSettings(void)
 	numberOfGearsFNumberLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsFNumberLabel, TRUE);
 	gwinSetFont(numberOfGearsFNumberLabel, gdispOpenFont("Georgia36"));
+	gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 
 	// create button widget: numberOfGearsFPlus
 	wi.g.show = TRUE;
@@ -563,6 +563,7 @@ static void createGearsSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
+	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 	sprintf(gearBuffer, "%d", gearBackSettings[0]);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -571,6 +572,7 @@ static void createGearsSettings(void)
 	numberOfGearsBNumberLabel = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfGearsBNumberLabel, TRUE);
 	gwinSetFont(numberOfGearsBNumberLabel, gdispOpenFont("Georgia36"));
+	gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
 
 	// create button widget: numberOfGearsBPlus
 	wi.g.show = TRUE;
@@ -634,7 +636,7 @@ static void createTeethSettings(void)
 	gwinLabelSetBorder(numberOfTeethSelectorLabel, TRUE);
 	gwinSetFont(numberOfTeethSelectorLabel, gdispOpenFont("Georgia36"));
 	
-	// create button widget: numberOfTeethF
+	// create button widget: numberOfTeethFrontButton
 	wi.g.show = TRUE;
 	wi.g.x = 65;
 	wi.g.y = 70;
@@ -645,10 +647,10 @@ static void createTeethSettings(void)
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &black;
-	numberOfTeethF = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethF, gdispOpenFont("Georgia36"));
+	numberOfTeethFrontButton = gwinButtonCreate(0, &wi);
+	gwinSetFont(numberOfTeethFrontButton, gdispOpenFont("Georgia36"));
 
-	// create button widget: numberOfTeethB
+	// create button widget: numberOfTeethBackButton
 	wi.g.show = TRUE;
 	wi.g.x = 150;
 	wi.g.y = 70;
@@ -659,8 +661,8 @@ static void createTeethSettings(void)
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &black;
-	numberOfTeethB = gwinButtonCreate(0, &wi);
-	gwinSetFont(numberOfTeethB, gdispOpenFont("Georgia36"));
+	numberOfTeethBackButton = gwinButtonCreate(0, &wi);
+	gwinSetFont(numberOfTeethBackButton, gdispOpenFont("Georgia36"));
 
 	// Create label widget: numberOfTeethFBLabel
 	wi.g.show = TRUE;
@@ -714,6 +716,7 @@ static void createTeethSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
+	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 	sprintf(gearBuffer, "%d", currentGearTeethWindow);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -759,6 +762,7 @@ static void createTeethSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
+	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 	sprintf(gearBuffer, "%d", currentTeethTeethWindow);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -767,6 +771,7 @@ static void createTeethSettings(void)
 	numberOfTeethTNumber = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(numberOfTeethTNumber, TRUE);
 	gwinSetFont(numberOfTeethTNumber, gdispOpenFont("Georgia36"));
+	gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
 
 	// create button widget: numberOfTeethTNumberPlus
 	wi.g.show = TRUE;
@@ -875,18 +880,98 @@ static void createGearsStatus(void)
 	gwinSetFont(gearStatusBackLabel, gdispOpenFont("Georgia24"));
 }
 
+static void destroyConsole(void)
+{
+	gwinDestroy(consoleContainer);
+	gwinDestroy(consoleWindow);
+}
+
+static void destroyMenu(void)
+{
+	gwinDestroy(menuContainer);
+	gwinDestroy(menuList);
+	gwinDestroy(returnButton);
+}
+static void destroyBluetooth(void)
+{
+	gwinDestroy(bluetoothContainer);
+	gwinDestroy(bluetoothSearchContainer);
+	gwinDestroy(bluetoothSearchingContainer);
+	gwinDestroy(bluetoothSearchingLabel);
+	gwinDestroy(bluetoothDevicesContainer);
+	gwinDestroy(bluetoothDevicesList);
+	gwinDestroy(bluetoothSearchButton);
+}
+
+static void destroyGearsSettings(void)
+{
+	gwinDestroy(numberOfGearsContainer);
+	gwinDestroy(numberOfGearsLabel);
+	gwinDestroy(numberOfGearsFrontLabel);
+	gwinDestroy(numberOfGearsBackLabel);
+	gwinDestroy(numberOfGearsFNumberLabel);
+	gwinDestroy(numberOfGearsFPlus);
+	gwinDestroy(numberOfGearsFMinus);
+	gwinDestroy(numberOfGearsBNumberLabel);
+	gwinDestroy(numberOfGearsBPlus);
+	gwinDestroy(numberOfGearsBMinus);
+}
+
+static void destroyTeethSettings(void)
+{
+	gwinDestroy(numberofTeethContainer);
+	gwinDestroy(numberOfTeethSelectorLabel);
+	gwinDestroy(numberOfTeethGearLabel);
+	gwinDestroy(numberOfTeethLabel);
+	gwinDestroy(numberOfTeethGNumber);
+	gwinDestroy(numberOfTeethGNumberPlus);
+	gwinDestroy(numberOfTeethGNumberMinus);
+	gwinDestroy(numberOfTeethFrontButton);
+	gwinDestroy(numberOfTeethBackButton);
+	gwinDestroy(numberOfTeethFBLabel);
+	gwinDestroy(numberOfTeethTNumber);
+	gwinDestroy(numberOfTeethTNumberPlus);
+	gwinDestroy(numberOfTeethTNumberMinus);
+	gwinDestroy(numberOfTeethEnter);
+}
+
+static void destroyGearsStatus(void)
+{
+	gwinDestroy(gearsStatusContainer);
+	gwinDestroy(gearStatusLabel);
+	gwinDestroy(gearStatusFrontLabel);
+	gwinDestroy(gearStatusBackLabel);
+}
+
+static void destroyOldMenuSelectedItem(void)
+{
+	switch(oldMenuSelectedItem){
+	case 0:
+		destroyBluetooth();
+		break;
+	case 1:
+		destroyGearsSettings();
+		break;
+	case 2:
+		destroyTeethSettings();
+		break;
+	case 3:
+		destroyGearsStatus();
+		break;
+	case 4:
+		destroyConsole();
+		break;
+	}
+}
+
 void saveTeethSettings(){
 	if(currentGearSide == 0){
 		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_FRONT_GEARS)){
 			gearFrontSettings[currentGearTeethWindow] = currentTeethTeethWindow;
-			currentGearSide = 1;
-			gwinSetText(numberOfTeethFBLabel, "B", TRUE);
 		}
 	}else if(currentGearSide == 1){
 		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_BACK_GEARS)){
 			gearBackSettings[currentGearTeethWindow] = currentTeethTeethWindow;
-			currentGearSide = 0;
-			gwinSetText(numberOfTeethFBLabel, "F", TRUE);
 		}
 	}
 }
@@ -929,12 +1014,6 @@ void guiCreate(void)
 	createMainContainer();
 	createMap();
 	createData();
-	createMenu();
-	createConsole();
-	createBluetooth();
-	createGearsSettings();
-	createTeethSettings();
-	createGearsStatus();
 	
 	// Select the default display page
 	guiShowPage(0);
@@ -952,8 +1031,10 @@ void guiEventLoop(void)
 			  if(speed == 200){
 					speed = 0;
 				}
-			  sprintf(speedout, "%d km/h", speed);
-			  gwinSetText(speedLabel, speedout, TRUE);
+				if(gwinGetVisible(dataContainer)){
+					sprintf(speedout, "%d km/h", speed);
+					gwinSetText(speedLabel, speedout, TRUE);
+				}
 		 }else{
 				count++;
 		 }	
@@ -994,59 +1075,77 @@ void guiEventLoop(void)
 		pe = geventEventWait(&glistener, 0);
 		switch (pe->type) {
 			case GEVENT_GWIN_BUTTON:
-				if (((GEventGWinButton*)pe)->gwin == menuButton) {					
+				if (((GEventGWinButton*)pe)->gwin == menuButton) {
+						// MENU
 						gwinHide(mapContainer);
 						gwinHide(dataContainer);
+						createMenu();
 						gwinShow(menuContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
-						gwinHide(consoleContainer);
-						gwinHide(numberOfGearsContainer);
-						gwinHide(numberofTeethContainer);
-						gwinHide(gearsStatusContainer);
-						gwinHide(bluetoothContainer);
-						gwinHide(menuContainer);
+						// RETURN
+						destroyOldMenuSelectedItem();
+						destroyMenu();
 						gwinShow(dataContainer);
 				  	gwinShow(mapContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
+						// BLUETOOTH SEARCH
 					  gwinHide(bluetoothDevicesContainer);
 						gwinShow(bluetoothSearchingContainer);
 					  bluetoothTimeout=0;
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFPlus) {
+						// FRONT GEARS PLUS
 						if(gearFrontSettings[0] != MAXIMUM_FRONT_GEARS){
 							gearFrontSettings[0]++;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
 						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFMinus) {
+						// FRONT GEARS MINUS
 					  if(gearFrontSettings[0] != 1){
 							gearFrontSettings[0]--;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
 						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBPlus) {
+						// BACK GEARS PLUS
 						if(gearBackSettings[0] != MAXIMUM_BACK_GEARS){
 							gearBackSettings[0]++;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", gearBackSettings[0]);
 						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBMinus){ 
+						// BACK GEARS MINUS
 						if(gearBackSettings[0] != 1){
 							gearBackSettings[0]--;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", gearBackSettings[0]);
 						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
-				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethF){ 
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethFrontButton){ 
+						// FRONT GEARS TEETH PAGE
 						currentGearSide = 0;
 						gwinSetText(numberOfTeethFBLabel, "F", TRUE);
 						if(currentGearTeethWindow > gearFrontSettings[0]){
 							currentGearTeethWindow = gearFrontSettings[0];
+							memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 							sprintf(gearBuffer, "%d", currentGearTeethWindow);
 							gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 						}
-				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethB){ 
+				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethBackButton){ 
+						// BACK GEARS TEETH
 						currentGearSide = 1;
 						gwinSetText(numberOfTeethFBLabel, "B", TRUE);
+						if(currentGearTeethWindow > gearBackSettings[0]){
+							currentGearTeethWindow = gearBackSettings[0];
+							memset(&gearBuffer[0], 0, sizeof(gearBuffer));
+							sprintf(gearBuffer, "%d", currentGearTeethWindow);
+							gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
+						}
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethGNumberPlus) {
+						// GEAR PLUS TEETH
 						if(currentGearSide == 0){
 							if(currentGearTeethWindow < gearFrontSettings[0]){
 								currentGearTeethWindow++;
@@ -1056,28 +1155,35 @@ void guiEventLoop(void)
 								currentGearTeethWindow++;
 							}
 						}
-					  
+					  memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", currentGearTeethWindow);
 						gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethGNumberMinus) {
+						// GEAR PLUS TEETH
 					  if(currentGearTeethWindow != 1){
 							currentGearTeethWindow--;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", currentGearTeethWindow);
 						gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethTNumberPlus) {
+						// TEETH PLUS TEETH
 					  if(currentTeethTeethWindow != MAXIMUM_TEETH){
 							currentTeethTeethWindow++;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", currentTeethTeethWindow);
 						gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethTNumberMinus) {
+						// TEETH MINUS TEETH
 					  if(currentTeethTeethWindow != MINIMUM_TEETH){
 							currentTeethTeethWindow--;
 						}
+						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
 						sprintf(gearBuffer, "%d", currentTeethTeethWindow);
 						gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethEnter) {
+						// SAVE TEETH
 					  saveTeethSettings();
 				}
 				break;
@@ -1086,54 +1192,38 @@ void guiEventLoop(void)
 		}
 		
 		if(gwinGetVisible(menuContainer)){
-			gwinPrintf(consoleWindow, "Selected Item: \0331\033b%d\033B\033C\r\n", gwinListGetSelected(menuList));
-			switch(gwinListGetSelected(menuList)){
-				case 0:
-					gwinHide(numberOfGearsContainer);
-					gwinHide(numberofTeethContainer);
-					gwinHide(gearsStatusContainer);
-					gwinHide(consoleContainer);
-				  if(!gwinGetVisible(bluetoothContainer)){
+			gwinPrintf(consoleWindow, "Front Gears: \0331\033b%d\033B\033C\r\n", gearFrontSettings[0]);
+			gwinPrintf(consoleWindow, "Back Gears: \0331\033b%d\033B\033C\r\n", gearBackSettings[0]);
+			gwinPrintf(consoleWindow, "currentGearSide: \0331\033b%d\033B\033C\r\n", currentGearSide);
+			gwinPrintf(consoleWindow, "currentGearTeethWindow: \0331\033b%d\033B\033C\r\n", currentGearTeethWindow);
+			gwinPrintf(consoleWindow, "currentTeethTeethWindow: \0331\033b%d\033B\033C\r\n", currentTeethTeethWindow);
+			gwinPrintf(consoleWindow, "oldMenuSelectedItem: \0331\033b%d\033B\033C\r\n", oldMenuSelectedItem);			
+			if(oldMenuSelectedItem != gwinListGetSelected(menuList)){
+				destroyOldMenuSelectedItem();
+				switch(gwinListGetSelected(menuList)){
+					case 0:
+						createBluetooth();
 						gwinShow(bluetoothContainer);
-					}
-					break;
-				case 1:
-					gwinHide(bluetoothContainer);
-					gwinHide(numberofTeethContainer);
-					gwinHide(gearsStatusContainer);
-					gwinHide(consoleContainer);
-					if(!gwinGetVisible(numberOfGearsContainer)){
+						break;
+					case 1:
+						createGearsSettings();
 						gwinShow(numberOfGearsContainer);
-					}
-				  break;
-				case 2:
-					gwinHide(numberOfGearsContainer);
-					gwinHide(bluetoothContainer);
-					gwinHide(gearsStatusContainer);
-					gwinHide(consoleContainer);
-					if(!gwinGetVisible(numberofTeethContainer)){
+						break;
+					case 2:
+						createTeethSettings();
 						gwinShow(numberofTeethContainer);
-					}
-					break;
-				case 3:
-					gwinHide(numberOfGearsContainer);
-					gwinHide(bluetoothContainer);
-					gwinHide(numberofTeethContainer);
-					gwinHide(consoleContainer);
-					if(!gwinGetVisible(gearsStatusContainer)){
+						break;
+					case 3:
+						createGearsStatus();
 						gwinShow(gearsStatusContainer);
-					}
-					break;
-				case 4:
-					gwinHide(numberOfGearsContainer);
-					gwinHide(bluetoothContainer);
-					gwinHide(numberofTeethContainer);
-					gwinHide(gearsStatusContainer);
-					if(!gwinGetVisible(consoleContainer)){
+						break;
+					case 4:
+						createConsole();
 						gwinShow(consoleContainer);
-					}
-					break;
-			}
+						break;
+				}
+				oldMenuSelectedItem = gwinListGetSelected(menuList);
+			}	
 		}
 	}
 }
