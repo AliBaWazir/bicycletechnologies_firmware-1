@@ -12,73 +12,6 @@
 // GListeners
 extern GListener glistener;
 
-// GHandle
-// Main Container (Background layer0)
-extern GHandle mainContainer;
-
-// Data Container on the left side
-extern GHandle dataContainer;
-extern GHandle speedLabel;
-extern GHandle rpmLabel;
-extern GHandle batteryLabel;
-extern GHandle menuButton;
-
-// Console Container 
-extern GHandle consoleContainer;
-extern GHandle consoleWindow;
-
-// Menu Container
-extern GHandle menuContainer;
-extern GHandle menuList;
-extern GHandle returnButton;
-
-// Map Container
-extern GHandle mapContainer;
-extern GHandle mapWindow;
-
-// Bluetooth Container
-extern GHandle bluetoothContainer;
-extern GHandle bluetoothSearchContainer;
-extern GHandle bluetoothSearchingContainer;
-extern GHandle bluetoothSearchingLabel;
-extern GHandle bluetoothDevicesContainer;
-extern GHandle bluetoothDevicesList;
-extern GHandle bluetoothSearchButton;
-
-// GearsSettings Container
-extern GHandle numberOfGearsContainer;
-extern GHandle numberOfGearsLabel;
-extern GHandle numberOfGearsFrontLabel;
-extern GHandle numberOfGearsBackLabel;
-extern GHandle numberOfGearsFNumberLabel;
-extern GHandle numberOfGearsFPlus;
-extern GHandle numberOfGearsFMinus;
-extern GHandle numberOfGearsBNumberLabel;
-extern GHandle numberOfGearsBPlus;
-extern GHandle numberOfGearsBMinus;
-
-// numberOfTeeth Container
-extern GHandle numberofTeethContainer;
-extern GHandle numberOfTeethSelectorLabel;
-extern GHandle numberOfTeethGearLabel;
-extern GHandle numberOfTeethLabel;
-extern GHandle numberOfTeethGNumber;
-extern GHandle numberOfTeethGNumberPlus;
-extern GHandle numberOfTeethGNumberMinus;
-extern GHandle numberOfTeethFrontButton;
-extern GHandle numberOfTeethBackButton;
-extern GHandle numberOfTeethFBLabel;
-extern GHandle numberOfTeethTNumber;
-extern GHandle numberOfTeethTNumberPlus;
-extern GHandle numberOfTeethTNumberMinus;
-extern GHandle numberOfTeethEnter;
-
-// gearsStatus Container
-extern GHandle gearsStatusContainer;
-extern GHandle gearStatusLabel;
-extern GHandle gearStatusFrontLabel;
-extern GHandle gearStatusBackLabel;
-
 #define MAXIMUM_FRONT_GEARS 4
 #define MAXIMUM_BACK_GEARS 9
 #define MAXIMUM_TEETH 35
@@ -86,15 +19,11 @@ extern GHandle gearStatusBackLabel;
 
 extern int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
 extern int gearBackSettings[MAXIMUM_BACK_GEARS+1];
-extern char gearBuffer[5];
 
 extern int currentGearSide;
 extern int currentGearTeethWindow;
 extern int currentTeethTeethWindow;
 extern int oldMenuSelectedItem;
-
-extern int speed;
-extern char speedout[10];
 
 // Function Prototypes
 void guiCreate(void);
