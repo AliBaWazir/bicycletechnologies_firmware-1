@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include <string.h>
 
+//SDCard Stuff
+GFILE *myfile;
+const char* drive;
+
 // GListeners
 GListener glistener;
 
@@ -1266,6 +1270,11 @@ void guiCreate(void)
 	
 	// Select the default display page
 	guiShowPage(0);
+	
+	//gfileMount ('F', drive);
+	myfile = gfileOpen ("myFile", "w");
+	gfileWrite(myfile,"HelloWorld!", 12);
+	gfileClose(myfile);
 }
 
 void guiEventLoop(void)

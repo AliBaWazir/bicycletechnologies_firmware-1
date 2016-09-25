@@ -143,9 +143,13 @@
 /********************************************************/
 #define GFX_USE_GFILE TRUE
 
+#define GFILE_NEED_FATFS TRUE
+#define GFILE_NEED_PRINTG TRUE
+#define GFILE_NEED_STRINGS TRUE
+#define GFILE_ALLOW_FLOATS  TRUE
 #define GFILE_NEED_NATIVEFS FALSE
 #define GFILE_NEED_ROMFS TRUE
-#define GFILE_MAX_GFILES 1
+#define GFILE_MAX_GFILES 4
 
 
 
