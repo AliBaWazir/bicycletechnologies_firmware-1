@@ -49,7 +49,7 @@ uint32_t log_rtt_init(void)
 }
 
 // Forward declaration of SEGGER RTT vprintf function
-int SEGGER_RTT_vprintf(unsigned BufferIndex, const char * sFormat, va_list * pParamList);
+//extern int SEGGER_RTT_vprintf(unsigned BufferIndex, const char * sFormat, va_list * pParamList);
 
 void log_rtt_printf(int terminal_index, char * format_msg, ...)
 {

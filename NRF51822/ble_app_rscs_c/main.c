@@ -34,6 +34,7 @@
 #include "app_timer.h"
 #include "bsp.h"
 #include "bsp_btn_ble.h"
+#include "nrf_log.h"
 
 #define CENTRAL_LINK_COUNT       1                                   /**<number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT    0                                   /**<number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
@@ -764,7 +765,7 @@ static void uart_init(void)
            TX_PIN_NUMBER,
            RTS_PIN_NUMBER,
            CTS_PIN_NUMBER,
-           APP_UART_FLOW_CONTROL_ENABLED,
+           APP_UART_FLOW_CONTROL_DISABLED,
            false,
            UART_BAUDRATE_BAUDRATE_Baud38400
        };
@@ -812,11 +813,35 @@ static void power_manage(void)
 }
 
 
+static bool nrf_logging_init(){
+		uint32_t err_code   = 0xFFFFFFFF;
+		bool     ret_code   = true;
+	
+		// Initialize module
+		err_code = NRF_LOG_INIT();
+		if (err_code != NRF_SUCCESS)
+		{
+    // Module initialization failed. Take corrective action.
+				ret_code = false;
+		}
+		return ret_code;
+}
+
 int main(void)
 {
     bool erase_bonds;
+		bool nrf_logging_init_success = false;
+		int  i                        = 0;
 
     // Initialize.
+		nrf_logging_init_success = nrf_logging_init();
+		if  (!nrf_logging_init_success){
+				i=1;
+				return -1;
+		} else{
+				NRF_LOG("nrf_logging initialized successfully\r\n");
+		}
+		
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, NULL);
     buttons_leds_init(&erase_bonds);
     uart_init();
@@ -825,7 +850,9 @@ int main(void)
     device_manager_init(erase_bonds);
     db_discovery_init();
     rscs_c_init();
-
+		
+		NRF_LOG("main initialized successfully\r\n");
+		
     // Start scanning for peripherals and initiate connection
     // with devices that advertise Running Speed and Cadence UUID.
     scan_start();
@@ -833,7 +860,10 @@ int main(void)
     for (;;)
     {
         power_manage();
+				NRF_LOG("Looping\r\n");
     }
+		
+		
 }
 
 

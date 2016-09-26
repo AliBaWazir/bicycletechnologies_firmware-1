@@ -14,7 +14,7 @@
 #endif
 
 #ifndef NRF_LOG_USES_UART
-#define NRF_LOG_USES_UART 0
+#define NRF_LOG_USES_UART 1
 #endif
 
 #ifndef NRF_LOG_USES_RAW_UART

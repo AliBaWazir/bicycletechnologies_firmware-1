@@ -48,6 +48,8 @@ Purpose : Implementation of SEGGER real-time transfer which allows
 #define SEGGER_RTT_H
 
 #include "SEGGER_RTT_Conf.h"
+#include <stdarg.h>
+
 
 /*********************************************************************
 *
@@ -138,6 +140,7 @@ int     SEGGER_RTT_TerminalOut        (char TerminalId, const char* s);
 *
 **********************************************************************
 */
+int SEGGER_RTT_vprintf(unsigned BufferIndex, const char * sFormat, va_list * pParamList);
 int SEGGER_RTT_printf(unsigned BufferIndex, const char * sFormat, ...);
 
 /*********************************************************************
