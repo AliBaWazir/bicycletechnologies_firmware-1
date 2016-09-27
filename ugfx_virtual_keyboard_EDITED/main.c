@@ -125,6 +125,11 @@ void DSI_IRQHandler()
 }
 #endif
 
+void Thread_1 (void const *arg)
+{
+	guiEventLoop();
+}		// function prototype for Thread_1
+osThreadDef (Thread_1, osPriorityNormal, 1, 0);            // define Thread_1
 
 int main (void)
 {	
@@ -147,8 +152,17 @@ int main (void)
 
 	guiCreate();
 
+  osThreadId id;
+  
+  id = osThreadCreate (osThread (Thread_1), NULL);         // create the thread
+	
+	int x = 0;
     while(1) {
-		guiEventLoop();
+			if(x > 10000){
+				//gfileWrite(myfile,"YOLO\n", 5);
+				x=0;
+			}
+			x++;
     }
 }
 

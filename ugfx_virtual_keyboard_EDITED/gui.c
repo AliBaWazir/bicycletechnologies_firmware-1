@@ -118,6 +118,7 @@ void drawTile(int xx, int yy);
 
 static void createMainContainer(void)
 {
+	gfileWrite(myfile,"createMainContainer\n", 20);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 	
@@ -137,6 +138,7 @@ static void createMainContainer(void)
 
 static void createMap(void)
 {
+	gfileWrite(myfile,"createMap\n", 10);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -167,6 +169,7 @@ static void createMap(void)
 
 static void createData(void)
 {
+	gfileWrite(myfile,"createData\n", 11);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 		
@@ -251,6 +254,7 @@ static void createData(void)
 
 static void createConsole(void)
 {
+	gfileWrite(myfile,"createConsole\n", 14);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -283,6 +287,7 @@ static void createConsole(void)
 
 static void createMenu(void)
 {
+	gfileWrite(myfile,"createMenu\n", 11);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -342,6 +347,7 @@ static void createMenu(void)
 
 static void createBluetooth(void)
 {
+	gfileWrite(myfile,"createBluetooth\n", 16);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -465,6 +471,7 @@ static void createBluetooth(void)
 
 static void createGearsSettings(void)
 {
+	gfileWrite(myfile,"createGearsSettings\n", 20);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -621,6 +628,7 @@ static void createGearsSettings(void)
 
 static void createTeethSettings(void)
 {
+	gfileWrite(myfile,"createTeethSettings\n", 20);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -834,6 +842,7 @@ static void createTeethSettings(void)
 
 static void createGearsStatus(void)
 {
+	gfileWrite(myfile,"createGearsStatus\n", 18);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -1097,18 +1106,21 @@ static void createGearsStatus(void)
 
 static void destroyConsole(void)
 {
+	gfileWrite(myfile,"destroy,Console\n", 16);
 	gwinDestroy(consoleWindow);
 	gwinDestroy(consoleContainer);
 }
 
 static void destroyMenu(void)
 {
+	gfileWrite(myfile,"destroy,Menu\n", 13);
 	gwinDestroy(menuList);
 	gwinDestroy(returnButton);
 	gwinDestroy(menuContainer);
 }
 static void destroyBluetooth(void)
 {
+	gfileWrite(myfile,"destroy,Bluetooth\n", 18);
 	gwinDestroy(bluetoothSearchingLabel);
 	gwinDestroy(bluetoothDevicesList);
 	gwinDestroy(bluetoothSearchButton);
@@ -1120,6 +1132,7 @@ static void destroyBluetooth(void)
 
 static void destroyGearsSettings(void)
 {
+	gfileWrite(myfile,"destroy,Gears,Settings\n", 23);
 	gwinDestroy(numberOfGearsLabel);
 	gwinDestroy(numberOfGearsFrontLabel);
 	gwinDestroy(numberOfGearsBackLabel);
@@ -1134,6 +1147,7 @@ static void destroyGearsSettings(void)
 
 static void destroyTeethSettings(void)
 {
+	gfileWrite(myfile,"destroy,Teeth,Settings\n", 23);
 	gwinDestroy(numberOfTeethSelectorLabel);
 	gwinDestroy(numberOfTeethGearLabel);
 	gwinDestroy(numberOfTeethLabel);
@@ -1150,23 +1164,9 @@ static void destroyTeethSettings(void)
 	gwinDestroy(numberofTeethContainer);
 }
 
-static void destroyMap(void)
-{
-  gwinDestroy(mapWindow);
-	gwinDestroy(mapContainer);
-}
-
-static void destroyData(void)
-{
-	gwinDestroy(speedLabel);
-	gwinDestroy(rpmLabel);
-	gwinDestroy(batteryLabel);
-	gwinDestroy(menuButton);
-	gwinDestroy(dataContainer);
-}
-
 static void destroyGearsStatus(void)
 {
+	gfileWrite(myfile,"destroy,Gears,Status\n", 21);
 	for(int i = 1; i<= gearFrontSettings[0]; i++){
 		gwinDestroy(gearsChangesFrontGearLabel[i]);
 	}
@@ -1196,6 +1196,7 @@ static void destroyGearsStatus(void)
 
 static void destroyOldMenuSelectedItem(void)
 {
+	gfileWrite(myfile,"destroy,Old,Menu,Selected,Item\n", 31);
 	switch(oldMenuSelectedItem){
 	case 0:
 		destroyBluetooth();
@@ -1218,6 +1219,7 @@ static void destroyOldMenuSelectedItem(void)
 }
 
 void saveTeethSettings(){
+	gfileWrite(myfile,"save,Teeth,Settings\n", 20);
 	if(currentGearSide == 0){
 		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_FRONT_GEARS)){
 			gearFrontSettings[currentGearTeethWindow] = currentTeethTeethWindow;
@@ -1247,6 +1249,8 @@ void guiShowPage(unsigned pageIndex)
 
 void guiCreate(void)
 {
+	myfile = gfileOpen("logFile.csv", "w");
+	
 	GWidgetInit wi;
 
 	// GWIN settings
@@ -1276,15 +1280,7 @@ void guiEventLoop(void)
 {
 	GEvent* pe;
 	int count = 0;
-	bool_t mounted = TRUE;
-	//mounted = gfileMount ('F', drive);
-	myfile = gfileOpen("myFile", "w");
-	while (1) {
-		if(mounted){
-			gfileWrite(myfile,"HelloWorld!\n", 12);
-		}
-		
-		
+	while (1) {		
 		if(gwinGetVisible(dataContainer)){
 			if(count == 50){
 				count = 0;
@@ -1298,14 +1294,6 @@ void guiEventLoop(void)
 				count++;
 			}
 		}
-		
-		/*if(gwinGetVisible(numberofTeethContainer) && gwinGetVisible(numberOfTeethFrontButton)){
-			break;
-		}*/
-		
-		/*if(gwinGetVisible(numberofTeethContainer) && !gwinGetVisible(numberOfTeethFrontButton)){
-			break;
-		}*/
 		
     if(gwinGetVisible(mapContainer)){
 			gfxSleepMilliseconds(3);
@@ -1331,28 +1319,21 @@ void guiEventLoop(void)
 			}
 			//gwinRedraw(mapWindow);
 		}
-    
-		/*if(gwinGetVisible(numberofTeethContainer) && !gwinGetVisible(numberOfTeethFrontButton)){
-			break;
-		}	*/
 		
 		// Get an event
 		pe = geventEventWait(&glistener, 0);
 		switch (pe->type) {
 			case GEVENT_GWIN_BUTTON:
 				if (((GEventGWinButton*)pe)->gwin == menuButton) {
+						gfileWrite(myfile,"menuButton\n", 11);
 						// MENU
-						//destroyMap();
-						//destroyData();
-						
 						gwinHide(dataContainer);
 				  	gwinHide(mapContainer);
 					
 						createMenu();
 						gwinShow(menuContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
-						gfileClose(myfile);
-					  mounted=FALSE;
+						gfileWrite(myfile,"returnButton\n", 13);
 						// RETURN
 						destroyOldMenuSelectedItem();
 						destroyMenu();
@@ -1362,6 +1343,7 @@ void guiEventLoop(void)
 						gwinShow(dataContainer);
 				  	gwinShow(mapContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
+						gfileWrite(myfile,"bluetoothSearchButton\n", 22);
 						// BLUETOOTH SEARCH
 					  gwinHide(bluetoothDevicesContainer);
 						gwinShow(bluetoothSearchingContainer);
@@ -1502,6 +1484,7 @@ void guiEventLoop(void)
 						gwinPrintf(consoleWindow, "currentGearTeethWindow: \0331\033b%d\033B\033C\r\n", currentGearTeethWindow);
 						gwinPrintf(consoleWindow, "currentTeethTeethWindow: \0331\033b%d\033B\033C\r\n", currentTeethTeethWindow);
 						gwinPrintf(consoleWindow, "oldMenuSelectedItem: \0331\033b%d\033B\033C\r\n", oldMenuSelectedItem);
+						gfileClose(myfile);
 						break;
 					default:
 						break;
