@@ -1270,18 +1270,21 @@ void guiCreate(void)
 	
 	// Select the default display page
 	guiShowPage(0);
-	
-	//gfileMount ('F', drive);
-	myfile = gfileOpen ("myFile", "w");
-	gfileWrite(myfile,"HelloWorld!", 12);
-	gfileClose(myfile);
 }
 
 void guiEventLoop(void)
 {
 	GEvent* pe;
 	int count = 0;
+	bool_t mounted = TRUE;
+	//mounted = gfileMount ('F', drive);
+	myfile = gfileOpen("myFile", "w");
 	while (1) {
+		if(mounted){
+			gfileWrite(myfile,"HelloWorld!\n", 12);
+		}
+		
+		
 		if(gwinGetVisible(dataContainer)){
 			if(count == 50){
 				count = 0;
@@ -1348,6 +1351,8 @@ void guiEventLoop(void)
 						createMenu();
 						gwinShow(menuContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
+						gfileClose(myfile);
+					  mounted=FALSE;
 						// RETURN
 						destroyOldMenuSelectedItem();
 						destroyMenu();

@@ -41,7 +41,23 @@ DSTATUS disk_status (
   if ( drv )
 		return STA_NOINIT;
 	
-	return 0;
+	DSTATUS Stat = STA_NOINIT;
+
+	/* Check SDCARD status */
+	if (BSP_SD_GetStatus() == MSD_OK) {
+		Stat &= ~STA_NOINIT;
+	} else {
+		Stat |= STA_NOINIT;
+	}
+
+//	/* Check if write enabled */
+//	if (SDCARD_IsWriteEnabled()) {
+//		Stat &= ~STA_PROTECT;
+//	} else {
+//		Stat |= STA_PROTECT;
+//	}
+
+	return Stat;
 }
 
 
@@ -60,7 +76,7 @@ DRESULT disk_read (
 	if ( drv || !count )
 		return RES_PARERR;
 
-	res = (DRESULT)BSP_SD_ReadBlocks((uint32_t *)buff, sector, 512, count);
+	res = (DRESULT)BSP_SD_ReadBlocks((uint32_t *)buff, (uint64_t) (sector * SD_BLOCK_SIZE), SD_BLOCK_SIZE, count);
 	
 	if ( res == 0x00 )
 		return RES_OK;
@@ -84,7 +100,7 @@ DRESULT disk_write (
 	if ( drv || !count )
 		return RES_PARERR;
 
-	res = (DRESULT)BSP_SD_WriteBlocks((uint32_t *)buff, sector, 512, count);
+	res = (DRESULT)BSP_SD_WriteBlocks((uint32_t *)buff, (uint64_t) (sector * SD_BLOCK_SIZE), SD_BLOCK_SIZE, count);
 
 	if ( res == 0 )
 		return RES_OK;
