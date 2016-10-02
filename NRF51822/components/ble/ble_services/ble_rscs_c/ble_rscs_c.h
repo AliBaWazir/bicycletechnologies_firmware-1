@@ -1,158 +1,222 @@
-#ifndef BLE_RSCS_C_H__
-#define BLE_RSCS_C_H__
+/* Copyright (c) 2012 Nordic Semiconductor. All Rights Reserved.
+ *
+ * The information contained herein is property of Nordic Semiconductor ASA.
+ * Terms and conditions of usage are described in detail in NORDIC
+ * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
+ *
+ * Licensees are granted free, non-transferable use of the information. NO
+ * WARRANTY of ANY KIND is provided. This heading must NOT be removed from
+ * the file.
+ *
+ */
+
+/** @file
+ *
+ * @defgroup ble_sdk_srv_csc Cycling Speed and Cadence Service
+ * @{
+ * @ingroup ble_sdk_srv
+ * @brief Cycling Speed and Cadence Service module.
+ *
+ * @details This module implements the Cycling Speed and Cadence Service. If enabled, notification
+ *          of the Cycling Speead and Candence Measurement is performed when the application
+ *          calls ble_cscs_measurement_send().
+ *
+ *          To use this service, you need to provide the the supported features (@ref BLE_CSCS_FEATURES).
+ *          If you choose to support Wheel revolution data (feature bit @ref BLE_CSCS_FEATURE_WHEEL_REV_BIT), 
+ *          you then need to support the 'setting of cumulative value' operation by the supporting the 
+ *          Speed and Cadence Control Point (@ref ble_sdk_srv_sc_ctrlpt) by setting the @ref BLE_SRV_SC_CTRLPT_CUM_VAL_OP_SUPPORTED
+ *          bit of the ctrplt_supported_functions in the @ref ble_cscs_init_t structure.
+ *          If you want to support the 'start autocalibration' control point feature, you need, after the @ref BLE_SC_CTRLPT_EVT_START_CALIBRATION
+ *          has been received and the auto calibration is finished, to call the @ref ble_sc_ctrlpt_rsp_send to indicate that the operation is finished
+ *          and thus be able to receive new control point operations.
+ *          If you want to support the 'sensor location' related operation, you need to provide a list of supported location in the 
+ *          @ref ble_cscs_init_t structure.
+ *          
+ *
+ * @note The application or the service using this module must propagate BLE stack events to the 
+ *       Cycling Speead and Candence Service module by calling ble_cscs_on_ble_evt() from the 
+ *       from the @ref ble_stack_handler function. This service will forward the event to the @ref ble_sdk_srv_sc_ctrlpt module.
+ *
+ * @note Attention! 
+ *  To maintain compliance with Nordic Semiconductor ASA Bluetooth profile 
+ *  qualification listings, this section of source code must not be modified.
+ */
+
+#ifndef BLE_CSCS_H__
+#define BLE_CSCS_H__
 
 #include <stdint.h>
 #include <stdbool.h>
 #include "ble.h"
+#include "ble_srv_common.h"
+#include "ble_sc_ctrlpt.h"
+#include "ble_sensor_location.h"
 #include "ble_db_discovery.h"
+#include "sdk_macros.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+	
+/** @defgroup BLE_CSCS_FEATURES Cycling Speed and Cadence Service feature bits
+ * @{ */
+ 
+#define BLE_CSCS_FEATURE_WHEEL_REV_BIT                  (0x01 << 0)     /**< Wheel Revolution Data Supported bit. */
+#define BLE_CSCS_FEATURE_CRANK_REV_BIT                  (0x01 << 1)     /**< Crank Revolution Data Supported bit. */
+#define BLE_CSCS_FEATURE_MULTIPLE_SENSORS_BIT           (0x01 << 2)     /**< Multiple Sensor Locations Supported bit. */
+/** @} */
 
-/**
- * @defgroup ble_rscs_c Running Speed and Cadence Service Client
- * @{
- * @ingroup ble_sdk_srv
- *
- * @details  This module contains the APIs and types exposed by the Running Speed and Cadence
- *           Service Client module. These APIs and types can be used by the application to perform
- *           discovery of Running Speed and Cadence Service at the peer and interact with it.
- *
- * @note     The application must propagate BLE stack events to this module by calling
- *           ble_rscs_c_on_ble_evt().
- */
-
-
-/**@brief Structure containing the handles related to the Running Speed and Cadence Service found on the peer. */
+/**@brief Structure containing the handles related to the Cycling Speed and Cadence Service found on the peer. */
 typedef struct
 {
-    uint16_t rsc_cccd_handle;                /**< Handle of the CCCD of the Running Speed and Cadence characteristic. */
-    uint16_t rsc_handle;                     /**< Handle of the Running Speed and Cadence characteristic as provided by the SoftDevice. */
-} ble_rscs_c_db_t;
+    uint16_t csc_cccd_handle;                /**< Handle of the CCCD of the Cycling Speed and Cadence characteristic. */
+    uint16_t csc_handle;                     /**< Handle of the Cycling Speed and Cadence characteristic as provided by the SoftDevice. */
+} ble_cscs_c_db_t;
 
-/**@brief RSCS Client event type. */
+/**@brief Cycling Speed and Cadence Service event type. */
 typedef enum
+{	
+	  /* Used */
+    BLE_CSCS_C_EVT_DISCOVERY_COMPLETE = 1,   /**< Event indicating that the Cycling Speed and Cadence Service has been discovered at the peer. */
+    BLE_CSCS_C_EVT_CSC_NOTIFICATION,         /**< Event indicating that a notification of the Cycling Speed and Cadence measurement characteristic has been received from the peer. */
+	  
+	  /*Not used */
+	  BLE_CSCS_C_EVT_NOTIFICATION_ENABLED,       /**< Cycling Speed and Cadence value notification enabled event. */
+    BLE_CSCS_C_EVT_NOTIFICATION_DISABLED       /**< Cycling Speed and Cadence value notification disabled event. */
+	
+} ble_cscs_c_evt_type_t;
+
+/**@brief Cycling Speed and Cadence Service measurement structure. This contains a Cycling Speed and
+ *        Cadence Service measurement. */
+typedef struct ble_cscs_meas_s
 {
-    BLE_RSCS_C_EVT_DISCOVERY_COMPLETE = 1,  /**< Event indicating that the Running Speed and Cadence Service has been discovered at the peer. */
-    BLE_RSCS_C_EVT_RSC_NOTIFICATION         /**< Event indicating that a notification of the Running Speed and Cadence measurement characteristic has been received from the peer. */
-} ble_rscs_c_evt_type_t;
+    bool        is_wheel_rev_data_present;                              /**< True if Wheel Revolution Data is present in the measurement. */
+    bool        is_crank_rev_data_present;                              /**< True if Crank Revolution Data is present in the measurement. */
+    uint32_t    cumulative_wheel_revs;                                  /**< Cumulative Wheel Revolutions. */
+    uint16_t    last_wheel_event_time;                                  /**< Last Wheel Event Time. */
+    uint16_t    cumulative_crank_revs;                                  /**< Cumulative Crank Revolutions. */
+    uint16_t    last_crank_event_time;                                  /**< Last Crank Event Time. */
+} ble_cscs_c_meas_t;
 
-#define BLE_RSCS_INSTANT_STRIDE_LEN_PRESENT    0x00  /**< Instantaneous Stride Length Measurement Supported bit. */
-#define BLE_RSCS_TOTAL_DISTANCE_PRESENT        0x01  /**< Total Distance Measurement Supported bit. */
-#define BLE_RSCS_WALKING_OR_RUNNING_STATUS_BIT 0x02  /**< Walking or Running Status Supported bit. */
-
-/**@brief Structure containing the Running Speed and Cadence measurement received from the peer. */
+/**@brief Cycling Speed and Cadence Service event. */
 typedef struct
 {
-    bool     is_inst_stride_len_present;             /**< True if Instantaneous Stride Length is present in the measurement. */
-    bool     is_total_distance_present;              /**< True if Total Distance is present in the measurement. */
-    bool     is_running;                             /**< True if running, False if walking. */
-    uint16_t inst_speed;                             /**< Instantaneous Speed. */
-    uint8_t  inst_cadence;                           /**< Instantaneous Cadence. */
-    uint16_t inst_stride_length;                     /**< Instantaneous Stride Length. */
-    uint32_t total_distance;                         /**< Total Distance. */
-} ble_rsc_t;
-
-/**@brief Running Speed and Cadence Event structure. */
-typedef struct
-{
-    ble_rscs_c_evt_type_t evt_type;  /**< Type of the event. */
-    uint16_t  conn_handle;           /**< Connection handle on which the rscs_c event  occured.*/
+    ble_cscs_c_evt_type_t evt_type;                                       /**< Type of event. */
+	  
+	  /* The following fields are added to be similar to running speed and candence example */
+	  uint16_t  conn_handle;                  /**< Connection handle on which the cscs_c event  occured.*/
     union
     {
-        ble_rscs_c_db_t rscs_db;           /**< Running Speed and Cadence Service related handles found on the peer device. This will be filled if the evt_type is @ref BLE_RSCS_C_EVT_DISCOVERY_COMPLETE.*/
-        ble_rsc_t       rsc;               /**< Running Speed and Cadence measurement received. This will be filled if the evt_type is @ref BLE_RSCS_C_EVT_RSC_NOTIFICATION. */
+        ble_cscs_c_db_t     cscs_db;           /**< Cycling Speed and Cadence Service related handles found on the peer device. This will be filled if the evt_type is @ref BLE_CSCS_C_EVT_DISCOVERY_COMPLETE.*/
+        ble_cscs_c_meas_t   csc_meas;          /**< Cycling Speed and Cadence measurement received. This will be filled if the evt_type is @ref BLE_CSCS_C_EVT_RSC_NOTIFICATION. */
     } params;
-} ble_rscs_c_evt_t;
+	
+} ble_cscs_c_evt_t;
 
-// Forward declaration of the ble_rscs_c_t type.
-typedef struct ble_rscs_c_s ble_rscs_c_t;
+// Forward declaration of the ble_cscs_t type. 
+typedef struct ble_cscs_c_s ble_cscs_c_t;
 
+/**@brief Cycling Speed and Cadence Service event handler type. */
+typedef void (*ble_cscs_c_evt_handler_t) (ble_cscs_c_t * p_cscs, ble_cscs_c_evt_t * p_evt);
 
-/**@brief   Event handler type.
- *
- * @details This is the type of the event handler that should be provided by the application
- *          of this module in order to receive events.
- */
-typedef void (* ble_rscs_c_evt_handler_t) (ble_rscs_c_t * p_ble_rscs_c, ble_rscs_c_evt_t * p_evt);
-
-/**@brief Running Speed and Cadence client structure.
- */
-struct ble_rscs_c_s
-{
-    uint16_t                 conn_handle;      /**< Connection handle as provided by the SoftDevice. */
-    ble_rscs_c_db_t          peer_db;          /**< Handles related to RSCS on the peer*/
-    ble_rscs_c_evt_handler_t evt_handler;      /**< Application event handler to be called when there is an event related to the Running Speed and Cadence service. */
-};
-
-/**@brief Running Speed and Cadence client initialization structure.
- */
+/**@brief Cycling Speed and Cadence Service init structure. This contains all options and data
+*         needed for initialization of the service. */
 typedef struct
 {
-    ble_rscs_c_evt_handler_t evt_handler;  /**< Event handler to be called by the Running Speed and Cadence Client module whenever there is an event related to the Running Speed and Cadence Service. */
-} ble_rscs_c_init_t;
+    ble_cscs_c_evt_handler_t     evt_handler;                           /**< Event handler to be called for handling events in the Cycling Speed and Cadence Service. */
+    /*Extra fiels*/
+	  ble_srv_cccd_security_mode_t csc_meas_attr_md;                      /**< Initial security level for cycling speed and cadence measurement attribute */
+    ble_srv_cccd_security_mode_t csc_ctrlpt_attr_md;                    /**< Initial security level for cycling speed and cadence control point attribute */
+    ble_srv_security_mode_t      csc_feature_attr_md;                   /**< Initial security level for feature attribute */
+    uint16_t                     feature;                               /**< Initial value for features of sensor @ref BLE_CSCS_FEATURES. */
+    uint8_t                      ctrplt_supported_functions;            /**< Supported control point functionnalities see @ref BLE_SRV_SC_CTRLPT_SUPP_FUNC. */
+    ble_sc_ctrlpt_evt_handler_t  ctrlpt_evt_handler;                    /**< Event handler */
+    ble_sensor_location_t        *list_supported_locations;             /**< List of supported sensor locations.*/
+    uint8_t                      size_list_supported_locations;         /**< Number of supported sensor locations in the list.*/
+    ble_srv_error_handler_t      error_handler;                         /**< Function to be called in case of an error. */
+    ble_sensor_location_t        *sensor_location;                      /**< Initial Sensor Location, if NULL, sensor_location characteristic is not added*/
+    ble_srv_cccd_security_mode_t csc_sensor_loc_attr_md;                /**< Initial security level for sensor location attribute */
+} ble_cscs_c_init_t;
+
+/**@brief Cycling Speed and Cadence Service structure. This contains various status information for
+ *        the service. */
+typedef struct ble_cscs_c_s
+{
+    ble_cscs_c_evt_handler_t     evt_handler;                           /**< Event handler to be called for handling events in the Cycling Speed and Cadence Service. */
+    ble_cscs_c_db_t              peer_db;                               /**< Handles related to CSCS on the peer*/
+    uint16_t                     conn_handle;                           /**< Handle of the current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
+    
+	  /* Extra fields*/
+	  uint16_t                     service_handle;                        /**< Handle of Cycling Speed and Cadence Service (as provided by the BLE stack). */
+    ble_gatts_char_handles_t     meas_handles;                          /**< Handles related to the Cycling Speed and Cadence Measurement characteristic. */
+    ble_gatts_char_handles_t     feature_handles;                       /**< Handles related to the Cycling Speed and Cadence feature characteristic. */
+    ble_gatts_char_handles_t     sensor_loc_handles;                    /**< Handles related to the Cycling Speed and Cadence Sensor Location characteristic. */
+    uint16_t                     feature;                               /**< Bit mask of features available on sensor. */
+    ble_sc_ctrlpt_t              ctrl_pt;                               /**< data for speed and cadence control point */
+} ble_cscs_c_t;
 
 
-/**@brief      Function for initializing the Running Speed and Cadence Service Client module.
+
+/**@brief Function for initializing the Cycling Speed and Cadence Service.
  *
- * @details    This function will initialize the module and set up Database Discovery to discover
- *             the Running Speed and Cadence Service. After calling this function, call @ref ble_db_discovery_start
- *             to start discovery once a link with a peer has been established.
+ * @param[out]  p_cscs      Cycling Speed and Cadence Service structure. This structure will have to
+ *                          be supplied by the application. It will be initialized by this function,
+ *                          and will later be used to identify this particular service instance.
+ * @param[in]   p_cscs_init Information needed to initialize the service.
  *
- * @param[out] p_ble_rscs_c      Pointer to the RSC Service client structure.
- * @param[in]  p_ble_rscs_c_init Pointer to the RSC Service initialization structure containing
- *                               the initialization information.
- *
- * @retval     NRF_SUCCESS      Operation success.
- * @retval     NRF_ERROR_NULL   A parameter is NULL.
- *                              Otherwise, an error code returned by @ref ble_db_discovery_evt_register.
+ * @return      NRF_SUCCESS on successful initialization of service, otherwise an error code.
  */
-uint32_t ble_rscs_c_init(ble_rscs_c_t * p_ble_rscs_c, ble_rscs_c_init_t * p_ble_rscs_c_init);
+uint32_t ble_cscs_c_init(ble_cscs_c_t * p_ble_cscs_c, const ble_cscs_c_init_t * p_ble_cscs_c_init);
 
-void ble_rscs_c_on_ble_evt(ble_rscs_c_t * p_ble_rscs_c, const ble_evt_t * p_ble_evt);
-
-uint32_t ble_rscs_c_rsc_notif_enable(ble_rscs_c_t * p_ble_rscs_c);
-
-
-/**@brief     Function for handling events from the database discovery module.
+/**@brief Function for handling the Application's BLE Stack events.
  *
- * @details   Call this function when getting a callback event from the DB discovery modue.
- *            This function will handle an event from the database discovery module, and determine
- *            if it relates to the discovery of Running Speed and Cadence service at the peer. If so, it will
- *            call the application's event handler indicating that the RSC service has been
- *            discovered at the peer. It also populates the event with the service related
- *            information before providing it to the application.
+ * @details Handles all events from the BLE stack of interest to the Cycling Speed and Cadence
+ *          Service.
  *
- * @param     p_ble_rscs_c Pointer to the Runnind Speed and Cadence Service client structure.
- * @param[in] p_evt Pointer to the event received from the database discovery module.
- *
+ * @param[in]   p_cscs     Cycling Speed and Cadence Service structure.
+ * @param[in]   p_ble_evt  Event received from the BLE stack.
  */
-void ble_rscs_on_db_disc_evt(ble_rscs_c_t * p_ble_rscs_c, const ble_db_discovery_evt_t * p_evt);
+void ble_cscs_c_on_ble_evt(ble_cscs_c_t * p_ble_cscs_c, const ble_evt_t * p_ble_evt);	
 
 
-/**@brief     Function for assigning handles to a this instance of rscs_c.
+/**@brief Function for sending cycling speed and cadence measurement if notification has been enabled.
+ *
+ * @details The application calls this function after having performed a Cycling Speed and Cadence
+ *          Service measurement. If notification has been enabled, the measurement data is encoded
+ *          and sent to the client.
+ *
+ * @param[in]   p_cscs         Cycling Speed and Cadence Service structure.
+ * @param[in]   p_measurement  Pointer to new cycling speed and cadence measurement.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+uint32_t ble_cscs_c_measurement_send(ble_cscs_c_t * p_cscs, ble_cscs_c_meas_t * p_measurement);
+
+
+/**@brief     Function for assigning handles to a this instance of cscs_c.
  *
  * @details   Call this function when a link has been established with a peer to
  *            associate this link to this instance of the module. This makes it
  *            possible to handle several link and associate each link to a particular
  *            instance of this module. The connection handle and attribute handles will be
- *            provided from the discovery event @ref BLE_RSCS_C_EVT_DISCOVERY_COMPLETE.
+ *            provided from the discovery event @ref BLE_CSCS_C_EVT_DISCOVERY_COMPLETE.
  *
- * @param[in] p_ble_rscs_c   Pointer to the RSC client structure instance to associate.
- * @param[in] conn_handle    Connection handle to associated with the given RSCS Client Instance.
- * @param[in] p_peer_handles Attribute handles on the RSCS server that you want this RSCS client to
+ * @param[in] p_ble_cscs_c   Pointer to the CSC client structure instance to associate.
+ * @param[in] conn_handle    Connection handle to associated with the given CSCS Client Instance.
+ * @param[in] p_peer_handles Attribute handles on the CSCS server that you want this CSCS client to
  *                           interact with.
  */
-uint32_t ble_rscs_c_handles_assign(ble_rscs_c_t *    p_ble_rscs_c,
-                                   uint16_t         conn_handle,
-                                   ble_rscs_c_db_t * p_peer_handles);
-
+uint32_t ble_cscs_c_handles_assign(ble_cscs_c_t *    p_ble_cscs_c,
+                                   uint16_t          conn_handle,
+                                   ble_cscs_c_db_t * p_peer_handles);
+																	 
+uint32_t ble_cscs_c_csc_notif_enable(ble_cscs_c_t * p_ble_cscs_c);
+void ble_cscs_on_db_disc_evt(ble_cscs_c_t * p_ble_cscs_c, const ble_db_discovery_evt_t * p_evt);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // BLE_RSCS_C_H__
+#endif // BLE_CSCS_H__
 
-/** @} */ // End tag for the file.
+/** @} */

@@ -8,9 +8,9 @@
  */
 
 /**
- * @brief BLE Running Speed and Cadence Collector application main file.
+ * @brief BLE Cycling Speed and Cadence Collector application main file.
  *
- * This file contains the source code for a sample Running Speed and Cadence collector application.
+ * This file contains the source code running on nRF51822 module for the SHIFTY project.
  */
 
 #include <stdint.h>
@@ -98,7 +98,7 @@ typedef enum
 } ble_scan_mode_t;
 
 static ble_db_discovery_t    m_ble_db_discovery;                       /**< Structure used to identify the DB Discovery module. */
-static ble_rscs_c_t          m_ble_rsc_c;                              /**< Structure used to identify the Running Speed and Cadence client module. */
+static ble_cscs_c_t          m_ble_csc_c;                              /**< Structure used to identify the Cycling Speed and Cadence client module. */
 static ble_gap_scan_params_t m_scan_param;                             /**< Scan parameters requested for scanning and connection. */
 static ble_scan_mode_t       m_scan_mode = BLE_FAST_SCAN;              /**< Scan mode used by application. */
 static uint16_t              m_conn_handle;                            /**< Current connection handle. */
@@ -147,7 +147,7 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
  */
 static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
 {
-    ble_rscs_on_db_disc_evt(&m_ble_rsc_c, p_evt);
+    ble_cscs_on_db_disc_evt(&m_ble_csc_c, p_evt);
 }
 
 
@@ -517,7 +517,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
     ble_conn_state_on_ble_evt(p_ble_evt);
     pm_on_ble_evt(p_ble_evt);
     ble_db_discovery_on_ble_evt(&m_ble_db_discovery, p_ble_evt);
-    ble_rscs_c_on_ble_evt(&m_ble_rsc_c, p_ble_evt);
+    ble_cscs_c_on_ble_evt(&m_ble_csc_c, p_ble_evt);
     bsp_btn_ble_on_ble_evt(p_ble_evt);
     on_ble_evt(p_ble_evt);
 }
@@ -633,56 +633,49 @@ void bsp_event_handler(bsp_event_t event)
 }
 
 
-/**@brief Running Speed and Cadence Collector Handler.
+/**@brief Cycling Speed and Cadence Collector Handler.
  */
-static void rscs_c_evt_handler(ble_rscs_c_t * p_rsc_c, ble_rscs_c_evt_t * p_rsc_c_evt)
+static void cscs_c_evt_handler(ble_cscs_c_t * p_csc_c, ble_cscs_c_evt_t * p_csc_c_evt)
 {
     uint32_t err_code;
 
-    switch (p_rsc_c_evt->evt_type)
+    switch (p_csc_c_evt->evt_type)
     {
-        case BLE_RSCS_C_EVT_DISCOVERY_COMPLETE:
+        case BLE_CSCS_C_EVT_DISCOVERY_COMPLETE:
             // Initiate bonding.
-            err_code = ble_rscs_c_handles_assign(&m_ble_rsc_c,
-                                                 p_rsc_c_evt->conn_handle,
-                                                 &p_rsc_c_evt->params.rscs_db);
+            err_code = ble_cscs_c_handles_assign(&m_ble_csc_c,
+                                                 p_csc_c_evt->conn_handle,
+                                                 &p_csc_c_evt->params.cscs_db);
             APP_ERROR_CHECK(err_code);
 
-            err_code = pm_conn_secure(p_rsc_c_evt->conn_handle, false);
+            err_code = pm_conn_secure(p_csc_c_evt->conn_handle, false);
             APP_ERROR_CHECK(err_code);
 
-            // Running Speed and Cadence service discovered. Enable Running Speed and Cadence notifications.
-            err_code = ble_rscs_c_rsc_notif_enable(p_rsc_c);
+            // Cycling Speed and Cadence service discovered. Enable Cycling Speed and Cadence notifications.
+            err_code = ble_cscs_c_csc_notif_enable(p_csc_c);
             APP_ERROR_CHECK(err_code);
 
-            NRF_LOG_INFO("Running Speed and Cadence service discovered \r\n");
+            NRF_LOG_INFO("Cycling Speed and Cadence service discovered \r\n");
             break;
 
-        case BLE_RSCS_C_EVT_RSC_NOTIFICATION:
+        case BLE_CSCS_C_EVT_CSC_NOTIFICATION:
         {
             NRF_LOG_INFO("\r\n");
-            NRF_LOG_DEBUG("RSC Measurement received %d \r\n",
-                     p_rsc_c_evt->params.rsc.inst_speed);
-
-            NRF_LOG_INFO("Instantanious Speed   = %d\r\n", p_rsc_c_evt->params.rsc.inst_speed);
-            if (p_rsc_c_evt->params.rsc.is_inst_stride_len_present)
-            {
-                NRF_LOG_INFO("Stride Length         = %d\r\n",
-                       p_rsc_c_evt->params.rsc.inst_stride_length);
-            }
-            if (p_rsc_c_evt->params.rsc.is_total_distance_present)
-            {
-                NRF_LOG_INFO("Total Distance = %u\r\n",
-                       (unsigned int)p_rsc_c_evt->params.rsc.total_distance);
-            }
-            NRF_LOG_INFO("Instantanious Cadence = %d\r\n", p_rsc_c_evt->params.rsc.inst_cadence);
-            NRF_LOG_INFO("Flags\r\n");
-            NRF_LOG_INFO("  Stride Length Present = %d\r\n",
-                   p_rsc_c_evt->params.rsc.is_inst_stride_len_present);
-            NRF_LOG_INFO("  Total Distance Present= %d\r\n",
-                   p_rsc_c_evt->params.rsc.is_total_distance_present);
-            NRF_LOG_INFO("  Is Running            = %d\r\n", p_rsc_c_evt->params.rsc.is_running);
-            break;
+            if(p_csc_c_evt->params.csc_meas.is_wheel_rev_data_present){
+								NRF_LOG_INFO("Comulative Wheel Revolution   = %d\r\n",
+							                p_csc_c_evt->params.csc_meas.cumulative_wheel_revs);
+							  NRF_LOG_INFO("Last Wheel Event time         = %d\r\n",
+							                p_csc_c_evt->params.csc_meas.last_wheel_event_time);
+						}
+					  
+					  if(p_csc_c_evt->params.csc_meas.is_crank_rev_data_present){
+								NRF_LOG_INFO("Comulative Crank Revolution   = %d\r\n",
+							                p_csc_c_evt->params.csc_meas.cumulative_crank_revs);
+							NRF_LOG_INFO("Last Crank Event time         = %d\r\n",
+							                p_csc_c_evt->params.csc_meas.last_crank_event_time);
+						}
+						
+						break;
         }
 
         default:
@@ -692,15 +685,20 @@ static void rscs_c_evt_handler(ble_rscs_c_t * p_rsc_c, ble_rscs_c_evt_t * p_rsc_
 
 
 /**
- * @brief HRunning Speed and Cadence collector initialization.
+ * @brief Cycling Speed and Cadence collector initialization.
  */
-static void rscs_c_init(void)
+static void cscs_c_init(void)
 {
-    ble_rscs_c_init_t rscs_c_init_obj;
+    ble_cscs_c_init_t cscs_c_init_obj;
+		//memset(&cscs_c_init_obj, 0, sizeof(ble_cscs_c_init_t));
+	
+    cscs_c_init_obj.evt_handler = cscs_c_evt_handler;
+	  /*Added to accept all features from sensor*/
+	  cscs_c_init_obj.feature = BLE_CSCS_FEATURE_WHEEL_REV_BIT 
+                          	| BLE_CSCS_FEATURE_CRANK_REV_BIT
+	                          | BLE_CSCS_FEATURE_MULTIPLE_SENSORS_BIT;;
 
-    rscs_c_init_obj.evt_handler = rscs_c_evt_handler;
-
-    uint32_t err_code = ble_rscs_c_init(&m_ble_rsc_c, &rscs_c_init_obj);
+    uint32_t err_code = ble_cscs_c_init(&m_ble_csc_c, &cscs_c_init_obj);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -952,17 +950,17 @@ int main(void)
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, NULL);
     buttons_leds_init(&erase_bonds);
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
-    NRF_LOG_INFO("Running Speed collector example\r\n");
+    NRF_LOG_INFO("Cycling Speed and Cadence collector example\r\n");
     ble_stack_init();
     ble_conn_state_init();
     peer_manager_init(erase_bonds);
     db_discovery_init();
-    rscs_c_init();
+    cscs_c_init();
 
     whitelist_load();
 
     // Start scanning for peripherals and initiate connection
-    // with devices that advertise Running Speed and Cadence UUID.
+    // with devices that advertise Cycling Speed and Cadence UUID.
     scan_start();
 
     for (;;)

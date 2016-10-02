@@ -85,13 +85,6 @@
 #define BLE_BAS_ENABLED 0
 #endif
 
-// <q> BLE_RSCS_C_ENABLED  - ble_cscs_c - Cycling Speed and Cadence Client
- 
-
-#ifndef BLE_CSCS_C_ENABLED
-#define BLE_CSCS_C_ENABLED 1
-#endif
-
 // <q> BLE_CSCS_ENABLED  - ble_cscs - Cycling Speed and Cadence Service
  
 
@@ -201,7 +194,7 @@
  
 
 #ifndef BLE_RSCS_C_ENABLED
-#define BLE_RSCS_C_ENABLED 0
+#define BLE_RSCS_C_ENABLED 1
 #endif
 
 // <q> BLE_RSCS_ENABLED  - ble_rscs - Running Speed and Cadence Service
@@ -2149,7 +2142,7 @@
 // <8=> White 
 
 #ifndef NRF_LOG_COLOR_DEFAULT
-#define NRF_LOG_COLOR_DEFAULT 1
+#define NRF_LOG_COLOR_DEFAULT 0
 #endif
 
 // <o> NRF_LOG_ERROR_COLOR  - ANSI escape code prefix.
