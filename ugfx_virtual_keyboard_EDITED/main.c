@@ -152,6 +152,11 @@ int main (void)
 
 	guiCreate();
 
+	osMutexDef (MutexIsr);
+	mutex_id = osMutexCreate  (osMutex (MutexIsr));
+  if (mutex_id != NULL)  {
+    // Mutex object created
+  }   
   osThreadId id;
   
   id = osThreadCreate (osThread (Thread_1), NULL);         // create the thread
@@ -163,6 +168,7 @@ int main (void)
 				x=0;
 			}
 			x++;
+			printingFile("I AM IN MAIN = %d\n",x);
     }
 }
 

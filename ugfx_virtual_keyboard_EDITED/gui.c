@@ -116,9 +116,34 @@ static pixel_t* surface;
 
 void drawTile(int xx, int yy);
 
+osMutexId mutex_id;
+
+void printingFile(const char *fmt, ...)
+{
+	osStatus status;
+	status  = osMutexWait(mutex_id, 0);
+	if (status != osOK){
+		// handle failure code
+	}
+	char buffer[256];
+	int charcount = 0;
+  va_list args;
+  va_start (args, fmt);
+  charcount = vsprintf (buffer, fmt, args);
+	gfileWrite(myfile, buffer, charcount);
+	va_end(args);
+	status = osMutexRelease(mutex_id);
+	if (status != osOK)  {
+		// handle failure code
+	}
+}
+
 static void createMainContainer(void)
 {
-	gfileWrite(myfile,"createMainContainer\n", 20);
+	//gfileWrite(myfile,"createMainContainer\n", 20);
+	printingFile("createMainContainer\n");
+	printingFile("YOLOSWAG = %d\n", 5);
+	printingFile("BDN = %d, YOLO = %d\n", 10,20);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 	
@@ -138,7 +163,8 @@ static void createMainContainer(void)
 
 static void createMap(void)
 {
-	gfileWrite(myfile,"createMap\n", 10);
+	//gfileWrite(myfile,"createMap\n", 10);
+	printingFile("createMap\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -169,7 +195,8 @@ static void createMap(void)
 
 static void createData(void)
 {
-	gfileWrite(myfile,"createData\n", 11);
+	//gfileWrite(myfile,"createData\n", 11);
+	printingFile("createData\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 		
@@ -254,7 +281,8 @@ static void createData(void)
 
 static void createConsole(void)
 {
-	gfileWrite(myfile,"createConsole\n", 14);
+	//gfileWrite(myfile,"createConsole\n", 14);
+	printingFile("createConsole\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -287,7 +315,8 @@ static void createConsole(void)
 
 static void createMenu(void)
 {
-	gfileWrite(myfile,"createMenu\n", 11);
+	//gfileWrite(myfile,"createMenu\n", 11);
+	printingFile("createMenu\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -347,7 +376,8 @@ static void createMenu(void)
 
 static void createBluetooth(void)
 {
-	gfileWrite(myfile,"createBluetooth\n", 16);
+	//gfileWrite(myfile,"createBluetooth\n", 16);
+	printingFile("createBluetooth\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -471,7 +501,8 @@ static void createBluetooth(void)
 
 static void createGearsSettings(void)
 {
-	gfileWrite(myfile,"createGearsSettings\n", 20);
+	//gfileWrite(myfile,"createGearsSettings\n", 20);
+	printingFile("createGearsSettings\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -628,7 +659,8 @@ static void createGearsSettings(void)
 
 static void createTeethSettings(void)
 {
-	gfileWrite(myfile,"createTeethSettings\n", 20);
+	//gfileWrite(myfile,"createTeethSettings\n", 20);
+	printingFile("createTeethSettings\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -842,7 +874,8 @@ static void createTeethSettings(void)
 
 static void createGearsStatus(void)
 {
-	gfileWrite(myfile,"createGearsStatus\n", 18);
+	//gfileWrite(myfile,"createGearsStatus\n", 18);
+	printingFile("createGearsStatus\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -1106,21 +1139,24 @@ static void createGearsStatus(void)
 
 static void destroyConsole(void)
 {
-	gfileWrite(myfile,"destroy,Console\n", 16);
+	//gfileWrite(myfile,"destroy,Console\n", 16);
+	printingFile("destroy,Console\n");
 	gwinDestroy(consoleWindow);
 	gwinDestroy(consoleContainer);
 }
 
 static void destroyMenu(void)
 {
-	gfileWrite(myfile,"destroy,Menu\n", 13);
+	//gfileWrite(myfile,"destroy,Menu\n", 13);
+	printingFile("destroy,Menu\n");
 	gwinDestroy(menuList);
 	gwinDestroy(returnButton);
 	gwinDestroy(menuContainer);
 }
 static void destroyBluetooth(void)
 {
-	gfileWrite(myfile,"destroy,Bluetooth\n", 18);
+	//gfileWrite(myfile,"destroy,Bluetooth\n", 18);
+	printingFile("destroy,Bluetooth\n");
 	gwinDestroy(bluetoothSearchingLabel);
 	gwinDestroy(bluetoothDevicesList);
 	gwinDestroy(bluetoothSearchButton);
@@ -1132,7 +1168,8 @@ static void destroyBluetooth(void)
 
 static void destroyGearsSettings(void)
 {
-	gfileWrite(myfile,"destroy,Gears,Settings\n", 23);
+	//gfileWrite(myfile,"destroy,Gears,Settings\n", 23);
+	printingFile("destroy,Gears,Settings\n");
 	gwinDestroy(numberOfGearsLabel);
 	gwinDestroy(numberOfGearsFrontLabel);
 	gwinDestroy(numberOfGearsBackLabel);
@@ -1147,7 +1184,8 @@ static void destroyGearsSettings(void)
 
 static void destroyTeethSettings(void)
 {
-	gfileWrite(myfile,"destroy,Teeth,Settings\n", 23);
+	//gfileWrite(myfile,"destroy,Teeth,Settings\n", 23);
+	printingFile("destroy,Teeth,Settings\n");
 	gwinDestroy(numberOfTeethSelectorLabel);
 	gwinDestroy(numberOfTeethGearLabel);
 	gwinDestroy(numberOfTeethLabel);
@@ -1166,7 +1204,8 @@ static void destroyTeethSettings(void)
 
 static void destroyGearsStatus(void)
 {
-	gfileWrite(myfile,"destroy,Gears,Status\n", 21);
+	//gfileWrite(myfile,"destroy,Gears,Status\n", 21);
+	printingFile("destroy,Gears,Status\n");
 	for(int i = 1; i<= gearFrontSettings[0]; i++){
 		gwinDestroy(gearsChangesFrontGearLabel[i]);
 	}
@@ -1196,7 +1235,8 @@ static void destroyGearsStatus(void)
 
 static void destroyOldMenuSelectedItem(void)
 {
-	gfileWrite(myfile,"destroy,Old,Menu,Selected,Item\n", 31);
+	//gfileWrite(myfile,"destroy,Old,Menu,Selected,Item\n", 31);
+	printingFile("destroy,Old,Menu,Selected,Item\n");
 	switch(oldMenuSelectedItem){
 	case 0:
 		destroyBluetooth();
@@ -1219,7 +1259,8 @@ static void destroyOldMenuSelectedItem(void)
 }
 
 void saveTeethSettings(){
-	gfileWrite(myfile,"save,Teeth,Settings\n", 20);
+	//gfileWrite(myfile,"save,Teeth,Settings\n", 20);
+	printingFile("save,Teeth,Settings\n");
 	if(currentGearSide == 0){
 		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_FRONT_GEARS)){
 			gearFrontSettings[currentGearTeethWindow] = currentTeethTeethWindow;
@@ -1249,6 +1290,9 @@ void guiShowPage(unsigned pageIndex)
 
 void guiCreate(void)
 {
+	if(gfileExists("logFile.csv")){
+		gfileDelete("logFile.csv");
+	}
 	myfile = gfileOpen("logFile.csv", "w");
 	
 	GWidgetInit wi;
@@ -1325,7 +1369,8 @@ void guiEventLoop(void)
 		switch (pe->type) {
 			case GEVENT_GWIN_BUTTON:
 				if (((GEventGWinButton*)pe)->gwin == menuButton) {
-						gfileWrite(myfile,"menuButton\n", 11);
+						//gfileWrite(myfile,"menuButton\n", 11);
+						printingFile("menuButton\n");
 						// MENU
 						gwinHide(dataContainer);
 				  	gwinHide(mapContainer);
@@ -1333,7 +1378,8 @@ void guiEventLoop(void)
 						createMenu();
 						gwinShow(menuContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
-						gfileWrite(myfile,"returnButton\n", 13);
+						//gfileWrite(myfile,"returnButton\n", 13);
+						printingFile("returnButton\n");
 						// RETURN
 						destroyOldMenuSelectedItem();
 						destroyMenu();
@@ -1343,7 +1389,8 @@ void guiEventLoop(void)
 						gwinShow(dataContainer);
 				  	gwinShow(mapContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
-						gfileWrite(myfile,"bluetoothSearchButton\n", 22);
+						//gfileWrite(myfile,"bluetoothSearchButton\n", 22);
+						printingFile("bluetoothSearchButton\n");
 						// BLUETOOTH SEARCH
 					  gwinHide(bluetoothDevicesContainer);
 						gwinShow(bluetoothSearchingContainer);
