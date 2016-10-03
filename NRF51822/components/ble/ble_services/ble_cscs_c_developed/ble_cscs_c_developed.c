@@ -24,7 +24,7 @@
 #include "nordic_common.h"
 #include "nrf_error.h"
 #include "app_util.h"
-#include "ble_rscs_c.h" //renaming the h file is needed
+#include "ble_cscs_c_developed.h" //renaming the h file is needed
 #include "ble_db_discovery.h"
 #include "ble_types.h"
 #include "ble_srv_common.h"

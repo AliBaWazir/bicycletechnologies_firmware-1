@@ -68,12 +68,12 @@ typedef enum
 {
     BLE_CSCS_EVT_NOTIFICATION_ENABLED,                                  /**< Cycling Speed and Cadence value notification enabled event. */
     BLE_CSCS_EVT_NOTIFICATION_DISABLED                                  /**< Cycling Speed and Cadence value notification disabled event. */
-} ble_cscs_evt_type_t;
+} ble_cscs_evt_type_e;
 
 /**@brief Cycling Speed and Cadence Service event. */
 typedef struct
 {
-    ble_cscs_evt_type_t evt_type;                                       /**< Type of event. */
+    ble_cscs_evt_type_e evt_type;                                       /**< Type of event. */
 } ble_cscs_evt_t;
 
 // Forward declaration of the ble_csc_t type.

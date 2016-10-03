@@ -26,7 +26,7 @@
 #include "app_error.h"
 #include "boards.h"
 #include "nrf_gpio.h"
-#include "ble_rscs_c.h"
+#include "../cscs_app.h"
 #include "app_util.h"
 #include "app_timer.h"
 #include "bsp.h"
@@ -69,9 +69,10 @@
 #define SLAVE_LATENCY             0                                  /**< Determines slave latency in counts of connection events. */
 #define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(4000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
 
-#define TARGET_UUID               BLE_UUID_CYCLING_SPEED_AND_CADENCE /**< Target device name that application is looking for. */
+#define TARGET_UUID_CYCLING_CADENCE  BLE_UUID_CYCLING_SPEED_AND_CADENCE /**< Target device name that application is looking for for Cycling Speed and Cadence */
+#define TARGET_UUID_HEART_RATE       BLE_UUID_HEART_RATE_SERVICE        /**< Target device name that application is looking for for Heart Rate */  
 
-#define UUID16_SIZE               2                                  /**< Size of 16 bit UUID */
+#define UUID16_SIZE                  2                                  /**< Size of 16 bit UUID */
 
 
 /**@breif Macro to unpack 16bit unsigned UUID from octet stream. */
@@ -98,7 +99,6 @@ typedef enum
 } ble_scan_mode_t;
 
 static ble_db_discovery_t    m_ble_db_discovery;                       /**< Structure used to identify the DB Discovery module. */
-static ble_cscs_c_t          m_ble_csc_c;                              /**< Structure used to identify the Cycling Speed and Cadence client module. */
 static ble_gap_scan_params_t m_scan_param;                             /**< Scan parameters requested for scanning and connection. */
 static ble_scan_mode_t       m_scan_mode = BLE_FAST_SCAN;              /**< Scan mode used by application. */
 static uint16_t              m_conn_handle;                            /**< Current connection handle. */
@@ -147,7 +147,14 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
  */
 static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
 {
-    ble_cscs_on_db_disc_evt(&m_ble_csc_c, p_evt);
+		if (p_evt->params.discovered_db.srv_uuid.uuid == TARGET_UUID_CYCLING_CADENCE){
+				cscsApp_on_db_disc_evt( p_evt );
+		} else if (p_evt->params.discovered_db.srv_uuid.uuid == TARGET_UUID_HEART_RATE){
+			/*TODO: call the heart rate app function*/
+		} else{
+			NRF_LOG_ERROR("db_disc_handler called with unknown UUID: %d\r\n",
+			               p_evt->params.discovered_db.srv_uuid.uuid);
+		}
 }
 
 
@@ -391,7 +398,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
                 {
                     UUID16_EXTRACT(&extracted_uuid, &type_data.p_data[u_index * UUID16_SIZE]);
 
-                    if (extracted_uuid == TARGET_UUID)
+                    if (extracted_uuid == TARGET_UUID_CYCLING_CADENCE || extracted_uuid == TARGET_UUID_HEART_RATE)
                     {
                         // Stop scanning.
                         err_code = sd_ble_gap_scan_stop();
@@ -517,7 +524,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
     ble_conn_state_on_ble_evt(p_ble_evt);
     pm_on_ble_evt(p_ble_evt);
     ble_db_discovery_on_ble_evt(&m_ble_db_discovery, p_ble_evt);
-    ble_cscs_c_on_ble_evt(&m_ble_csc_c, p_ble_evt);
+    cscsApp_on_ble_evt(p_ble_evt);
     bsp_btn_ble_on_ble_evt(p_ble_evt);
     on_ble_evt(p_ble_evt);
 }
@@ -630,76 +637,6 @@ void bsp_event_handler(bsp_event_t event)
         default:
             break;
     }
-}
-
-
-/**@brief Cycling Speed and Cadence Collector Handler.
- */
-static void cscs_c_evt_handler(ble_cscs_c_t * p_csc_c, ble_cscs_c_evt_t * p_csc_c_evt)
-{
-    uint32_t err_code;
-
-    switch (p_csc_c_evt->evt_type)
-    {
-        case BLE_CSCS_C_EVT_DISCOVERY_COMPLETE:
-            // Initiate bonding.
-            err_code = ble_cscs_c_handles_assign(&m_ble_csc_c,
-                                                 p_csc_c_evt->conn_handle,
-                                                 &p_csc_c_evt->params.cscs_db);
-            APP_ERROR_CHECK(err_code);
-
-            err_code = pm_conn_secure(p_csc_c_evt->conn_handle, false);
-            APP_ERROR_CHECK(err_code);
-
-            // Cycling Speed and Cadence service discovered. Enable Cycling Speed and Cadence notifications.
-            err_code = ble_cscs_c_csc_notif_enable(p_csc_c);
-            APP_ERROR_CHECK(err_code);
-
-            NRF_LOG_INFO("Cycling Speed and Cadence service discovered \r\n");
-            break;
-
-        case BLE_CSCS_C_EVT_CSC_NOTIFICATION:
-        {
-            NRF_LOG_INFO("\r\n");
-            if(p_csc_c_evt->params.csc_meas.is_wheel_rev_data_present){
-								NRF_LOG_INFO("Comulative Wheel Revolution   = %d\r\n",
-							                p_csc_c_evt->params.csc_meas.cumulative_wheel_revs);
-							  NRF_LOG_INFO("Last Wheel Event time         = %d\r\n",
-							                p_csc_c_evt->params.csc_meas.last_wheel_event_time);
-						}
-					  
-					  if(p_csc_c_evt->params.csc_meas.is_crank_rev_data_present){
-								NRF_LOG_INFO("Comulative Crank Revolution   = %d\r\n",
-							                p_csc_c_evt->params.csc_meas.cumulative_crank_revs);
-							NRF_LOG_INFO("Last Crank Event time         = %d\r\n",
-							                p_csc_c_evt->params.csc_meas.last_crank_event_time);
-						}
-						
-						break;
-        }
-
-        default:
-            break;
-    }
-}
-
-
-/**
- * @brief Cycling Speed and Cadence collector initialization.
- */
-static void cscs_c_init(void)
-{
-    ble_cscs_c_init_t cscs_c_init_obj;
-		//memset(&cscs_c_init_obj, 0, sizeof(ble_cscs_c_init_t));
-	
-    cscs_c_init_obj.evt_handler = cscs_c_evt_handler;
-	  /*Added to accept all features from sensor*/
-	  cscs_c_init_obj.feature = BLE_CSCS_FEATURE_WHEEL_REV_BIT 
-                          	| BLE_CSCS_FEATURE_CRANK_REV_BIT
-	                          | BLE_CSCS_FEATURE_MULTIPLE_SENSORS_BIT;;
-
-    uint32_t err_code = ble_cscs_c_init(&m_ble_csc_c, &cscs_c_init_obj);
-    APP_ERROR_CHECK(err_code);
 }
 
 
@@ -955,7 +892,7 @@ int main(void)
     ble_conn_state_init();
     peer_manager_init(erase_bonds);
     db_discovery_init();
-    cscs_c_init();
+    cscsApp_cscs_c_init();
 
     whitelist_load();
 
@@ -971,5 +908,4 @@ int main(void)
         }
     }
 }
-
 
