@@ -49,7 +49,7 @@ typedef struct{
 		uint32_data_field_t oldCrankRevolution;
 		double_data_field_t travelDistance;
 	  double_data_field_t totalTravelDistance;
-	  double_data_field_t speed; /*km/h*/
+	  double_data_field_t speed; /*m/s*/
 	  double_data_field_t travel_cadence;
 		double_data_field_t oldWheelEventTime; 
 		double_data_field_t oldCrankEventTime;
@@ -88,9 +88,9 @@ static double process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t ne
         wheel_event_time_diff = ((new_wheel_event_time - cscs_instantanious_data.oldWheelEventTime.value));
     }
     if (wheel_event_time_diff > 0) {
-        wheel_event_time_diff = wheel_event_time_diff / 1024.0;
-        //convert speed from m/s to km/h by multiplying 3.6
-        travel_speed = (((wheel_revolution_diff * wheelCircumference)/wheel_event_time_diff)*3.6);
+        wheel_event_time_diff = wheel_event_time_diff / 1024.0; //time diff in seconds
+        //speed is in units of m/s
+        travel_speed = (((wheel_revolution_diff * wheelCircumference)/wheel_event_time_diff));
 
 				cscs_instantanious_data.speed.value = travel_speed;
 			  cscs_instantanious_data.speed.is_read = false;
@@ -171,14 +171,14 @@ static void cscsApp_decode_cscs_meas_data ( ble_cscs_c_meas_t *csc_meas_data)
 static void cscsApp_debug_print_inst_data(){
 		
 		NRF_LOG_INFO("\r\n");
-		NRF_LOG_INFO("oldWheelRevolution  = %d \r\n", cscs_instantanious_data.oldWheelRevolution.value);
-		NRF_LOG_INFO("oldCrankRevolution  = %d \r\n", cscs_instantanious_data.oldCrankRevolution.value);
-		NRF_LOG_INFO("travelDistance      = %d \r\n", cscs_instantanious_data.travelDistance.value);
-		NRF_LOG_INFO("totalTravelDistance = %d \r\n", cscs_instantanious_data.totalTravelDistance.value);
-		NRF_LOG_INFO("speed               = %d \r\n", cscs_instantanious_data.speed.value);
-		NRF_LOG_INFO("travel_cadence      = %d \r\n", cscs_instantanious_data.travel_cadence.value);
-		NRF_LOG_INFO("oldWheelEventTime   = %d \r\n", cscs_instantanious_data.oldWheelEventTime.value);
-		NRF_LOG_INFO("oldCrankEventTime   = %d \r\n", cscs_instantanious_data.oldCrankEventTime.value);
+		NRF_LOG_INFO("oldWheelRevolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelRevolution.value);
+		NRF_LOG_INFO("oldCrankRevolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankRevolution.value);
+		NRF_LOG_INFO("travelDistance      = %d \r\n", (uint32_t)cscs_instantanious_data.travelDistance.value);
+		NRF_LOG_INFO("totalTravelDistance = %d \r\n", (uint32_t)cscs_instantanious_data.totalTravelDistance.value);
+		NRF_LOG_INFO("speed               = %d \r\n", (uint32_t)cscs_instantanious_data.speed.value);
+		NRF_LOG_INFO("travel_cadence      = %d \r\n", (uint32_t)cscs_instantanious_data.travel_cadence.value);
+		NRF_LOG_INFO("oldWheelEventTime   = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelEventTime.value);
+		NRF_LOG_INFO("oldCrankEventTime   = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankEventTime.value);
 		
 }
 
@@ -277,7 +277,9 @@ void cscsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 void cscsApp_cscs_c_init(void)
 {
     ble_cscs_c_init_t cscs_c_init_obj;
-		//memset(&cscs_c_init_obj, 0, sizeof(ble_cscs_c_init_t));
+		memset(&cscs_c_init_obj, 0, sizeof(ble_cscs_c_init_t));
+		
+		memset (&cscs_instantanious_data, 0, sizeof(cscs_instantanious_data_t));
 	
     cscs_c_init_obj.evt_handler                      = cscsApp_cscs_c_evt_handler;
 	  /*Added to accept all features from sensor*/
@@ -287,4 +289,5 @@ void cscsApp_cscs_c_init(void)
 
     uint32_t err_code = ble_cscs_c_init(&m_ble_cscs_c, &cscs_c_init_obj);
     APP_ERROR_CHECK(err_code);
+		
 }
