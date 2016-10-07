@@ -25,16 +25,10 @@ extern int currentGearTeethWindow;
 extern int currentTeethTeethWindow;
 extern int oldMenuSelectedItem;
 
-extern GFILE *myfile;
-
-extern osMutexId mutex_id;
-
 // Function Prototypes
 void guiCreate(void);
 void guiShowPage(unsigned pageIndex);
 void guiEventLoop(void);
-
-void printingFile(const char *fmt, ...);
 
 #endif /* _GUI_H_ */
 

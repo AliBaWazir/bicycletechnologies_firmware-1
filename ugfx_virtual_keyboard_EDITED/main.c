@@ -5,6 +5,7 @@
 #include "RTE_Components.h"
 #include "gfx.h"
 #include "gui.h"
+#include "trace.h"
 
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
@@ -13,8 +14,13 @@ uint32_t HAL_GetTick(void) {
   return os_time; 
 }
 
-
 #endif
+
+/* RTC structure */
+TM_RTC_t RTCD;
+ 
+/* RTC Alarm structure */
+TM_RTC_AlarmTime_t RTCA;
 
 /*******************************************************************************
 * FUNCTION:
@@ -145,30 +151,33 @@ int main (void)
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
 	
-
-	
+	/* Init RTC */
+	if (TM_RTC_Init(TM_RTC_ClockSource_External)) {
+			/* RTC was already initialized and time is running */
+			/* No need to set clock now */
+	} else {
+			/* RTC was now initialized */
+			/* If you need to set new time, now is the time to do it */
+	}
+		
 	geventListenerInit(&glistener);
 	gwinAttachListener(&glistener);
 
 	guiCreate();
 
 	osMutexDef (MutexIsr);
-	mutex_id = osMutexCreate  (osMutex (MutexIsr));
-  if (mutex_id != NULL)  {
+	traceMutex = osMutexCreate  (osMutex (MutexIsr));
+  if (traceMutex != NULL)  {
     // Mutex object created
   }   
   osThreadId id;
   
   id = osThreadCreate (osThread (Thread_1), NULL);         // create the thread
 	
-	int x = 0;
-    while(1) {
-			if(x > 10000){
-				//gfileWrite(myfile,"YOLO\n", 5);
-				x=0;
-			}
-			x++;
-			printingFile("I AM IN MAIN = %d\n",x);
-    }
+	while(1) {
+		osDelay(1000);
+		TM_RTC_GetDateTime(&RTCD, TM_RTC_Format_BIN);
+		TRACE("Time is: %d:%d:%d \n",RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+	}
 }
 

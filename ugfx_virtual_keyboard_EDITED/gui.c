@@ -7,13 +7,10 @@
 #include "colors.h"
 #include "widgetstyles.h"
 #include "gui.h"
+#include "trace.h"
 
 #include <stdio.h>
 #include <string.h>
-
-//SDCard Stuff
-GFILE *myfile;
-const char* drive;
 
 // GListeners
 GListener glistener;
@@ -94,10 +91,40 @@ GHandle gearsCurrentBackLabel;
 GHandle gearsCurrentFrontGearLabel[MAXIMUM_FRONT_GEARS+1];
 GHandle gearsCurrentBackGearLabel[MAXIMUM_BACK_GEARS+1];
 
+GHandle clockSettingsContainer;
+GHandle clockChangesContainer;
+GHandle clockChangesLabel;
+GHandle clockChangesSubmit;
+GHandle clockChangesKey[5];
+GHandle clockChangesValue[5];
+uint8_t clockChangeSelectedItem;
+uint8_t previousClockSelection;
+GHandle clockChangesUp;
+GHandle clockChangesDown;
+GHandle clockChangesPlus;
+GHandle clockChangesMinus;
+GHandle clockCurrentContainer;
+GHandle clockCurrentLabel;
+GHandle clockCurrentTimeLabel;
+#define MAXIMUM_MINUTES 59
+#define MAXIMUM_HOUR 24
+#define MAXIMUM_DAY 31
+#define MAXIMUM_MONTH 12
+typedef struct {
+	uint8_t Minutes;     /*!< Minutes parameter, from 00 to 59 */
+	uint8_t Hours;       /*!< Hours parameter, 24Hour mode, 00 to 23 */
+	uint8_t Day;         /*!< Day in a month, 1 to 31 */
+	uint8_t Month;       /*!< Month in a year, 1 to 12 */
+	uint8_t Year;        /*!< Year parameter, 00 to 99, 00 is 2000 and 99 is 2099 */
+} ClockChangesStruct;
+ClockChangesStruct clockChangesStruct;
+
 int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
 int gearBackSettings[MAXIMUM_BACK_GEARS+1];
 char gearBuffer[5];
 char gearsStatus[26];
+
+char timeBuffer[23];
 
 int currentGearSide;
 int currentGearTeethWindow;
@@ -116,34 +143,12 @@ static pixel_t* surface;
 
 void drawTile(int xx, int yy);
 
-osMutexId mutex_id;
-
-void printingFile(const char *fmt, ...)
-{
-	osStatus status;
-	status  = osMutexWait(mutex_id, 0);
-	if (status != osOK){
-		// handle failure code
-	}
-	char buffer[256];
-	int charcount = 0;
-  va_list args;
-  va_start (args, fmt);
-  charcount = vsprintf (buffer, fmt, args);
-	gfileWrite(myfile, buffer, charcount);
-	va_end(args);
-	status = osMutexRelease(mutex_id);
-	if (status != osOK)  {
-		// handle failure code
-	}
-}
-
 static void createMainContainer(void)
 {
 	//gfileWrite(myfile,"createMainContainer\n", 20);
-	printingFile("createMainContainer\n");
-	printingFile("YOLOSWAG = %d\n", 5);
-	printingFile("BDN = %d, YOLO = %d\n", 10,20);
+	TRACE("createMainContainer\n");
+	TRACE("YOLOSWAG = %d\n", 5);
+	TRACE("BDN = %d, YOLO = %d\n", 10,20);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 	
@@ -164,7 +169,7 @@ static void createMainContainer(void)
 static void createMap(void)
 {
 	//gfileWrite(myfile,"createMap\n", 10);
-	printingFile("createMap\n");
+	TRACE("createMap\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -196,7 +201,7 @@ static void createMap(void)
 static void createData(void)
 {
 	//gfileWrite(myfile,"createData\n", 11);
-	printingFile("createData\n");
+	TRACE("createData\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 		
@@ -282,7 +287,7 @@ static void createData(void)
 static void createConsole(void)
 {
 	//gfileWrite(myfile,"createConsole\n", 14);
-	printingFile("createConsole\n");
+	TRACE("createConsole\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -316,7 +321,7 @@ static void createConsole(void)
 static void createMenu(void)
 {
 	//gfileWrite(myfile,"createMenu\n", 11);
-	printingFile("createMenu\n");
+	TRACE("createMenu\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -351,12 +356,14 @@ static void createMenu(void)
 	gwinListAddItem(menuList, "Gears Settings", FALSE);
 	gwinListAddItem(menuList, "Teeth Settings", FALSE);
 	gwinListAddItem(menuList, "Gears Status", FALSE);
+	gwinListAddItem(menuList, "Clock Settings", FALSE);
 	gwinListAddItem(menuList, "Console", FALSE);
 	gwinListSetSelected(menuList, 0, TRUE);
 	gwinListSetSelected(menuList, 1, FALSE);
 	gwinListSetSelected(menuList, 2, FALSE);
 	gwinListSetSelected(menuList, 3, FALSE);
   gwinListSetSelected(menuList, 4, FALSE);
+	gwinListSetSelected(menuList, 5, FALSE);
 	oldMenuSelectedItem = -1;
 	
 	// create button widget: menuButton
@@ -377,7 +384,7 @@ static void createMenu(void)
 static void createBluetooth(void)
 {
 	//gfileWrite(myfile,"createBluetooth\n", 16);
-	printingFile("createBluetooth\n");
+	TRACE("createBluetooth\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -502,7 +509,7 @@ static void createBluetooth(void)
 static void createGearsSettings(void)
 {
 	//gfileWrite(myfile,"createGearsSettings\n", 20);
-	printingFile("createGearsSettings\n");
+	TRACE("createGearsSettings\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -660,7 +667,7 @@ static void createGearsSettings(void)
 static void createTeethSettings(void)
 {
 	//gfileWrite(myfile,"createTeethSettings\n", 20);
-	printingFile("createTeethSettings\n");
+	TRACE("createTeethSettings\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -875,7 +882,7 @@ static void createTeethSettings(void)
 static void createGearsStatus(void)
 {
 	//gfileWrite(myfile,"createGearsStatus\n", 18);
-	printingFile("createGearsStatus\n");
+	TRACE("createGearsStatus\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 
@@ -1137,10 +1144,260 @@ static void createGearsStatus(void)
 	}
 }
 
+static void createClockSettings(void)
+{
+	TRACE("createClockSettings\n");
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+
+	clockChangeSelectedItem = 0;
+	previousClockSelection = 0;
+	clockChangesStruct.Year = 16;
+	clockChangesStruct.Month = 10;
+	clockChangesStruct.Day = 7;
+	clockChangesStruct.Hours = 12;
+	clockChangesStruct.Minutes = 15;
+	
+	// create container widget: clockSettingsContainer
+	wi.g.show = FALSE;
+	wi.g.x = 305;
+	wi.g.y = 0;
+	wi.g.width = 495;
+	wi.g.height = 480;
+	wi.g.parent = mainContainer;
+	wi.text = "clockSettingsContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	clockSettingsContainer = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// create container widget: clockChangesContainer
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 0;
+	wi.g.width = 495;
+	wi.g.height = 355;
+	wi.g.parent = clockSettingsContainer;
+	wi.text = "clockChangesContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	clockChangesContainer = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// Create label widget: clockChangesLabel
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 5;
+	wi.g.width = 160;
+	wi.g.height = 50;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "Changes";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	clockChangesLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(clockChangesLabel, TRUE);
+	gwinSetFont(clockChangesLabel, gdispOpenFont("Georgia36"));
+
+	// create button widget: clockChangesSubmit
+	wi.g.show = TRUE;
+	wi.g.x = 390;
+	wi.g.y = 5;
+	wi.g.width = 90;
+	wi.g.height = 90;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "Submit";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	clockChangesSubmit = gwinButtonCreate(0, &wi);
+	gwinSetFont(clockChangesSubmit, gdispOpenFont("Georgia24"));
+	
+	// Create label widget: clockChangesKey
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 60;
+	wi.g.width = 120;
+	wi.g.height = 50;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "Yr";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	clockChangesKey[0] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(clockChangesKey[0], TRUE);
+	gwinSetFont(clockChangesKey[0], gdispOpenFont("Georgia36"));
+	
+	for(int i = 1; i < 5; i++){
+		wi.g.y += 55;
+		switch(i){
+		case 1:
+			wi.text = "Mon";
+			break;
+		case 2:
+			wi.text = "Day";
+			break;
+		case 3:
+			wi.text = "Hou";
+			break;
+		case 4:
+			wi.text = "Min";
+			break;
+		}
+		clockChangesKey[i] = gwinLabelCreate(0, &wi);
+		gwinLabelSetBorder(clockChangesKey[i], TRUE);
+		gwinSetFont(clockChangesKey[i], gdispOpenFont("Georgia36"));
+	}
+	
+	// Create label widget: clockChangesValue
+	wi.g.show = TRUE;
+	wi.g.x = 136;
+	wi.g.y = 60;
+	wi.g.width = 120;
+	wi.g.height = 50;
+	wi.g.parent = clockChangesContainer;
+	memset(&timeBuffer[0], 0, sizeof(timeBuffer));
+	sprintf(timeBuffer, "%d", clockChangesStruct.Year);
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	clockChangesValue[0] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(clockChangesValue[0], TRUE);
+	gwinSetFont(clockChangesValue[0], gdispOpenFont("Georgia36"));
+	gwinSetText(clockChangesValue[0], timeBuffer, TRUE);
+	
+	for(int i = 1; i < 5; i++){
+		wi.g.y += 55;
+		memset(&timeBuffer[0], 0, sizeof(timeBuffer));
+		switch(i){
+		case 1:
+			sprintf(timeBuffer, "%d",clockChangesStruct.Month);
+			break;
+		case 2:
+			sprintf(timeBuffer, "%d",clockChangesStruct.Day);
+			break;
+		case 3:
+			sprintf(timeBuffer, "%d",clockChangesStruct.Hours);
+			break;
+		case 4:
+			sprintf(timeBuffer, "%d",clockChangesStruct.Minutes);
+			break;
+		}
+		clockChangesValue[i] = gwinLabelCreate(0, &wi);
+		gwinLabelSetBorder(clockChangesValue[i], TRUE);
+		gwinSetFont(clockChangesValue[i], gdispOpenFont("Georgia36"));
+		gwinSetText(clockChangesValue[i], timeBuffer, TRUE);
+	}
+	
+	gwinSetStyle(clockChangesKey[clockChangeSelectedItem], &black);
+	gwinSetStyle(clockChangesValue[clockChangeSelectedItem], &black);
+	
+	// create button widget: clockChangesUp
+	wi.g.show = TRUE;
+	wi.g.x = 280;
+	wi.g.y = 170;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "";
+	wi.customDraw = gwinButtonDraw_ArrowUp;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	clockChangesUp = gwinButtonCreate(0, &wi);
+	gwinSetFont(clockChangesUp, gdispOpenFont("Georgia36"));
+	
+	// create button widget: clockChangesDown
+	wi.g.show = TRUE;
+	wi.g.x = 280;
+	wi.g.y = 255;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "";
+	wi.customDraw = gwinButtonDraw_ArrowDown;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	clockChangesDown = gwinButtonCreate(0, &wi);
+	gwinSetFont(clockChangesDown, gdispOpenFont("Georgia36"));
+	
+	// create button widget: clockChangesPlus
+	wi.g.show = TRUE;
+	wi.g.x = 365;
+	wi.g.y = 170;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "+";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	clockChangesPlus = gwinButtonCreate(0, &wi);
+	gwinSetFont(clockChangesPlus, gdispOpenFont("Georgia36"));
+	
+	// create button widget: clockChangesMinus
+	wi.g.show = TRUE;
+	wi.g.x = 365;
+	wi.g.y = 255;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = clockChangesContainer;
+	wi.text = "-";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	clockChangesMinus = gwinButtonCreate(0, &wi);
+	gwinSetFont(clockChangesMinus, gdispOpenFont("Georgia36"));
+	
+	// create container widget: clockCurrentContainer
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 355;
+	wi.g.width = 495;
+	wi.g.height = 125;
+	wi.g.parent = clockSettingsContainer;
+	wi.text = "clockSettingsContainer";
+	wi.customDraw = 0;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	clockCurrentContainer = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// Create label widget: clockCurrentLabel
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 5;
+	wi.g.width = 160;
+	wi.g.height = 50;
+	wi.g.parent = clockCurrentContainer;
+	wi.text = "Current";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	clockCurrentLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(clockCurrentLabel, TRUE);
+	gwinSetFont(clockCurrentLabel, gdispOpenFont("Georgia36"));
+	
+	// Create label widget: clockCurrentTimeLabel
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 60;
+	wi.g.width = 465;
+	wi.g.height = 50;
+	wi.g.parent = clockCurrentContainer;
+	TM_RTC_GetDateTime(&RTCD, TM_RTC_Format_BIN);
+	sprintf(timeBuffer, "%d/%d/%d || %d:%d:%d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+	wi.text = timeBuffer;
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	clockCurrentTimeLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(clockCurrentTimeLabel, TRUE);
+	gwinSetFont(clockCurrentTimeLabel, gdispOpenFont("Georgia36"));
+}
+
 static void destroyConsole(void)
 {
 	//gfileWrite(myfile,"destroy,Console\n", 16);
-	printingFile("destroy,Console\n");
+	TRACE("destroy,Console\n");
 	gwinDestroy(consoleWindow);
 	gwinDestroy(consoleContainer);
 }
@@ -1148,7 +1405,7 @@ static void destroyConsole(void)
 static void destroyMenu(void)
 {
 	//gfileWrite(myfile,"destroy,Menu\n", 13);
-	printingFile("destroy,Menu\n");
+	TRACE("destroy,Menu\n");
 	gwinDestroy(menuList);
 	gwinDestroy(returnButton);
 	gwinDestroy(menuContainer);
@@ -1156,7 +1413,7 @@ static void destroyMenu(void)
 static void destroyBluetooth(void)
 {
 	//gfileWrite(myfile,"destroy,Bluetooth\n", 18);
-	printingFile("destroy,Bluetooth\n");
+	TRACE("destroy,Bluetooth\n");
 	gwinDestroy(bluetoothSearchingLabel);
 	gwinDestroy(bluetoothDevicesList);
 	gwinDestroy(bluetoothSearchButton);
@@ -1169,7 +1426,7 @@ static void destroyBluetooth(void)
 static void destroyGearsSettings(void)
 {
 	//gfileWrite(myfile,"destroy,Gears,Settings\n", 23);
-	printingFile("destroy,Gears,Settings\n");
+	TRACE("destroy,Gears,Settings\n");
 	gwinDestroy(numberOfGearsLabel);
 	gwinDestroy(numberOfGearsFrontLabel);
 	gwinDestroy(numberOfGearsBackLabel);
@@ -1185,7 +1442,7 @@ static void destroyGearsSettings(void)
 static void destroyTeethSettings(void)
 {
 	//gfileWrite(myfile,"destroy,Teeth,Settings\n", 23);
-	printingFile("destroy,Teeth,Settings\n");
+	TRACE("destroy,Teeth,Settings\n");
 	gwinDestroy(numberOfTeethSelectorLabel);
 	gwinDestroy(numberOfTeethGearLabel);
 	gwinDestroy(numberOfTeethLabel);
@@ -1205,7 +1462,7 @@ static void destroyTeethSettings(void)
 static void destroyGearsStatus(void)
 {
 	//gfileWrite(myfile,"destroy,Gears,Status\n", 21);
-	printingFile("destroy,Gears,Status\n");
+	TRACE("destroy,Gears,Status\n");
 	for(int i = 1; i<= gearFrontSettings[0]; i++){
 		gwinDestroy(gearsChangesFrontGearLabel[i]);
 	}
@@ -1233,10 +1490,33 @@ static void destroyGearsStatus(void)
 	gwinDestroy(gearsStatusContainer);
 }
 
+static void destroyClockSsettings(void)
+{
+	TRACE("destroy,Clock,Status\n");
+
+	gwinDestroy(clockChangesLabel);
+	gwinDestroy(clockChangesSubmit);
+	
+	for(int i = 0; i < 5; i++){
+		gwinDestroy(clockChangesKey[i]);
+	}
+	
+	for(int i = 0; i < 5; i++){
+		gwinDestroy(clockChangesValue[i]);
+	}
+	
+	gwinDestroy(clockCurrentLabel);
+	gwinDestroy(clockCurrentTimeLabel);
+	
+	gwinDestroy(clockChangesContainer);
+	gwinDestroy(clockCurrentContainer);
+	gwinDestroy(clockSettingsContainer);
+}
+
 static void destroyOldMenuSelectedItem(void)
 {
 	//gfileWrite(myfile,"destroy,Old,Menu,Selected,Item\n", 31);
-	printingFile("destroy,Old,Menu,Selected,Item\n");
+	TRACE("destroy,Old,Menu,Selected,Item\n");
 	switch(oldMenuSelectedItem){
 	case 0:
 		destroyBluetooth();
@@ -1251,6 +1531,9 @@ static void destroyOldMenuSelectedItem(void)
 		destroyGearsStatus();
 		break;
 	case 4:
+		destroyClockSsettings();
+		break;
+	case 5:
 		destroyConsole();
 		break;
 	default:
@@ -1260,7 +1543,7 @@ static void destroyOldMenuSelectedItem(void)
 
 void saveTeethSettings(){
 	//gfileWrite(myfile,"save,Teeth,Settings\n", 20);
-	printingFile("save,Teeth,Settings\n");
+	TRACE("save,Teeth,Settings\n");
 	if(currentGearSide == 0){
 		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_FRONT_GEARS)){
 			gearFrontSettings[currentGearTeethWindow] = currentTeethTeethWindow;
@@ -1270,6 +1553,13 @@ void saveTeethSettings(){
 			gearBackSettings[currentGearTeethWindow] = currentTeethTeethWindow;
 		}
 	}
+}
+
+void updateClockSelection(){
+	gwinSetStyle(clockChangesKey[previousClockSelection], &belize);
+	gwinSetStyle(clockChangesValue[previousClockSelection], &belize);
+	gwinSetStyle(clockChangesKey[clockChangeSelectedItem], &black);
+	gwinSetStyle(clockChangesValue[clockChangeSelectedItem], &black);
 }
 
 void guiShowPage(unsigned pageIndex)
@@ -1290,10 +1580,7 @@ void guiShowPage(unsigned pageIndex)
 
 void guiCreate(void)
 {
-	if(gfileExists("logFile.csv")){
-		gfileDelete("logFile.csv");
-	}
-	myfile = gfileOpen("logFile.csv", "w");
+	openTraceFile();
 	
 	GWidgetInit wi;
 
@@ -1324,6 +1611,8 @@ void guiEventLoop(void)
 {
 	GEvent* pe;
 	int count = 0;
+	uint8_t previousSeconds = 0;
+	
 	while (1) {		
 		if(gwinGetVisible(dataContainer)){
 			if(count == 50){
@@ -1336,6 +1625,20 @@ void guiEventLoop(void)
 				gwinSetText(speedLabel, speedout, TRUE);
 			}else{
 				count++;
+			}
+		}
+		
+		if(gwinGetVisible(clockSettingsContainer)){
+			TM_RTC_GetDateTime(&RTCD, TM_RTC_Format_BIN);
+			if(RTCD.Seconds != previousSeconds){
+				memset(&timeBuffer[0], 0, sizeof(timeBuffer));
+				sprintf(timeBuffer, "%d/%d/%d || %d:%d:%d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+				gwinSetText(clockCurrentTimeLabel, timeBuffer, TRUE);
+				previousSeconds = RTCD.Seconds;
+			}
+			if(clockChangeSelectedItem != previousClockSelection){
+				updateClockSelection();
+				previousClockSelection = clockChangeSelectedItem;
 			}
 		}
 		
@@ -1370,7 +1673,7 @@ void guiEventLoop(void)
 			case GEVENT_GWIN_BUTTON:
 				if (((GEventGWinButton*)pe)->gwin == menuButton) {
 						//gfileWrite(myfile,"menuButton\n", 11);
-						printingFile("menuButton\n");
+						TRACE("menuButton\n");
 						// MENU
 						gwinHide(dataContainer);
 				  	gwinHide(mapContainer);
@@ -1379,7 +1682,7 @@ void guiEventLoop(void)
 						gwinShow(menuContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
 						//gfileWrite(myfile,"returnButton\n", 13);
-						printingFile("returnButton\n");
+						TRACE("returnButton\n");
 						// RETURN
 						destroyOldMenuSelectedItem();
 						destroyMenu();
@@ -1390,7 +1693,7 @@ void guiEventLoop(void)
 				  	gwinShow(mapContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
 						//gfileWrite(myfile,"bluetoothSearchButton\n", 22);
-						printingFile("bluetoothSearchButton\n");
+						TRACE("bluetoothSearchButton\n");
 						// BLUETOOTH SEARCH
 					  gwinHide(bluetoothDevicesContainer);
 						gwinShow(bluetoothSearchingContainer);
@@ -1492,6 +1795,76 @@ void guiEventLoop(void)
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethEnter) {
 						// SAVE TEETH
 					  saveTeethSettings();
+				}else if (((GEventGWinButton*)pe)->gwin == clockChangesUp) {
+						// Clock Changes Selection Up
+					  if(clockChangeSelectedItem != 0){clockChangeSelectedItem--;}
+				}else if (((GEventGWinButton*)pe)->gwin == clockChangesDown) {
+						// Clock Changes Selection Down
+						if(clockChangeSelectedItem != 4){clockChangeSelectedItem++;}
+				}else if (((GEventGWinButton*)pe)->gwin == clockChangesPlus) {
+						// Clock Changes Selection Down
+						memset(&timeBuffer[0], 0, sizeof(timeBuffer));
+						switch(clockChangeSelectedItem){
+							case 0:
+								//if(clockChangeSelectedItem.Year)
+								clockChangesStruct.Year++;
+								sprintf(timeBuffer, "%d", clockChangesStruct.Year);
+								break;
+							case 1:
+								if(clockChangesStruct.Month != MAXIMUM_MONTH){clockChangesStruct.Month++;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Month);
+								break;
+							case 2:
+								if(clockChangesStruct.Day != MAXIMUM_DAY){clockChangesStruct.Day++;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Day);
+								break;
+							case 3:
+								if(clockChangesStruct.Hours != MAXIMUM_HOUR){clockChangesStruct.Hours++;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Hours);
+								break;
+							case 4:
+								if(clockChangesStruct.Minutes != MAXIMUM_MINUTES){clockChangesStruct.Minutes++;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Minutes);
+								break;
+						}
+						gwinSetText(clockChangesValue[clockChangeSelectedItem], timeBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == clockChangesMinus) {
+						// Clock Changes Selection Down
+						memset(&timeBuffer[0], 0, sizeof(timeBuffer));
+						switch(clockChangeSelectedItem){
+							case 0:
+								clockChangesStruct.Year--;
+								sprintf(timeBuffer, "%d", clockChangesStruct.Year);
+								break;
+							case 1:
+								if(clockChangesStruct.Month != 1){clockChangesStruct.Month--;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Month);
+								break;
+							case 2:
+								if(clockChangesStruct.Day != 1){clockChangesStruct.Day--;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Day);
+								break;
+							case 3:
+								if(clockChangesStruct.Hours != 0){clockChangesStruct.Hours--;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Hours);
+								break;
+							case 4:
+								if(clockChangesStruct.Minutes != 0){clockChangesStruct.Minutes--;};
+								sprintf(timeBuffer, "%d", clockChangesStruct.Minutes);
+								break;
+						}
+						gwinSetText(clockChangesValue[clockChangeSelectedItem], timeBuffer, TRUE);
+				}else if (((GEventGWinButton*)pe)->gwin == clockChangesSubmit) {
+						// Clock Changes Submit
+						RTCD.Year = clockChangesStruct.Year;
+						RTCD.Month = clockChangesStruct.Month;
+						RTCD.Day = clockChangesStruct.Day;
+						RTCD.Hours = clockChangesStruct.Hours;
+						RTCD.Minutes = clockChangesStruct.Minutes;
+						RTCD.Seconds = 0;
+						TM_RTC_SetDateTime(&RTCD, TM_RTC_Format_BIN);
+						closeTraceFile();
+						openTraceFile();
 				}
 				break;
 			default:
@@ -1523,6 +1896,10 @@ void guiEventLoop(void)
 						gwinShow(gearsStatusContainer);
 						break;
 					case 4:
+						createClockSettings();
+						gwinShow(clockSettingsContainer);
+						break;
+					case 5:
 						createConsole();
 						gwinShow(consoleContainer);
 						gwinPrintf(consoleWindow, "Front Gears: \0331\033b%d\033B\033C\r\n", gearFrontSettings[0]);
@@ -1531,7 +1908,9 @@ void guiEventLoop(void)
 						gwinPrintf(consoleWindow, "currentGearTeethWindow: \0331\033b%d\033B\033C\r\n", currentGearTeethWindow);
 						gwinPrintf(consoleWindow, "currentTeethTeethWindow: \0331\033b%d\033B\033C\r\n", currentTeethTeethWindow);
 						gwinPrintf(consoleWindow, "oldMenuSelectedItem: \0331\033b%d\033B\033C\r\n", oldMenuSelectedItem);
-						gfileClose(myfile);
+					  closeTraceFile();
+						osDelay(1000);
+						openTraceFile();
 						break;
 					default:
 						break;

@@ -442,6 +442,16 @@
               <FileType>1</FileType>
               <FilePath>.\diskio.c</FilePath>
             </File>
+            <File>
+              <FileName>tm_stm32_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tm_stm32_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>trace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\trace.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -603,6 +613,12 @@
         </targetInfos>
       </component>
       <component Cclass="Device" Cgroup="STM32Cube HAL" Csub="RCC" Cvendor="Keil" Cversion="1.5.0" condition="STM32F4 HAL GPIO">
+        <package name="STM32F4xx_DFP" schemaVersion="1.3" url="http://www.keil.com/pack" vendor="Keil" version="2.9.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F469NI Flash"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="STM32Cube HAL" Csub="RTC" Cvendor="Keil" Cversion="1.5.0" condition="STM32F4 HAL">
         <package name="STM32F4xx_DFP" schemaVersion="1.3" url="http://www.keil.com/pack" vendor="Keil" version="2.9.0"/>
         <targetInfos>
           <targetInfo name="STM32F469NI Flash"/>
