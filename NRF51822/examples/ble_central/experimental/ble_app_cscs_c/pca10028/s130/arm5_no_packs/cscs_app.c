@@ -28,8 +28,8 @@
 * MACRO DEFINITIONS
 ***********************************************************************************************/
 
-#define DFAULT_WHEEL_DIAMETER 0.5
-#define PI                    3.14159265
+#define DFAULT_WHEEL_DIAMETER_CM 50
+#define PI                       3.14159265
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -47,10 +47,10 @@ typedef struct{
 typedef struct{
 		uint32_data_field_t oldWheelRevolution;
 		uint32_data_field_t oldCrankRevolution;
-		double_data_field_t travelDistance;
-	  double_data_field_t totalTravelDistance;
-	  double_data_field_t speed; /*m/s*/
-	  double_data_field_t travel_cadence;
+		double_data_field_t travelDistance_m;
+   //double_data_field_t totalTravelDistance;
+	  double_data_field_t wheel_speed_mps; /*m/s*/
+	  double_data_field_t crank_cadence_rpm;
 		double_data_field_t oldWheelEventTime; 
 		double_data_field_t oldCrankEventTime;
 } cscs_instantanious_data_t;
@@ -60,7 +60,12 @@ typedef struct{
 ***********************************************************************************************/
 static ble_cscs_c_t                 m_ble_cscs_c;      /**< Structure used to identify the Cycling Speed and Cadence client module. */
 static cscs_instantanious_data_t    cscs_instantanious_data;
-static double                       wheelCircumference = 2*PI*DFAULT_WHEEL_DIAMETER;               /*The circumfrance is calculated by wheel diameter specified by user*/
+static double                       wheel_circumference_cm = 2*PI*DFAULT_WHEEL_DIAMETER_CM;               /*The circumfrance is calculated by wheel diameter specified by user*/
+//static uint32_t                     wheel_revolution_offset = 0;                                     /*Offset from the first reading*/
+//static uint16_t                     crank_revolution_offset = 0;
+//static uint16_t                     wheel_event_time_offset = 0;
+//static uint16_t                     crank_event_time_offset = 0;
+
 /* TODO: create a function to update wheelCircumference by user data*/
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -74,28 +79,28 @@ static double process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t ne
     
     double wheel_revolution_diff  = 0.0;
     double wheel_event_time_diff  = 0.0;
-    double travel_speed           = 0.0;
     
     if (cscs_instantanious_data.oldWheelRevolution.value != 0) {
         wheel_revolution_diff = new_cumulative_wheel_revs - cscs_instantanious_data.oldWheelRevolution.value;
 			/*TODO: create static function for updating*/
-			  cscs_instantanious_data.travelDistance.value = cscs_instantanious_data.travelDistance.value + ((wheel_revolution_diff * wheelCircumference) / 1000.0);
-        cscs_instantanious_data.travelDistance.is_read = false;
-			  cscs_instantanious_data.totalTravelDistance.value = ((new_cumulative_wheel_revs * wheelCircumference) / 1000.0);
-			  cscs_instantanious_data.totalTravelDistance.is_read= false;
+			  cscs_instantanious_data.travelDistance_m.value = cscs_instantanious_data.travelDistance_m.value + ((wheel_revolution_diff * wheel_circumference_cm) / 100.0);
+        cscs_instantanious_data.travelDistance_m.is_read = false;
     }
     if (cscs_instantanious_data.oldWheelEventTime.value != 0) {
-        wheel_event_time_diff = ((new_wheel_event_time - cscs_instantanious_data.oldWheelEventTime.value));
+        wheel_event_time_diff = new_wheel_event_time - cscs_instantanious_data.oldWheelEventTime.value;
     }
     if (wheel_event_time_diff > 0) {
         wheel_event_time_diff = wheel_event_time_diff / 1024.0; //time diff in seconds
         //speed is in units of m/s
-        travel_speed = (((wheel_revolution_diff * wheelCircumference)/wheel_event_time_diff));
-
-				cscs_instantanious_data.speed.value = travel_speed;
-			  cscs_instantanious_data.speed.is_read = false;
-    }
+        cscs_instantanious_data.wheel_speed_mps.value = (((wheel_revolution_diff * wheel_circumference_cm)/100.0)/wheel_event_time_diff);
+			  cscs_instantanious_data.wheel_speed_mps.is_read = false;
+    } else{
+			  //wheel is stopped. Set speed at 0 m/s
+			  cscs_instantanious_data.wheel_speed_mps.value = 0.0;
+			  cscs_instantanious_data.wheel_speed_mps.is_read = false;
+		}
     
+		//update the old revolution and envent time fields with new data
     cscs_instantanious_data.oldWheelRevolution.value = new_cumulative_wheel_revs;
 		cscs_instantanious_data.oldWheelRevolution.is_read = false;
     cscs_instantanious_data.oldWheelEventTime.value = new_wheel_event_time;
@@ -112,25 +117,27 @@ static double process_crank_data(uint16_t new_cumulative_crank_revs, uint16_t ne
     
     double      crank_revolution_diff = 0.0;
     double      crank_event_time_diff = 0.0;
-    double      travel_cadence        = 0.0;
+    double      cadence_rpm               = 0.0;
 
-    if (cscs_instantanious_data.oldCrankEventTime.value != 0) {
-        crank_event_time_diff = new_crank_event_time - cscs_instantanious_data.oldCrankEventTime.value;
-    }
-    if (cscs_instantanious_data.oldCrankRevolution.value != 0) {
+		if (cscs_instantanious_data.oldCrankRevolution.value != 0) {
         crank_revolution_diff = new_cumulative_crank_revs - cscs_instantanious_data.oldCrankRevolution.value;
     }
+		
+    if (cscs_instantanious_data.oldCrankEventTime.value != 0) {
+        crank_event_time_diff = new_crank_event_time - cscs_instantanious_data.oldCrankEventTime.value;
+    } 
+    
     if (crank_event_time_diff > 0) {
         crank_event_time_diff = crank_event_time_diff / 1024.0;
-        travel_cadence = ((crank_revolution_diff / crank_event_time_diff) * 60); //rp..
+        cadence_rpm = (crank_revolution_diff /(crank_event_time_diff/60) ); //rpm
     }
 
     cscs_instantanious_data.oldCrankRevolution.value = new_cumulative_crank_revs;
 		cscs_instantanious_data.oldCrankRevolution.is_read = false;
     cscs_instantanious_data.oldCrankEventTime.value = new_crank_event_time;
 		cscs_instantanious_data.oldCrankEventTime.is_read= false;
-		cscs_instantanious_data.travel_cadence.value = travel_cadence;
-		cscs_instantanious_data.travel_cadence.is_read = false;
+		cscs_instantanious_data.crank_cadence_rpm.value = cadence_rpm;
+		cscs_instantanious_data.crank_cadence_rpm.is_read = false;
 		
 		return crank_revolution_diff;
 }
@@ -154,7 +161,7 @@ static void cscsApp_decode_cscs_meas_data ( ble_cscs_c_meas_t *csc_meas_data)
             crank_rev_diff = process_crank_data(csc_meas_data->cumulative_crank_revs, csc_meas_data->last_crank_event_time);
             if (crank_rev_diff > 0) {
                 wheel_to_crank_diff_ratio = wheel_rev_diff/crank_rev_diff;
-                NRF_LOG_INFO("Wheel to crank diff ratio = %f \r\n",wheel_to_crank_diff_ratio);
+                NRF_LOG_INFO("Wheel to crank diff ratio = %d \r\n",wheel_to_crank_diff_ratio);
             }
         }
     }
@@ -163,22 +170,21 @@ static void cscsApp_decode_cscs_meas_data ( ble_cscs_c_meas_t *csc_meas_data)
         if (csc_meas_data->is_crank_rev_data_present)
         {
 						crank_rev_diff = process_crank_data(csc_meas_data->cumulative_crank_revs, csc_meas_data->last_crank_event_time);
-					  NRF_LOG_INFO("Crank revolution diff = %l \r\n",crank_rev_diff);
+					  NRF_LOG_INFO("Crank revolution diff = %d \r\n",crank_rev_diff);
         }
     }
 }
 
 static void cscsApp_debug_print_inst_data(){
 		
-		NRF_LOG_INFO("\r\n");
-		NRF_LOG_INFO("oldWheelRevolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelRevolution.value);
-		NRF_LOG_INFO("oldCrankRevolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankRevolution.value);
-		NRF_LOG_INFO("travelDistance      = %d \r\n", (uint32_t)cscs_instantanious_data.travelDistance.value);
-		NRF_LOG_INFO("totalTravelDistance = %d \r\n", (uint32_t)cscs_instantanious_data.totalTravelDistance.value);
-		NRF_LOG_INFO("speed               = %d \r\n", (uint32_t)cscs_instantanious_data.speed.value);
-		NRF_LOG_INFO("travel_cadence      = %d \r\n", (uint32_t)cscs_instantanious_data.travel_cadence.value);
-		NRF_LOG_INFO("oldWheelEventTime   = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelEventTime.value);
-		NRF_LOG_INFO("oldCrankEventTime   = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankEventTime.value);
+		NRF_LOG_INFO("------------------------------------------------------\r\n");
+		NRF_LOG_INFO("travel distance             = %d (m)\r\n", (uint32_t)cscs_instantanious_data.travelDistance_m.value);
+		NRF_LOG_INFO("wheel speed                = %d (m/s)\r\n", (uint32_t)cscs_instantanious_data.wheel_speed_mps.value);
+		NRF_LOG_INFO("crank cadence            = %d (rpm)\r\n", (uint32_t)cscs_instantanious_data.crank_cadence_rpm.value);
+		NRF_LOG_INFO("old wheel revolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelRevolution.value);
+		NRF_LOG_INFO("old crank revolution   = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankRevolution.value);
+		NRF_LOG_INFO("old wheel event time = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelEventTime.value);
+		NRF_LOG_INFO("old crank event time  = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankEventTime.value);
 		
 }
 

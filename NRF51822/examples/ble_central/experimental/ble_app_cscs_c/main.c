@@ -67,7 +67,8 @@
 #define MIN_CONNECTION_INTERVAL   MSEC_TO_UNITS(7.5, UNIT_1_25_MS)   /**< Determines minimum connection interval in millisecond. */
 #define MAX_CONNECTION_INTERVAL   MSEC_TO_UNITS(30, UNIT_1_25_MS)    /**< Determines maximum connection interval in millisecond. */
 #define SLAVE_LATENCY             0                                  /**< Determines slave latency in counts of connection events. */
-#define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(4000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
+//#define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(4000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
+#define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(12000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
 
 #define TARGET_UUID_CYCLING_CADENCE  BLE_UUID_CYCLING_SPEED_AND_CADENCE /**< Target device name that application is looking for for Cycling Speed and Cadence */
 #define TARGET_UUID_HEART_RATE       BLE_UUID_HEART_RATE_SERVICE        /**< Target device name that application is looking for for Heart Rate */  
