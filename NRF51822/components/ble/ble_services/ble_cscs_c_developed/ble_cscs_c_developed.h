@@ -79,10 +79,6 @@ typedef enum
 	  /* Used */
     BLE_CSCS_C_EVT_DISCOVERY_COMPLETE = 1,   /**< Event indicating that the Cycling Speed and Cadence Service has been discovered at the peer. */
     BLE_CSCS_C_EVT_CSC_NOTIFICATION,         /**< Event indicating that a notification of the Cycling Speed and Cadence measurement characteristic has been received from the peer. */
-	  
-	  /*Not used */
-	  BLE_CSCS_C_EVT_NOTIFICATION_ENABLED,       /**< Cycling Speed and Cadence value notification enabled event. */
-    BLE_CSCS_C_EVT_NOTIFICATION_DISABLED       /**< Cycling Speed and Cadence value notification disabled event. */
 	
 } ble_cscs_c_evt_type_t;
 
@@ -177,20 +173,6 @@ uint32_t ble_cscs_c_init(ble_cscs_c_t * p_ble_cscs_c, const ble_cscs_c_init_t * 
  * @param[in]   p_ble_evt  Event received from the BLE stack.
  */
 void ble_cscs_c_on_ble_evt(ble_cscs_c_t * p_ble_cscs_c, const ble_evt_t * p_ble_evt);	
-
-
-/**@brief Function for sending cycling speed and cadence measurement if notification has been enabled.
- *
- * @details The application calls this function after having performed a Cycling Speed and Cadence
- *          Service measurement. If notification has been enabled, the measurement data is encoded
- *          and sent to the client.
- *
- * @param[in]   p_cscs         Cycling Speed and Cadence Service structure.
- * @param[in]   p_measurement  Pointer to new cycling speed and cadence measurement.
- *
- * @return      NRF_SUCCESS on success, otherwise an error code.
- */
-uint32_t ble_cscs_c_measurement_send(ble_cscs_c_t * p_cscs, ble_cscs_c_meas_t * p_measurement);
 
 
 /**@brief     Function for assigning handles to a this instance of cscs_c.

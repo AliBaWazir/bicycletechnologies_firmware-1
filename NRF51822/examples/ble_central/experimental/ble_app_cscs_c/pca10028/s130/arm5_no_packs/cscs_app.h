@@ -10,6 +10,12 @@
 extern "C" {
 #endif
 
+typedef enum{
+	CSCS_APP_RET_CODE_SUCCESS,
+	CSCS_APP_RET_CODE_SENSOR_ERROR,
+	CSCS_APP_RET_CODE_BAD_ARGUMENT,
+	CSCS_RET_CODE_UNKNOWN_ERROR
+}cscsApp_ret_code_e;
 /**
  * @brief Cycling Speed and Cadence collector initialization.
  */
