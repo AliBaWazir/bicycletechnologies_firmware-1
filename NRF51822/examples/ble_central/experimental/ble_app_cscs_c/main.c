@@ -26,7 +26,6 @@
 #include "app_error.h"
 #include "boards.h"
 #include "nrf_gpio.h"
-#include "../cscs_app.h"
 #include "app_util.h"
 #include "app_timer.h"
 #include "bsp.h"
@@ -36,7 +35,10 @@
 #include "fstorage.h"
 #include "ble_conn_state.h"
 
-#define NRF_LOG_MODULE_NAME "APP"
+#include "../cscs_app.h"
+#include "../spis_app.h"
+
+#define NRF_LOG_MODULE_NAME "MAIN"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 
@@ -877,7 +879,8 @@ static void power_manage(void)
 
 int main(void)
 {
-    bool erase_bonds;
+    int spisApp_init();
+	/*bool erase_bonds;
 	  uint32_t err_code = NRF_SUCCESS;
 
     // Initialize.
@@ -907,6 +910,6 @@ int main(void)
         {
             power_manage();
         }
-    }
+    }*/
 }
 

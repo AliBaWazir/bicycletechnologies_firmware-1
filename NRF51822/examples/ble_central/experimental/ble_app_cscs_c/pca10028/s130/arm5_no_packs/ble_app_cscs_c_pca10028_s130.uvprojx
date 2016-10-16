@@ -455,6 +455,11 @@
                 <FileArmAds/>
               </FileOption>
             </File>
+            <File>
+              <FileName>spis_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\spis_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1846,6 +1851,11 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>nrf_drv_spis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\..\components\drivers_nrf\spi_slave\nrf_drv_spis.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3243,6 +3253,11 @@
               <FileType>5</FileType>
               <FilePath>.\cscs_app.h</FilePath>
             </File>
+            <File>
+              <FileName>spis_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\spis_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4634,6 +4649,11 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>nrf_drv_spis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\..\components\drivers_nrf\spi_slave\nrf_drv_spis.c</FilePath>
             </File>
           </Files>
         </Group>
