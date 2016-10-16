@@ -29,6 +29,8 @@
 #define RTE_DEVICE_HAL_LTDC
 #define RTE_DEVICE_HAL_PWR
 #define RTE_DEVICE_HAL_RCC
+#define RTE_DEVICE_HAL_RTC
+#define RTE_DEVICE_HAL_SD
 #define RTE_DEVICE_HAL_SDRAM
 #define RTE_DEVICE_STARTUP_STM32F4XX    /* Device Startup for STM32F4 */
 

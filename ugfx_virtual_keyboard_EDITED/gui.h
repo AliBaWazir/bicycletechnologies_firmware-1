@@ -12,29 +12,18 @@
 // GListeners
 extern GListener glistener;
 
-// GHandle
-// Main Container (Background layer0)
-extern GHandle mainContainer;
+#define MAXIMUM_FRONT_GEARS 4
+#define MAXIMUM_BACK_GEARS 9
+#define MAXIMUM_TEETH 35
+#define MINIMUM_TEETH 25
 
-// Data Container on the left side
-extern GHandle dataContainer;
-extern GHandle speedLabel;
-extern GHandle rpmLabel;
-extern GHandle batteryLabel;
-extern GHandle menuButton;
+extern int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
+extern int gearBackSettings[MAXIMUM_BACK_GEARS+1];
 
-// Console Container 
-extern GHandle consoleContainer;
-extern GHandle consoleWindow;
-
-// Menu Container
-extern GHandle menuContainer;
-extern GHandle menuList;
-extern GHandle returnButton;
-
-// Map Container
-extern GHandle mapContainer;
-extern GHandle mapWindow;
+extern int currentGearSide;
+extern int currentGearTeethWindow;
+extern int currentTeethTeethWindow;
+extern int oldMenuSelectedItem;
 
 // Function Prototypes
 void guiCreate(void);

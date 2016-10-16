@@ -46,6 +46,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32469i_discovery.h"
+#include "stm32f4xx_hal_sd.h"
 
 /** @addtogroup BSP
   * @{

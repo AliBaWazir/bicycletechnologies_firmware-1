@@ -21,3 +21,4 @@
 #include "gfile_fatfs_diskio_chibios.c"
 #include "gfile_petitfs_wrapper.c"
 #include "gfile_petitfs_diskio_chibios.c"
+#include "../../../diskio.c"
