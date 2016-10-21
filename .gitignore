@@ -21,5 +21,6 @@
 /**/*.hex
 
 /**/.#*
-/**/*.uvgui.*
+/**/*.uvguix.*
 /**/*.uvopt
+/**/JLinkLog.txt
