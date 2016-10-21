@@ -19,10 +19,10 @@ typedef enum{
 /**
  * @brief Cycling Speed and Cadence collector initialization.
  */
-	void cscsApp_on_ble_evt(const ble_evt_t *p_ble_evt);
-	void cscsApp_on_db_disc_evt(const ble_db_discovery_evt_t *p_evt);
-	void cscsApp_on_ble_event(const ble_evt_t *p_ble_evt);
-	void cscsApp_cscs_c_init(void);
+void cscsApp_on_ble_evt(const ble_evt_t *p_ble_evt);
+void cscsApp_on_db_disc_evt(const ble_db_discovery_evt_t *p_evt);
+void cscsApp_on_ble_event(const ble_evt_t *p_ble_evt);
+bool cscsApp_cscs_c_init(void);
 
 #ifdef __cplusplus
 }

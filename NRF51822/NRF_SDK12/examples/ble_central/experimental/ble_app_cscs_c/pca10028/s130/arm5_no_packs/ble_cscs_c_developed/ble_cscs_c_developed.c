@@ -189,7 +189,7 @@ static void on_read_rsp(ble_cscs_c_t * p_csc_c, const ble_evt_t * p_ble_evt)
  */
 static void on_hvx(ble_cscs_c_t * p_ble_cscs_c, const ble_evt_t * p_ble_evt)
 {
-	  const ble_gattc_evt_hvx_t * p_notif = &p_ble_evt->evt.gattc_evt.params.hvx;
+	//const ble_gattc_evt_hvx_t * p_notif = &p_ble_evt->evt.gattc_evt.params.hvx;
 	
     // Check if the event if on the link for this instance
     if (p_ble_cscs_c->conn_handle != p_ble_evt->evt.gattc_evt.conn_handle)

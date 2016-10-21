@@ -12,7 +12,7 @@ extern "C" {
 
 
 	
-int spisApp_init(void);	
+bool spisApp_init(void);
 	
 #ifdef __cplusplus
 }
