@@ -18,6 +18,7 @@
 #define NRF_LOG_MODULE_NAME "APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "../spis_app.h"
 
 
 #define SPIS_INSTANCE 1 /**< SPIS instance index. */
@@ -31,6 +32,16 @@ static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. *
 static volatile bool spis_xfer_done; /**< Flag used to indicate that SPIS instance completed the transfer. */
 
 uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
+
+static void spisApp_buffers_set(){
+ 	
+	memset(m_rx_buf, 0, m_length);
+        
+	// Actually set the buffers in the SPI peripheral. Any further clocks clock out the data and fill the RX buffer.
+    APP_ERROR_CHECK(nrf_drv_spis_buffers_set(&spis, m_tx_buf, m_length, m_rx_buf, m_length));
+ 	
+ 	spis_xfer_done = false;
+}
 
 /**
  * @brief SPIS user event handler.
@@ -65,6 +76,11 @@ static void spis_event_handler(nrf_drv_spis_event_t event)
         //more to come here. Refactor into a switch statement?
 
     }
+	
+	if (spis_xfer_done){
+		//set buffers
+ 		spisApp_buffers_set();
+ 	}
 }
 
 static void spisApp_config(void){
@@ -72,13 +88,13 @@ static void spisApp_config(void){
     // Enable the constant latency sub power mode to minimize the time it takes
     // for the SPIS peripheral to become active after the CSN line is asserted
     // (when the CPU is in sleep mode).
-    NRF_POWER->TASKS_CONSTLAT = 1;
+    //commented out due to HardFault
+    //NRF_POWER->TASKS_CONSTLAT = 1;
 
     LEDS_CONFIGURE(BSP_LED_0_MASK);
     LEDS_OFF(BSP_LED_0_MASK);
 
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
-    NRF_LOG_INFO("SPIS example\r\n");
 
     nrf_drv_spis_config_t spis_config = NRF_DRV_SPIS_DEFAULT_CONFIG;
     spis_config.csn_pin               = APP_SPIS_CS_PIN;
@@ -92,23 +108,13 @@ static void spisApp_config(void){
     
 }
 
-int spisApp_init(void)
+bool spisApp_init(void)
 {
-    spisApp_config();
-    while (1)
-    {
-        memset(m_rx_buf, 0, m_length);
-        spis_xfer_done = false;
-
-        
-        // Actually set the buffers in the SPI peripheral. Any further clocks clock out the data and fill the RX buffer.
-        APP_ERROR_CHECK(nrf_drv_spis_buffers_set(&spis, m_tx_buf, m_length, m_rx_buf, m_length));
-        
-
-        while (!spis_xfer_done)
-        {
-            __WFE();//wait for event (sleep)
-        }
-    }
+	bool ret_code = true;
+ 	
+ 	spisApp_config();
+ 	NRF_LOG_INFO("SPIS APP initialized successfully\r\n");
+ 	
+ 	return ret_code;
 }
 

@@ -332,8 +332,11 @@ void cscsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 /**
  * @brief Cycling Speed and Cadence collector initialization.
  */
-void cscsApp_cscs_c_init(void)
+bool cscsApp_cscs_c_init(void)
 {
+	bool     ret_code = true;
+	uint32_t err_code = NRF_SUCCESS;
+	
     ble_cscs_c_init_t cscs_c_init_obj;
 	memset(&cscs_c_init_obj, 0, sizeof(ble_cscs_c_init_t));
 		
@@ -345,7 +348,10 @@ void cscsApp_cscs_c_init(void)
                           	 | BLE_CSCS_FEATURE_CRANK_REV_BIT
 	                         | BLE_CSCS_FEATURE_MULTIPLE_SENSORS_BIT;
 
-    uint32_t err_code = ble_cscs_c_init(&m_ble_cscs_c, &cscs_c_init_obj);
-    APP_ERROR_CHECK(err_code);
-		
+    err_code = ble_cscs_c_init(&m_ble_cscs_c, &cscs_c_init_obj);
+    if ( err_code !=NRF_SUCCESS){
+		ret_code = false;
+	}
+
+	return ret_code;	
 }

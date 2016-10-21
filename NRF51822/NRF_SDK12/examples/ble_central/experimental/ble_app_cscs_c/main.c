@@ -884,24 +884,25 @@ static void power_manage(void)
 
 int main(void)
 {
-    spisApp_init();
-	/*bool erase_bonds;
-	  uint32_t err_code = NRF_SUCCESS;
+	bool erase_bonds;
+	//uint32_t err_code = NRF_SUCCESS;
 
-    // Initialize.
-	  err_code = NRF_LOG_INIT(NULL);
-		if (err_code != NRF_SUCCESS){
-			 return -1;
-		}
+    //Initialize.
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, NULL);
     buttons_leds_init(&erase_bonds);
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
-    NRF_LOG_INFO("Cycling Speed and Cadence collector example\r\n");
+    NRF_LOG_INFO("Running SHIFTY-Automatic Transmission Bike software\r\n");
     ble_stack_init();
     ble_conn_state_init();
     peer_manager_init(erase_bonds);
     db_discovery_init();
-    cscsApp_cscs_c_init();
+    if (!cscsApp_cscs_c_init()){
+		NRF_LOG_ERROR("Failed to initialize cscsApp\r\n");
+ 	}
+ 
+ 	if (!spisApp_init()){
+ 		NRF_LOG_ERROR("Failed to initialize spisApp\r\n");
+ 	}
 
     whitelist_load();
 
@@ -915,10 +916,7 @@ int main(void)
         {
             power_manage();
         }
-    }*/
-    for(;;)
-    {
-        // halt
     }
+
 }
 
