@@ -156,6 +156,7 @@ bool nrfTransmit2(uint8_t *buffIn, uint8_t *buffOut, uint16_t len) {
         if(buffOut[0] == 0xDF){
 
             TM_GPIO_SetPinHigh(GPIOD, GPIO_PIN_4);
+            Delay(250);
             return false;
         }
             
