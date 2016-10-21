@@ -29,7 +29,7 @@ static uint8_t       m_tx_buf[4];          /**< TX buffer. */
 static uint8_t       m_rx_buf[sizeof(m_tx_buf) + 1];    /**< RX buffer. */
 static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. */
 
-static volatile bool spis_xfer_done; /**< Flag used to indicate that SPIS instance completed the transfer. */
+static volatile bool spis_xfer_done = true; /**< Flag used to indicate that SPIS instance completed the transfer. */
 
 uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
 
@@ -74,13 +74,14 @@ static void spis_event_handler(nrf_drv_spis_event_t event)
            m_tx_buf[0] = 0xBA;
         }
         //more to come here. Refactor into a switch statement?
+        
+        
+        
 
     }
 	
-	if (spis_xfer_done){
-		//set buffers
- 		spisApp_buffers_set();
- 	}
+	
+        
 }
 
 static void spisApp_config(void){
@@ -112,9 +113,28 @@ bool spisApp_init(void)
 {
 	bool ret_code = true;
  	
+    
+    
  	spisApp_config();
+
+    
  	NRF_LOG_INFO("SPIS APP initialized successfully\r\n");
  	
  	return ret_code;
 }
+void spi_wait(){
+    
 
+        
+        if (spis_xfer_done){
+		//set buffers
+            memset(m_rx_buf, 0, m_length);
+            spis_xfer_done = false;
+            APP_ERROR_CHECK(nrf_drv_spis_buffers_set(&spis, m_tx_buf, m_length, m_rx_buf, m_length));
+        }
+        
+        while (!spis_xfer_done)
+        {
+            __WFE();//wait for event (sleep)
+        }
+}

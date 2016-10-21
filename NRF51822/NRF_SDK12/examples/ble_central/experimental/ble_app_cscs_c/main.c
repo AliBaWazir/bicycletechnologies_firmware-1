@@ -884,6 +884,7 @@ static void power_manage(void)
 
 int main(void)
 {
+    
 	bool erase_bonds;
 	//uint32_t err_code = NRF_SUCCESS;
 
@@ -892,6 +893,9 @@ int main(void)
     buttons_leds_init(&erase_bonds);
     APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
     NRF_LOG_INFO("Running SHIFTY-Automatic Transmission Bike software\r\n");
+    if (!spisApp_init()){
+ 		NRF_LOG_ERROR("Failed to initialize spisApp\r\n");
+ 	}
     ble_stack_init();
     ble_conn_state_init();
     peer_manager_init(erase_bonds);
@@ -900,9 +904,7 @@ int main(void)
 		NRF_LOG_ERROR("Failed to initialize cscsApp\r\n");
  	}
  
- 	if (!spisApp_init()){
- 		NRF_LOG_ERROR("Failed to initialize spisApp\r\n");
- 	}
+ 	
 
     whitelist_load();
 
@@ -915,6 +917,7 @@ int main(void)
         if (NRF_LOG_PROCESS() == false)
         {
             power_manage();
+            spi_wait();
         }
     }
 
