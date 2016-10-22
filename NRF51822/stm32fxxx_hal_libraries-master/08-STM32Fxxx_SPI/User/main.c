@@ -23,6 +23,7 @@
 /* Data for send and receive */
 uint8_t Transmit[15], Receive[15];
 bool nrfTransmit(uint8_t*, uint8_t*, uint16_t);
+bool nrfTransmit2(uint8_t*, uint8_t*, uint16_t);
 bool nrfTransmitSingle(uint8_t*, uint8_t*);
 bool nrfGetData(void);
 
@@ -139,11 +140,26 @@ bool nrfTransmitSingle(uint8_t* in, uint8_t* out){
 
 
 bool nrfTransmit(uint8_t *buffIn, uint8_t *buffOut, uint16_t len) {
-    Delay(75);
+    while(nrfTransmit2(buffIn, buffOut, len)==false){
+        //if we go here not working
+    }
+    return true;
+}   
+
+bool nrfTransmit2(uint8_t *buffIn, uint8_t *buffOut, uint16_t len) {
+    Delay(100);
     TM_GPIO_SetPinLow(GPIOD, GPIO_PIN_4);
-    Delay(8);
+    Delay(10);
     for(int i = 0; i<1; i++){
+        
         TM_SPI_SendMulti(SPI2, buffIn, buffOut,len);
+        if(buffOut[0] == 0xDF){
+
+            TM_GPIO_SetPinHigh(GPIOD, GPIO_PIN_4);
+            Delay(250);
+            return false;
+        }
+            
     }
     TM_GPIO_SetPinHigh(GPIOD, GPIO_PIN_4);
     return true;
