@@ -122,7 +122,7 @@ bool spisApp_init(void)
  	
  	return ret_code;
 }
-void spi_wait(){
+void spisApp_spi_wait(){
     
 
         

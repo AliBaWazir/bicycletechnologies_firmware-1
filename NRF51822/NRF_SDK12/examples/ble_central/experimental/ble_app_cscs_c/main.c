@@ -877,6 +877,7 @@ static void buttons_leds_init(bool * p_erase_bonds)
 static void power_manage(void)
 {
     uint32_t err_code = sd_app_evt_wait();
+	spisApp_spi_wait();
 
     APP_ERROR_CHECK(err_code);
 }
@@ -917,7 +918,6 @@ int main(void)
         if (NRF_LOG_PROCESS() == false)
         {
             power_manage();
-            spi_wait();
         }
     }
 

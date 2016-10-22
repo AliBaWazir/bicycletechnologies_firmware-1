@@ -14,7 +14,7 @@ extern "C" {
 	
 bool spisApp_init(void);
     
-void spi_wait(void);
+void spisApp_spi_wait(void);
 	
 #ifdef __cplusplus
 }

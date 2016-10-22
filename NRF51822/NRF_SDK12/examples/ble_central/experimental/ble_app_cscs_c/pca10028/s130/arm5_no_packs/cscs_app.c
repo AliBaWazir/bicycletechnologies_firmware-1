@@ -57,7 +57,7 @@ typedef struct{
 	uint16_data_field_t oldCrankEventTime;
 	double_data_field_t travelDistance_m;       //this is the traveled distance for the current cycling session
     double_data_field_t totalTravelDistance;    // This is the total traveled distance since first use of bike with sensor
-	double_data_field_t wheel_speed_mps; /*m/s*/
+	double_data_field_t wheel_speed_kmph; /*km/h*/
 	double_data_field_t crank_cadence_rpm;
 } cscs_instantanious_data_t;
 
@@ -116,12 +116,12 @@ static int32_t process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t n
 				
 	if (wheel_event_time_diff_s > 0) {
         //speed is in units of m/s
-        cscs_instantanious_data.wheel_speed_mps.value = (((wheel_revolutions_diff * wheel_circumference_cm)/100.0)/wheel_event_time_diff_s);
-		cscs_instantanious_data.wheel_speed_mps.is_read = false;
+        cscs_instantanious_data.wheel_speed_kmph.value = (((wheel_revolutions_diff * wheel_circumference_cm)/100.0)/wheel_event_time_diff_s)*3.6;  //3.6 is to convert from m/s to km/h
+		cscs_instantanious_data.wheel_speed_kmph.is_read = false;
     } else{
-		//wheel is stopped. Set speed at 0 m/s
-		cscs_instantanious_data.wheel_speed_mps.value = 0.0;
-		cscs_instantanious_data.wheel_speed_mps.is_read = false;
+		//wheel is stopped. Set speed at 0 km/h
+		cscs_instantanious_data.wheel_speed_kmph.value = 0.0;
+		cscs_instantanious_data.wheel_speed_kmph.is_read = false;
 	}
     
 	//update the old revolution and envent time fields with new data
@@ -229,7 +229,7 @@ static void cscsApp_debug_print_inst_data(){
 		
 		NRF_LOG_INFO("------------------------------------------------------\r\n");
 		NRF_LOG_INFO("travel distance             = %d (m)\r\n", (uint32_t)cscs_instantanious_data.travelDistance_m.value);
-		NRF_LOG_INFO("wheel speed                = %d (m/s)\r\n", (uint32_t)cscs_instantanious_data.wheel_speed_mps.value);
+		NRF_LOG_INFO("wheel speed                = %d (km/h)\r\n", (uint32_t)cscs_instantanious_data.wheel_speed_kmph.value);
 		NRF_LOG_INFO("crank cadence            = %d (rpm)\r\n", (uint32_t)cscs_instantanious_data.crank_cadence_rpm.value);
 		NRF_LOG_INFO("old wheel revolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelRevolutions.value);
 		NRF_LOG_INFO("old crank revolution   = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankRevolutions.value);
