@@ -9,19 +9,41 @@
  * the file.
  *
  */
+ 
+ /**********************************************************************************************
+* INCLUDES
+***********************************************************************************************/
 #include "sdk_config.h"
 #include "nrf_drv_spis.h"
 #include "nrf_gpio.h"
 #include "boards.h"
 #include "app_error.h"
 #include <string.h>
-#define NRF_LOG_MODULE_NAME "APP"
+#define NRF_LOG_MODULE_NAME "SPIS APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+
+#include "spis_sim_driver.h"
 #include "../spis_app.h"
 
-
+/**********************************************************************************************
+* MACRO DEFINITIONS
+***********************************************************************************************/
 #define SPIS_INSTANCE 1 /**< SPIS instance index. */
+
+#define SPIS_DRIVER_SIM_MODE 1 /*
+								This boolean is set to true only if SPI slave interaction
+								is in simulation mode.
+								*/
+
+/**********************************************************************************************
+* TYPE DEFINITIONS
+***********************************************************************************************/
+
+
+/**********************************************************************************************
+* STATIC VARIABLES
+***********************************************************************************************/
 static const nrf_drv_spis_t spis = NRF_DRV_SPIS_INSTANCE(SPIS_INSTANCE);/**< SPIS instance. */
 
 
@@ -33,6 +55,10 @@ static volatile bool spis_xfer_done = true; /**< Flag used to indicate that SPIS
 
 uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
 
+
+/**********************************************************************************************
+* STATIC FUCNCTIONS
+***********************************************************************************************/
 static void spisApp_buffers_set(){
  	
 	memset(m_rx_buf, 0, m_length);
@@ -109,16 +135,25 @@ static void spisApp_config(void){
     
 }
 
+/**********************************************************************************************
+* PUBLIC FUCNCTIONS
+***********************************************************************************************/
 bool spisApp_init(void)
 {
 	bool ret_code = true;
- 	
-    
     
  	spisApp_config();
+	
+	// if data need to be generated in simulation mode, initialize SPIS simulation driver
+	if (ret_code && SPIS_DRIVER_SIM_MODE){
+		ret_code = spisSimDriver_init();
+	}
 
-    
- 	NRF_LOG_INFO("SPIS APP initialized successfully\r\n");
+    if (ret_code){
+		NRF_LOG_INFO("SPIS APP initialized successfully\r\n");
+	} else {
+		NRF_LOG_ERROR("SPIS APP failed to initialize\r\n");
+	}
  	
  	return ret_code;
 }
