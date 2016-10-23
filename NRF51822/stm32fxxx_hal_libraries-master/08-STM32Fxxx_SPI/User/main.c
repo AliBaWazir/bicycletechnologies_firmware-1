@@ -26,6 +26,7 @@ bool nrfTransmit(uint8_t*, uint8_t*, uint16_t);
 bool nrfTransmit2(uint8_t*, uint8_t*, uint16_t);
 bool nrfTransmitSingle(uint8_t*, uint8_t*);
 bool nrfGetData(void);
+void runTestCase(uint8_t*);
 
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
@@ -72,10 +73,10 @@ int main(void) {
     TM_GPIO_SetPinHigh(GPIOD, GPIO_PIN_4);
     
     //Initialize Vars
-	spi_Data.speed.key = 0x01;
-    spi_Data.cadence.key = 0x02;
-    spi_Data.heartRate.key = 0x04;
-    spi_Data.batt.key = 0x08;
+	spi_Data.speed.key = 0xFA;
+    spi_Data.cadence.key = 0xCA;
+    spi_Data.heartRate.key = 0xEA;
+    spi_Data.batt.key = 0xBA;
     
         
     
@@ -85,9 +86,11 @@ int main(void) {
 	/* Init SPI */
 	TM_SPI_Init(SPI2, TM_SPI_PinsPack_1);
 
-    nrfGetData(); // Get struct data
     
-    while(1){}; //Do nothing forever
+    while(1){
+        nrfGetData(); 
+        Delay(10000*5);
+    } //Do nothing forever
 
 
 }
@@ -108,31 +111,35 @@ bool nrfGetData(){
     //nrfTransmit(bitField, garbage, 4);//echo for debugging
     
     if(0x01 & bitField[0]){   // 0001  Get speed
-        memset(garbage,0x00,sizeof(garbage));
-        nrfTransmitSingle(&spi_Data.speed.key, &garbage[0]);// This transfer gives the NRF the instruction
-        nrfTransmitSingle(&garbage[0], &spi_Data.speed.value);// This transfer allows the NRF to clock the data to us
+        runTestCase(&spi_Data.speed.key);
     }
     
     if(0x02 & bitField[0]){  // 0010   Get Cadence
-        memset(garbage,0x00,sizeof(garbage)); //clean up so the scope is cleaner
-        nrfTransmitSingle(&spi_Data.cadence.key, &garbage[0]);
-        nrfTransmitSingle(&garbage[0], &spi_Data.cadence.value);
+        runTestCase(&spi_Data.cadence.key);
     }
     
-    if(0x04 & bitField[0]){  // 0100   Get 
-        memset(garbage,0x00,sizeof(garbage));
-        nrfTransmitSingle(&spi_Data.heartRate.key, &garbage[0]);
-        nrfTransmitSingle(&garbage[0], &spi_Data.heartRate.value);
+    if(0x04 & bitField[0]){  // 0100   Get HR
+        runTestCase(&spi_Data.heartRate.key);
     }
-    if(0x08 & bitField[0]){  // 1000
-        memset(garbage,0x00,sizeof(garbage));
-        nrfTransmitSingle(&spi_Data.batt.key, &garbage[0]);
-        nrfTransmitSingle(&garbage[0], &spi_Data.batt.value);
+    if(0x08 & bitField[0]){  // 1000    Get Batt
+        runTestCase(&spi_Data.batt.key);
     }
     
     
     return true;
 }
+
+void runTestCase(uint8_t* target){
+    for(uint8_t i = 0; i<20; i++){
+        uint8_t testGarbage[4] = {0x00,0x00,0x00,0x00};
+        
+        memset(testGarbage,0x00,sizeof(testGarbage));
+        nrfTransmitSingle(target, &testGarbage[0]);// This transfer gives the NRF the instruction
+        nrfTransmitSingle(&testGarbage[0], &spi_Data.speed.value);// This transfer allows the NRF to clock the data to us
+    }
+}
+
+
 
 bool nrfTransmitSingle(uint8_t* in, uint8_t* out){
     return nrfTransmit(in, out, 1);    
@@ -147,7 +154,7 @@ bool nrfTransmit(uint8_t *buffIn, uint8_t *buffOut, uint16_t len) {
 }   
 
 bool nrfTransmit2(uint8_t *buffIn, uint8_t *buffOut, uint16_t len) {
-    Delay(100);
+    Delay(1000*7);
     TM_GPIO_SetPinLow(GPIOD, GPIO_PIN_4);
     Delay(10);
     for(int i = 0; i<1; i++){
