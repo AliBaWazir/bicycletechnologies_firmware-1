@@ -452,6 +452,11 @@
               <FileType>1</FileType>
               <FilePath>.\spis_app.c</FilePath>
             </File>
+            <File>
+              <FileName>spis_sim_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\spis_sim_driver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3060,6 +3065,11 @@
               <FileName>spis_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\spis_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>spis_sim_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\spis_sim_driver.c</FilePath>
             </File>
           </Files>
         </Group>
