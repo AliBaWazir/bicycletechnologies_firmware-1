@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
 uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type);
-bool spisSimDriver_init();
+bool spisSimDriver_init(void);
 
 
 #ifdef __cplusplus

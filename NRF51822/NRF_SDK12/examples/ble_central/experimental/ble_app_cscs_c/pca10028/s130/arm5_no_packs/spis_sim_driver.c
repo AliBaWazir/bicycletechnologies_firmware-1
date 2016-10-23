@@ -207,7 +207,7 @@ uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 			current_data = hr_bpm_sim_array[hr_index];
 			//update the index to get next data next time
 			if (!spisSimDriver_update_index(CSCS_DATA_HR)){
-				NRF_LOG_ERROR(".spisSimDriver_update_index failed to update hear rate index\r\n");
+				NRF_LOG_ERROR(".spisSimDriver_update_index failed to update heart rate index\r\n");
 			}
 		break;
 		
@@ -221,7 +221,7 @@ uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 }
 
 /*Initialize SPIS simulation driver*/
-bool spisSimDriver_init(){
+bool spisSimDriver_init(void){
 	bool ret_code  = true;
 	
 	//initialze sim data arrays
