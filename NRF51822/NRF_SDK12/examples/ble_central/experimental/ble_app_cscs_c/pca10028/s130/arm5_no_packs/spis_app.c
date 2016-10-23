@@ -35,11 +35,13 @@
 #define SPIS_REQUEST_AVAILABLE_DATA     0xDA
 #define SPIS_REQUEST_SPEED              0x01
 #define SPIS_REQUEST_CADENCE            0x02
+#define SPIS_REQUEST_DISTANCE           0x03
 #define SPIS_REQUEST_HR                 0x04
-#define SPIS_REQUEST_BATTERY            0x08
+#define SPIS_REQUEST_BATTERY            0x05
+
 
 #define SPIS_DRIVER_SIM_MODE 1 /*
-								This boolean is set to true only if SPI slave interaction
+								This flag is set to 1 only if SPI slave interaction
 								is in simulation mode.
 								*/
 
@@ -103,6 +105,15 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				} else {
 					/*TODO: get data from CSCS app*/
 					m_tx_buf[0] = 0xCA;
+				}
+			break;
+				
+			case SPIS_REQUEST_DISTANCE:
+				if (SPIS_DRIVER_SIM_MODE){
+					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_DISTANCE);
+				} else {
+					/*TODO: get data from CSCS app*/
+					m_tx_buf[0] = 0xDE;
 				}
 			break;
 			
