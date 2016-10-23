@@ -39,6 +39,7 @@
 								 //According to cadence measurement of 7 professional cyclists during 
 								 //3 week races they cycle about 90 rpm during flat and long (~190 km) 
 							     //group stages and individual time trials of ~50 km.
+#define MAX_SIM_DISTANCE    200
 #define MAX_SIM_HR          100
 
 /**********************************************************************************************
@@ -58,6 +59,7 @@
 //data to be set by slave
 static uint8_t speed_kmph_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t cadence_rpm_sim_array [SIM_DATA_ARRAY_SIZE];
+static uint8_t distance_km_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t hr_bpm_sim_array [SIM_DATA_ARRAY_SIZE];
 
 //data to be set by master
@@ -73,6 +75,7 @@ static uint8_t wheel_gear_count        = 0;
 //indexes for the current value of sim data
 static uint8_t speed_index      = 0;
 static uint8_t cadence_index    = 0;
+static uint8_t distance_index   = 0;
 static uint8_t hr_index         = 0;
 
 /**********************************************************************************************
@@ -98,6 +101,15 @@ static bool spisSimDriver_update_index (cscs_data_type_e index_type){
 			} else {
 				//reset the index to 0
 				cadence_index = 0;
+			}	
+		break;
+			
+		case CSCS_DATA_DISTANCE:
+			if ((distance_index+1)<SIM_DATA_ARRAY_SIZE){
+				distance_index +=1;
+			} else {
+				//reset the index to 0
+				distance_index = 0;
 			}	
 		break;
 		
@@ -158,6 +170,26 @@ static bool spisSimDriver_init_cadence_array(){
 	return ret_code;
 }
 
+static bool spisSimDriver_init_distance_array(){
+	bool    ret_code  = true;
+	uint8_t i         = 0;
+	
+	for (i =0; i<SIM_DATA_ARRAY_SIZE; i++){
+		if (i<=(SIM_DATA_ARRAY_SIZE/2)){
+			// at the first half simulation cycle, travelled distance will increase gradually from 0 to MAX_SIM_DISTANCE km
+			distance_km_sim_array[i]= i*(MAX_SIM_DISTANCE/(SIM_DATA_ARRAY_SIZE/2));
+		} else {
+			// at the second half simulation cycle, travelled distance will decrease gradually from MAX_SIM_DISTANCE km to 0
+			// make use of symmetry
+			uint8_t symmetric_i = (SIM_DATA_ARRAY_SIZE/2) - (i -SIM_DATA_ARRAY_SIZE/2);
+			distance_km_sim_array[i]= distance_km_sim_array[symmetric_i];
+		}
+		
+	}
+	
+	return ret_code;
+}
+
 static bool spisSimDriver_init_hr_array(){
 	bool    ret_code  = true;
 	uint8_t i         = 0;
@@ -203,6 +235,14 @@ uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 			}
 		break;
 		
+		case CSCS_DATA_DISTANCE:
+			current_data = distance_km_sim_array[distance_index];
+			//update the index to get next data next time
+			if (!spisSimDriver_update_index(CSCS_DATA_DISTANCE)){
+				NRF_LOG_ERROR("spisSimDriver_update_index failed to update cadence index.\r\n");
+			}
+		break;
+		
 		case CSCS_DATA_HR:
 			current_data = hr_bpm_sim_array[hr_index];
 			//update the index to get next data next time
@@ -229,6 +269,10 @@ bool spisSimDriver_init(void){
 	
 	if (ret_code){
 		ret_code = spisSimDriver_init_cadence_array();
+	}
+	
+    if (ret_code){
+		ret_code = spisSimDriver_init_distance_array();
 	}
 		
 	if (ret_code){
