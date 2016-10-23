@@ -24,6 +24,7 @@
 #include "nrf_log_ctrl.h"
 
 #include "spis_sim_driver.h"
+#include "algorithm_app.h"
 #include "../spis_app.h"
 
 /**********************************************************************************************
@@ -153,7 +154,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPIS_DRIVER_SIM_MODE){
 					spisSimDriver_set_cadence_setpoint(m_tx_buf[INDEX_ARG_SETPOINT]);
 				} else {
-					//algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
+					algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
 				}
 			break;
 				
@@ -161,7 +162,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPIS_DRIVER_SIM_MODE){
 					spisSimDriver_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
 				} else {
-					//algorithmApp_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
+					algorithmApp_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
 				}
 			break;
 				
@@ -169,7 +170,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPIS_DRIVER_SIM_MODE){
 					spisSimDriver_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
 				} else {
-					//algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
+					algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
 				}
 			break;
 				
@@ -177,7 +178,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPIS_DRIVER_SIM_MODE){
 					spisSimDriver_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
 				} else {
-					//algorithmApp_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
+					algorithmApp_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
 				}
 			break;
 				
