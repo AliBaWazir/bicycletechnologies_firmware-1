@@ -33,10 +33,10 @@
 
 //SPI requests definitions
 #define SPIS_REQUEST_AVAILABLE_DATA     0xDA
-#define SPIS_REQUEST_SPEED              0xFA
-#define SPIS_REQUEST_CADENCE            0xCA
-#define SPIS_REQUEST_HR                 0xEA
-#define SPIS_REQUEST_BATTERY            0xBA
+#define SPIS_REQUEST_SPEED              0x01
+#define SPIS_REQUEST_CADENCE            0x02
+#define SPIS_REQUEST_HR                 0x04
+#define SPIS_REQUEST_BATTERY            0x08
 
 #define SPIS_DRIVER_SIM_MODE 1 /*
 								This boolean is set to true only if SPI slave interaction
