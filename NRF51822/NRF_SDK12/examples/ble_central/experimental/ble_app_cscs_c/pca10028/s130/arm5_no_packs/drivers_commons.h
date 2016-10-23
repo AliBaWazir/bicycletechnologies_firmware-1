@@ -10,6 +10,10 @@
 extern "C" {
 #endif
 
+	
+#define CRANK_IDENTIFIER 1
+#define WHEEL_IDENTIFIER 2
+
 /**********************************************************************************************
 * CSCS
 ***********************************************************************************************/	
@@ -22,6 +26,18 @@ typedef enum {
 } cscs_data_type_e;
 
 
+
+/**********************************************************************************************
+* ROM STORED DATA
+***********************************************************************************************/
+typedef struct{
+	uint8_t cadence_setpoint;
+	uint8_t wheel_diameter;
+	uint8_t crank_gear_count;
+	uint8_t wheel_gear_count;
+	/*TODO: figure out how teeth count can be stored in ROM, 3D array?*/
+	
+} user_defined_properties_t;
 
 #ifdef __cplusplus
 }
