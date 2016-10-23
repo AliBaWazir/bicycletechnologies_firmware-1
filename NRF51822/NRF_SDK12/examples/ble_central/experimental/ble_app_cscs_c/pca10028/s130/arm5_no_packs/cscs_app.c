@@ -67,10 +67,6 @@ typedef struct{
 static ble_cscs_c_t                 m_ble_cscs_c;      /**< Structure used to identify the Cycling Speed and Cadence client module. */
 static cscs_instantanious_data_t    cscs_instantanious_data;
 static double                       wheel_circumference_cm = 2*PI*DFAULT_WHEEL_DIAMETER_CM;               /*The circumfrance is calculated by wheel diameter specified by user*/
-//static uint32_t                     wheel_revolution_offset = 0;                                     /*Offset from the first reading*/
-//static uint16_t                     crank_revolution_offset = 0;
-//static uint16_t                     wheel_event_time_offset = 0;
-//static uint16_t                     crank_event_time_offset = 0;
 
 /* TODO: create a function to update wheelCircumference by user data*/
 /**********************************************************************************************
