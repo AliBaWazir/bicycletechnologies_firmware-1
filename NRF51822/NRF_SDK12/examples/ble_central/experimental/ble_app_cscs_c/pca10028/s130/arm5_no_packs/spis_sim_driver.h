@@ -10,8 +10,13 @@
 extern "C" {
 #endif
 
-uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type);
-bool spisSimDriver_init(void);
+void spisSimDriver_set_cadence_setpoint (uint8_t new_cadence_setpoint);
+void spisSimDriver_set_wheel_diameter (uint8_t new_wheel_diameter);
+void spisSimDriver_set_gear_count (uint8_t gear_type, uint8_t new_gear_count);
+void spisSimDriver_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_t new_gear_teeth);
+	
+uint8_t spisSimDriver_get_current_data (cscs_data_type_e data_type);
+bool spisSimDriver_init (void);
 
 
 #ifdef __cplusplus

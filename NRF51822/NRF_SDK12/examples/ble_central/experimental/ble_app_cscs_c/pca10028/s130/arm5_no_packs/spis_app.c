@@ -31,13 +31,28 @@
 ***********************************************************************************************/
 #define SPIS_INSTANCE 1 /**< SPIS instance index. */
 
-//SPI requests definitions
+//SPI request definitions
 #define SPIS_REQUEST_AVAILABLE_DATA     0xDA
 #define SPIS_REQUEST_SPEED              0x01
 #define SPIS_REQUEST_CADENCE            0x02
 #define SPIS_REQUEST_DISTANCE           0x03
 #define SPIS_REQUEST_HR                 0x04
 #define SPIS_REQUEST_BATTERY            0x05
+
+#define SPIS_SET_CADENCE_SETPOINT       0x10
+#define SPIS_SET_WHEEL_DIAMETER         0x20
+#define SPIS_SET_GEAR_COUNT             0x30
+#define SPIS_SET_TEETH_COUNT            0x40
+
+
+//SPI argument indeces
+#define INDEX_ARG_BASE             1                  // second bit rx[1] denotes the first argument
+#define INDEX_ARG_SETPOINT         INDEX_ARG_BASE     // index of argument setpoint used with SPIS_SET_CADENCE_SETPOINT
+#define INDEX_ARG_WHEEL_DIAMETER   INDEX_ARG_BASE
+#define INDEX_ARG_GEAR_TYPE        INDEX_ARG_BASE
+#define INDEX_ARG_GEAR_COUNT       (INDEX_ARG_BASE+1) //if value of this arg is 1, it is cranck gear, 2 for wheel
+#define INDEX_ARG_GEAR_INDEX       (INDEX_ARG_BASE+1) //index starts from 0 for fisrt gear
+#define INDEX_ARG_TEETH_COUNT      (INDEX_ARG_BASE+2) //teeth count in a gear defined by INDEX_ARG_GEAR_TYPE and INDEX_ARG_GEAR_INDEX
 
 
 #define SPIS_DRIVER_SIM_MODE 1 /*
@@ -79,6 +94,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
     if (event.evt_type == NRF_DRV_SPIS_XFER_DONE){
 		
 		uint8_t command = m_rx_buf[0];
+		
         memset(m_tx_buf, 0x00, sizeof(m_tx_buf)); // clear the tx for visual clarity
         
         spis_xfer_done = true;
@@ -86,6 +102,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 
 		switch (command){
 			
+			/**************************** GETTERS ********************************/
 			case SPIS_REQUEST_AVAILABLE_DATA:
 				memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
 			break;
@@ -131,6 +148,39 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				m_tx_buf[0] = 0xBA;
 			break;
 			
+			/**************************** SETTERS ********************************/
+			case SPIS_SET_CADENCE_SETPOINT:
+				if (SPIS_DRIVER_SIM_MODE){
+					spisSimDriver_set_cadence_setpoint(m_tx_buf[INDEX_ARG_SETPOINT]);
+				} else {
+					//algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
+				}
+			break;
+				
+			case SPIS_SET_WHEEL_DIAMETER:
+				if (SPIS_DRIVER_SIM_MODE){
+					spisSimDriver_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
+				} else {
+					//algorithmApp_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
+				}
+			break;
+				
+			case SPIS_SET_GEAR_COUNT:
+				if (SPIS_DRIVER_SIM_MODE){
+					spisSimDriver_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
+				} else {
+					//algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
+				}
+			break;
+				
+			case SPIS_SET_TEETH_COUNT:
+				if (SPIS_DRIVER_SIM_MODE){
+					spisSimDriver_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
+				} else {
+					//algorithmApp_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
+				}
+			break;
+				
 			default:
 				NRF_LOG_ERROR("command in rx buffer is unknown. command= 0x%x\r\n",command);
 			break;
