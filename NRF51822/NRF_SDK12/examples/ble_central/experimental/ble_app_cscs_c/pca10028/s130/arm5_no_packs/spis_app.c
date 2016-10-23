@@ -31,6 +31,13 @@
 ***********************************************************************************************/
 #define SPIS_INSTANCE 1 /**< SPIS instance index. */
 
+//SPI requests definitions
+#define SPIS_REQUEST_AVAILABLE_DATA     0xDA
+#define SPIS_REQUEST_SPEED              0xFA
+#define SPIS_REQUEST_CADENCE            0xCA
+#define SPIS_REQUEST_HR                 0xEA
+#define SPIS_REQUEST_BATTERY            0xBA
+
 #define SPIS_DRIVER_SIM_MODE 1 /*
 								This boolean is set to true only if SPI slave interaction
 								is in simulation mode.
@@ -59,55 +66,66 @@ uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
-static void spisApp_buffers_set(){
- 	
-	memset(m_rx_buf, 0, m_length);
-        
-	// Actually set the buffers in the SPI peripheral. Any further clocks clock out the data and fill the RX buffer.
-    APP_ERROR_CHECK(nrf_drv_spis_buffers_set(&spis, m_tx_buf, m_length, m_rx_buf, m_length));
- 	
- 	spis_xfer_done = false;
-}
 
 /**
  * @brief SPIS user event handler.
  *
  * @param event
  */
-static void spis_event_handler(nrf_drv_spis_event_t event)
+static void spisApp_event_handler(nrf_drv_spis_event_t event)
 {
-    if (event.evt_type == NRF_DRV_SPIS_XFER_DONE)
-    {
-        memset(m_tx_buf, 0x00,sizeof(m_tx_buf)); // clear the tx for visual clarity
+    if (event.evt_type == NRF_DRV_SPIS_XFER_DONE){
+		
+		uint8_t command = m_rx_buf[0];
+        memset(m_tx_buf, 0x00, sizeof(m_tx_buf)); // clear the tx for visual clarity
         
         spis_xfer_done = true;
         NRF_LOG_INFO(" Transfer completed. Received: %s\r\n",(uint32_t)m_rx_buf);
 
-        if(m_rx_buf[0] == 0xDA){
-            memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
-        }
+		switch (command){
+			
+			case SPIS_REQUEST_AVAILABLE_DATA:
+				memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
+			break;
+			
+			case SPIS_REQUEST_SPEED:
+				if (SPIS_DRIVER_SIM_MODE){
+					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_SPEED);
+				} else {
+					/*TODO: get data from CSCS app*/
+					m_tx_buf[0] = 0xFA;
+				}
+			break;
+			
+			case SPIS_REQUEST_CADENCE:
+				if (SPIS_DRIVER_SIM_MODE){
+					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_CADENCE);
+				} else {
+					/*TODO: get data from CSCS app*/
+					m_tx_buf[0] = 0xCA;
+				}
+			break;
+			
+			case SPIS_REQUEST_HR:
+				if (SPIS_DRIVER_SIM_MODE){
+					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_HR);
+				} else {
+					/*TODO: get data from CSCS app*/
+					m_tx_buf[0] = 0xEA;
+				}
+			break;
+			
+			case SPIS_REQUEST_BATTERY:
+				/*TODO: figure out which device's battery*/
+				m_tx_buf[0] = 0xBA;
+			break;
+			
+			default:
+				NRF_LOG_ERROR("command in rx buffer is unknown. command= 0x%x\r\n",command);
+			break;
+		}     
 
-        if(m_rx_buf[0] == 0x01){//speed has been requested. Add to buffer
-           m_tx_buf[0] = 0xFA;
-        }
-        if(m_rx_buf[0] == 0x02){//cadence has been requested. Add to buffer
-           m_tx_buf[0] = 0xCA;
-        }
-        if(m_rx_buf[0] == 0x04){//HR has been requested. Add to buffer
-           m_tx_buf[0] = 0xEA;
-        }
-        if(m_rx_buf[0] == 0x08){//batt has been requested. Add to buffer
-           m_tx_buf[0] = 0xBA;
-        }
-        //more to come here. Refactor into a switch statement?
-        
-        
-        
-
-    }
-	
-	
-        
+    }     
 }
 
 static void spisApp_config(void){
@@ -131,7 +149,7 @@ static void spisApp_config(void){
     spis_config.def = 0xDF; // This is the data to clock if SPI peripheral can't get control of the memory. Try transfer again.
     spis_config.orc = 0xDC; //This is the data to clock if OVER READ BUFFER
 
-    APP_ERROR_CHECK(nrf_drv_spis_init(&spis, &spis_config, spis_event_handler));
+    APP_ERROR_CHECK(nrf_drv_spis_init(&spis, &spis_config, spisApp_event_handler));
     
 }
 
