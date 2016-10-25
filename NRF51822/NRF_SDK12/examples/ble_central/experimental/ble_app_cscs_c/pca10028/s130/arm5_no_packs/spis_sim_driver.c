@@ -33,7 +33,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define SIM_DATA_ARRAY_SIZE 20
+#define SIM_DATA_ARRAY_SIZE 2
 #define MAX_SIM_SPEED       40   //For cyclists in Copenhagen, the average cycling speed is 15.5 km/h 
                                  //(9.6 mph). On a racing bicycle, a reasonably fit rider can ride 
 								 //at 40 km/h (25 mph) on flat ground for short periods.
