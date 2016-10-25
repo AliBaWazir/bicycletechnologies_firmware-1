@@ -220,6 +220,7 @@ static bool spisSimDriver_init_hr_array(){
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
+/*TODO: move these functions to fstorage file*/
 void spisSimDriver_set_cadence_setpoint(uint8_t new_cadence_setpoint){
 	user_defined_properties.cadence_setpoint = new_cadence_setpoint;
 	NRF_LOG_INFO("cadence_setpoint is changed to= %d .\r\n",new_cadence_setpoint);
@@ -233,9 +234,9 @@ void spisSimDriver_set_wheel_diameter (uint8_t new_wheel_diameter){
 void spisSimDriver_set_gear_count (uint8_t gear_type, uint8_t new_gear_count){
 	
 	if (gear_type == CRANK_IDENTIFIER){
-		user_defined_properties.crank_gear_count = new_gear_count;
+		user_defined_properties.crank_gears_count = new_gear_count;
 	} else if (gear_type == WHEEL_IDENTIFIER){
-		user_defined_properties.wheel_gear_count = new_gear_count;
+		user_defined_properties.wheel_gears_count = new_gear_count;
 	} else {
 		NRF_LOG_ERROR("spisSimDriver_set_gear_count called with invalid gear_type= %d\r\n",gear_type);
 	}
@@ -244,8 +245,15 @@ void spisSimDriver_set_gear_count (uint8_t gear_type, uint8_t new_gear_count){
 }
 
 void spisSimDriver_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_t new_teeth_count){
-	NRF_LOG_INFO("teeth_count for gear type=%d in gear index= %d is changed to count= %d.\r\n", gear_type, gear_index, new_teeth_count);
-	/*TODO: */
+	if (gear_type == CRANK_IDENTIFIER){
+		user_defined_properties.crank_gears_teeth_count[gear_index] = new_teeth_count;
+	} else if (gear_type == WHEEL_IDENTIFIER){
+		user_defined_properties.wheel_gears_teeth_count[gear_index] = new_teeth_count;
+	} else {
+		NRF_LOG_ERROR("algorithmApp_set_teeth_count called with invalid gear_type= %d\r\n",gear_type);
+	}
+	
+    NRF_LOG_INFO("teeth_count for gear type=%d in gear index[%d] is changed to count= %d.\r\n", gear_type, gear_index, new_teeth_count);
 }
 
 

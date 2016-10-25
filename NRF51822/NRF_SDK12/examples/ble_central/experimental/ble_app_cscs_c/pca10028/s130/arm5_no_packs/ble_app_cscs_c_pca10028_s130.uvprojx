@@ -461,9 +461,9 @@
               <FilePath>.\spis_app.c</FilePath>
             </File>
             <File>
-              <FileName>gear_selection_algorithm.c</FileName>
+              <FileName>algorithm_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\gear_selection_algorithm.c</FilePath>
+              <FilePath>.\algorithm_app.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3278,9 +3278,9 @@
               <FilePath>.\spis_app.c</FilePath>
             </File>
             <File>
-              <FileName>gear_selection_algorithm.c</FileName>
+              <FileName>algorithm_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\gear_selection_algorithm.c</FilePath>
+              <FilePath>.\algorithm_app.c</FilePath>
             </File>
           </Files>
         </Group>
