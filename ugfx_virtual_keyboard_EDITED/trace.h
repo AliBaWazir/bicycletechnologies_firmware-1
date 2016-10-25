@@ -18,4 +18,6 @@ void closeTraceFile(void);
 void openTraceFile(void);
 void TRACE(const char *fmt, ...);
 
+TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format);
+
 #endif /* _TRACE_H_ */

@@ -61,3 +61,19 @@ void TRACE(const char *fmt, ...)
 		// handle failure code
 	}
 }
+
+TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format)
+{
+	osStatus status;
+	status  = osMutexWait(traceMutex, 0);
+	if (status != osOK){
+		// handle failure code
+	}
+	
+	TM_RTC_SetDateTime(data, format);
+	
+	status = osMutexRelease(traceMutex);
+	if (status != osOK)  {
+		// handle failure code
+	}	
+}

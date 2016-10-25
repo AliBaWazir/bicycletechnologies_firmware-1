@@ -1862,7 +1862,7 @@ void guiEventLoop(void)
 						RTCD.Hours = clockChangesStruct.Hours;
 						RTCD.Minutes = clockChangesStruct.Minutes;
 						RTCD.Seconds = 0;
-						TM_RTC_SetDateTime(&RTCD, TM_RTC_Format_BIN);
+						updateRTC(&RTCD, TM_RTC_Format_BIN);
 						closeTraceFile();
 						openTraceFile();
 				}
