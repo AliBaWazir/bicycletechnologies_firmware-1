@@ -30,8 +30,12 @@ void openTraceFile(void)
 	
 	char timedBuffer[128];
 	TM_RTC_GetDateTime(&rtcd, TM_RTC_Format_BIN);
-	sprintf(timedBuffer, "%d_%d_%d-%d_%d_%d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
-	
+	sprintf(timedBuffer, "%d_%02d_%02d-%02d_%02d_%02d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
+#ifdef DEBUG
+	char buffer[50];
+	sprintf(buffer, "Opening File: %d_%02d_%02d-%02d_%02d_%02d.csv\n",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
+	TM_USART_Puts(USART3, buffer);
+#endif		
 	if(gfileExists(timedBuffer)){
 		gfileDelete(timedBuffer);
 	}
@@ -56,8 +60,11 @@ void TRACE(const char *fmt, ...)
 	int charcount = 0;
 	
 	TM_RTC_GetDateTime(&rtcd, TM_RTC_Format_BIN);
-	charcount += sprintf(timedBuffer, "[%d/%d/%d || %d:%d:%d],",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
-	
+	charcount += sprintf(timedBuffer, "[%d/%02d/%02d || %02d:%02d:%02d],",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
+#ifdef DEBUG
+	sprintf(buffer, "Saving Into SDCard: [%d/%02d/%02d || %02d:%02d:%02d]\n",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
+	TM_USART_Puts(USART3, buffer);
+#endif
   va_list args;
   va_start (args, fmt);
   charcount += vsprintf (buffer, fmt, args);
@@ -77,7 +84,11 @@ TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format)
 	if (status != osOK){
 		// handle failure code
 	}
-	
+#ifdef DEBUG
+	char buffer[50];
+	sprintf(buffer, "Updating the RTC with: [%d/%02d/%02d || %02d:%02d:%02d]\n",data->Year,data->Month,data->Day,data->Hours,data->Minutes,data->Seconds);
+	TM_USART_Puts(USART3, buffer);
+#endif				
 	TM_RTC_SetDateTime(data, format);
 	
 	status = osMutexRelease(traceMutex);

@@ -230,8 +230,13 @@ int main (void)
 					rtcd.Minutes = GPS_Data.Time.Minutes;
 					rtcd.Seconds = GPS_Data.Time.Seconds;
 					rtcd.Subseconds = GPS_Data.Time.Hundredths;
-					updateRTC(&rtcd, TM_RTC_Format_BIN);
-					osDelay(5000);
+					rtcd.WeekDay = 1;
+					if(updateRTC(&rtcd, TM_RTC_Format_BIN) != TM_RTC_Result_Ok){
+						TRACE("ERROR: Saving RTC Based on GPS Failed\n");
+#ifdef DEBUG
+					TM_USART_Puts(USART3, "ERROR: Saving RTC Based on GPS Failed\n.");
+#endif	
+					};
 					closeTraceFile();
 					openTraceFile();
 					isRTCSet = true;
@@ -255,9 +260,10 @@ int main (void)
 				/* Convert float to integer and decimal part, with 6 decimal places */
 				TM_GPS_ConvertFloat(GPS_Data.Altitude, &GPS_Float_Alt, 6);
 
-				TRACE("Latitude=%d.%d,Longitude=%d.%d,SatsInUse=%02d,UTCTime=%02d.%02d.%02d:%02d,Fix=%d\n", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, 
-				GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal, GPS_Data.Satellites, GPS_Data.Time.Hours, GPS_Data.Time.Minutes, GPS_Data.Time.Seconds, GPS_Data.Time.Hundredths, 
-				GPS_Data.Fix, GPS_Float_Alt.Integer, GPS_Float_Alt.Decimal);
+				TRACE("Latitude=%d.%d,Longitude=%d.%d,SatsInUse=%02d,Date=% 4d/%02d/%02d,UTCTime=%02d.%02d.%02d:%02d,Fix=%d\n", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, 
+				GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal, GPS_Data.Satellites, GPS_Data.Date.Year, GPS_Data.Date.Month, GPS_Data.Date.Date,
+				GPS_Data.Time.Hours, GPS_Data.Time.Minutes, GPS_Data.Time.Seconds, GPS_Data.Time.Hundredths, 
+				GPS_Data.Fix, GPS_Float_Alt.Integer, GPS_Float_Alt.Decimal); 
 #endif
 				if(validCount < 35){
 					validCount++;

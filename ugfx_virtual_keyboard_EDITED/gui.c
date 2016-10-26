@@ -1374,7 +1374,7 @@ static void createClockSettings(void)
 	wi.g.height = 50;
 	wi.g.parent = clockCurrentContainer;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
-	sprintf(timeBuffer, "%d/%d/%d || %d:%d:%d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+	sprintf(timeBuffer, "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
 	wi.text = timeBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
