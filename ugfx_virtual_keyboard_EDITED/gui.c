@@ -118,6 +118,7 @@ typedef struct {
 	uint8_t Year;        /*!< Year parameter, 00 to 99, 00 is 2000 and 99 is 2099 */
 } ClockChangesStruct;
 ClockChangesStruct clockChangesStruct;
+TM_RTC_t RTCD;
 
 int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
 int gearBackSettings[MAXIMUM_BACK_GEARS+1];
@@ -145,10 +146,7 @@ void drawTile(int xx, int yy);
 
 static void createMainContainer(void)
 {
-	//gfileWrite(myfile,"createMainContainer\n", 20);
 	TRACE("createMainContainer\n");
-	TRACE("YOLOSWAG = %d\n", 5);
-	TRACE("BDN = %d, YOLO = %d\n", 10,20);
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
 	
@@ -168,7 +166,6 @@ static void createMainContainer(void)
 
 static void createMap(void)
 {
-	//gfileWrite(myfile,"createMap\n", 10);
 	TRACE("createMap\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -200,7 +197,6 @@ static void createMap(void)
 
 static void createData(void)
 {
-	//gfileWrite(myfile,"createData\n", 11);
 	TRACE("createData\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -286,7 +282,6 @@ static void createData(void)
 
 static void createConsole(void)
 {
-	//gfileWrite(myfile,"createConsole\n", 14);
 	TRACE("createConsole\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -320,7 +315,6 @@ static void createConsole(void)
 
 static void createMenu(void)
 {
-	//gfileWrite(myfile,"createMenu\n", 11);
 	TRACE("createMenu\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -383,7 +377,6 @@ static void createMenu(void)
 
 static void createBluetooth(void)
 {
-	//gfileWrite(myfile,"createBluetooth\n", 16);
 	TRACE("createBluetooth\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -508,7 +501,6 @@ static void createBluetooth(void)
 
 static void createGearsSettings(void)
 {
-	//gfileWrite(myfile,"createGearsSettings\n", 20);
 	TRACE("createGearsSettings\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -666,7 +658,6 @@ static void createGearsSettings(void)
 
 static void createTeethSettings(void)
 {
-	//gfileWrite(myfile,"createTeethSettings\n", 20);
 	TRACE("createTeethSettings\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -881,7 +872,6 @@ static void createTeethSettings(void)
 
 static void createGearsStatus(void)
 {
-	//gfileWrite(myfile,"createGearsStatus\n", 18);
 	TRACE("createGearsStatus\n");
 	GWidgetInit wi;
 	gwinWidgetClearInit(&wi);
@@ -1383,7 +1373,7 @@ static void createClockSettings(void)
 	wi.g.width = 465;
 	wi.g.height = 50;
 	wi.g.parent = clockCurrentContainer;
-	TM_RTC_GetDateTime(&RTCD, TM_RTC_Format_BIN);
+	getRTC(&RTCD, TM_RTC_Format_BIN);
 	sprintf(timeBuffer, "%d/%d/%d || %d:%d:%d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
 	wi.text = timeBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -1396,24 +1386,21 @@ static void createClockSettings(void)
 
 static void destroyConsole(void)
 {
-	//gfileWrite(myfile,"destroy,Console\n", 16);
-	TRACE("destroy,Console\n");
+	TRACE("destroyConsole\n");
 	gwinDestroy(consoleWindow);
 	gwinDestroy(consoleContainer);
 }
 
 static void destroyMenu(void)
 {
-	//gfileWrite(myfile,"destroy,Menu\n", 13);
-	TRACE("destroy,Menu\n");
+	TRACE("destroyMenu\n");
 	gwinDestroy(menuList);
 	gwinDestroy(returnButton);
 	gwinDestroy(menuContainer);
 }
 static void destroyBluetooth(void)
 {
-	//gfileWrite(myfile,"destroy,Bluetooth\n", 18);
-	TRACE("destroy,Bluetooth\n");
+	TRACE("destroyBluetooth\n");
 	gwinDestroy(bluetoothSearchingLabel);
 	gwinDestroy(bluetoothDevicesList);
 	gwinDestroy(bluetoothSearchButton);
@@ -1425,8 +1412,7 @@ static void destroyBluetooth(void)
 
 static void destroyGearsSettings(void)
 {
-	//gfileWrite(myfile,"destroy,Gears,Settings\n", 23);
-	TRACE("destroy,Gears,Settings\n");
+	TRACE("destroyGearsSettings\n");
 	gwinDestroy(numberOfGearsLabel);
 	gwinDestroy(numberOfGearsFrontLabel);
 	gwinDestroy(numberOfGearsBackLabel);
@@ -1441,8 +1427,7 @@ static void destroyGearsSettings(void)
 
 static void destroyTeethSettings(void)
 {
-	//gfileWrite(myfile,"destroy,Teeth,Settings\n", 23);
-	TRACE("destroy,Teeth,Settings\n");
+	TRACE("destroyTeethSettings\n");
 	gwinDestroy(numberOfTeethSelectorLabel);
 	gwinDestroy(numberOfTeethGearLabel);
 	gwinDestroy(numberOfTeethLabel);
@@ -1461,8 +1446,7 @@ static void destroyTeethSettings(void)
 
 static void destroyGearsStatus(void)
 {
-	//gfileWrite(myfile,"destroy,Gears,Status\n", 21);
-	TRACE("destroy,Gears,Status\n");
+	TRACE("destroyGearsStatus\n");
 	for(int i = 1; i<= gearFrontSettings[0]; i++){
 		gwinDestroy(gearsChangesFrontGearLabel[i]);
 	}
@@ -1492,7 +1476,7 @@ static void destroyGearsStatus(void)
 
 static void destroyClockSsettings(void)
 {
-	TRACE("destroy,Clock,Status\n");
+	TRACE("destroyClockStatus\n");
 
 	gwinDestroy(clockChangesLabel);
 	gwinDestroy(clockChangesSubmit);
@@ -1515,8 +1499,7 @@ static void destroyClockSsettings(void)
 
 static void destroyOldMenuSelectedItem(void)
 {
-	//gfileWrite(myfile,"destroy,Old,Menu,Selected,Item\n", 31);
-	TRACE("destroy,Old,Menu,Selected,Item\n");
+	TRACE("destroyOldMenuSelectedItem\n");
 	switch(oldMenuSelectedItem){
 	case 0:
 		destroyBluetooth();
@@ -1542,8 +1525,7 @@ static void destroyOldMenuSelectedItem(void)
 }
 
 void saveTeethSettings(){
-	//gfileWrite(myfile,"save,Teeth,Settings\n", 20);
-	TRACE("save,Teeth,Settings\n");
+	TRACE("saveTeethSettings\n");
 	if(currentGearSide == 0){
 		if(!(currentGearTeethWindow < 1) && !(currentGearTeethWindow > MAXIMUM_FRONT_GEARS)){
 			gearFrontSettings[currentGearTeethWindow] = currentTeethTeethWindow;
@@ -1629,10 +1611,10 @@ void guiEventLoop(void)
 		}
 		
 		if(gwinGetVisible(clockSettingsContainer)){
-			TM_RTC_GetDateTime(&RTCD, TM_RTC_Format_BIN);
+			getRTC(&RTCD, TM_RTC_Format_BIN);
 			if(RTCD.Seconds != previousSeconds){
 				memset(&timeBuffer[0], 0, sizeof(timeBuffer));
-				sprintf(timeBuffer, "%d/%d/%d || %d:%d:%d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+				sprintf(timeBuffer, "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
 				gwinSetText(clockCurrentTimeLabel, timeBuffer, TRUE);
 				previousSeconds = RTCD.Seconds;
 			}
@@ -1672,7 +1654,6 @@ void guiEventLoop(void)
 		switch (pe->type) {
 			case GEVENT_GWIN_BUTTON:
 				if (((GEventGWinButton*)pe)->gwin == menuButton) {
-						//gfileWrite(myfile,"menuButton\n", 11);
 						TRACE("menuButton\n");
 						// MENU
 						gwinHide(dataContainer);
@@ -1681,7 +1662,6 @@ void guiEventLoop(void)
 						createMenu();
 						gwinShow(menuContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == returnButton) {
-						//gfileWrite(myfile,"returnButton\n", 13);
 						TRACE("returnButton\n");
 						// RETURN
 						destroyOldMenuSelectedItem();
@@ -1692,7 +1672,6 @@ void guiEventLoop(void)
 						gwinShow(dataContainer);
 				  	gwinShow(mapContainer);
 				}else if (((GEventGWinButton*)pe)->gwin == bluetoothSearchButton) {
-						//gfileWrite(myfile,"bluetoothSearchButton\n", 22);
 						TRACE("bluetoothSearchButton\n");
 						// BLUETOOTH SEARCH
 					  gwinHide(bluetoothDevicesContainer);

@@ -18,12 +18,6 @@ uint32_t HAL_GetTick(void) {
 
 #endif
 
-/* RTC structure */
-TM_RTC_t RTCD;
- 
-/* RTC Alarm structure */
-TM_RTC_AlarmTime_t RTCA;
-
 /*******************************************************************************
 * FUNCTION:
 *   SystemClock_Config
@@ -169,11 +163,13 @@ int main (void)
 	
 	/* Initialize GPS on 9600 baudrate */
 	TM_GPS_Init(&GPS_Data, 9600);
-	
+
+#ifdef DEBUG
 	/* Initialize USART3 for debug */
 	/* TX = PB10 */
-	//TM_USART_Init(USART3, TM_USART_PinsPack_1, 115200);
-	
+	TM_USART_Init(USART3, TM_USART_PinsPack_1, 115200);
+	TM_USART_Puts(USART3, "UART PC Output\n");
+#endif
 	
 	/* Init RTC */
 	if (TM_RTC_Init(TM_RTC_ClockSource_External)) {
@@ -200,6 +196,7 @@ int main (void)
 	
 	/* Reset counter */
 	TM_DELAY_SetTime(0);
+	int validCount = 0;
 	while(1) {
 		/* Update GPR data */
 		/* Call this as faster as possible */
@@ -209,6 +206,9 @@ int main (void)
 			/* If we didn't receive nothing within 3 seconds */
 			TM_DELAY_SetTime(0);
 			TRACE("GPS: nothing received after 3 seconds\n");
+#ifdef DEBUG
+			TM_USART_Puts(USART3, "GPS: nothing received after 3 seconds\n");
+#endif	
 		}
 		/* If we have any unread data */
 		if (result == TM_GPS_Result_NewData) {
@@ -218,7 +218,10 @@ int main (void)
 			/* Is GPS signal valid? */
 			if (GPS_Data.Validity) {
 				/* If you want to make a GPS tracker, now is the time to save your data on SD card */
-				if(!isRTCSet){
+				if((!isRTCSet) && (validCount > 30)){
+#ifdef DEBUG
+					TM_USART_Puts(USART3, "GPS: Update RTC\n");
+#endif	
 					TM_RTC_t rtcd;
 					rtcd.Year = GPS_Data.Date.Year;
 					rtcd.Month = GPS_Data.Date.Month;
@@ -228,13 +231,17 @@ int main (void)
 					rtcd.Seconds = GPS_Data.Time.Seconds;
 					rtcd.Subseconds = GPS_Data.Time.Hundredths;
 					updateRTC(&rtcd, TM_RTC_Format_BIN);
+					osDelay(5000);
 					closeTraceFile();
 					openTraceFile();
 					isRTCSet = true;
 				}
 				
 				/* We have valid GPS signal */
-				TRACE("GPS: New GPS Data Received");
+				TRACE("GPS: New GPS Data Received\n");
+#ifdef DEBUG
+			TM_USART_Puts(USART3, "GPS: New GPS Data Received\n");
+#endif	
 #ifndef GPS_DISABLE_GPGGA
 				/* Latitude */
 				/* Convert float to integer and decimal part, with 6 decimal places */
@@ -248,13 +255,19 @@ int main (void)
 				/* Convert float to integer and decimal part, with 6 decimal places */
 				TM_GPS_ConvertFloat(GPS_Data.Altitude, &GPS_Float_Alt, 6);
 
-				TRACE("Latitude=%d.%d,Longitude=%d.%d,SatsInUse=%02d,UTCTime=%02d.%02d.%02d:%02d,Fix=%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, 
+				TRACE("Latitude=%d.%d,Longitude=%d.%d,SatsInUse=%02d,UTCTime=%02d.%02d.%02d:%02d,Fix=%d\n", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, 
 				GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal, GPS_Data.Satellites, GPS_Data.Time.Hours, GPS_Data.Time.Minutes, GPS_Data.Time.Seconds, GPS_Data.Time.Hundredths, 
 				GPS_Data.Fix, GPS_Float_Alt.Integer, GPS_Float_Alt.Decimal);
 #endif
+				if(validCount < 35){
+					validCount++;
+				}
 			} else {
 				/* GPS signal is not valid */
 				TRACE("GPS: Data received is not valid\n");
+#ifdef DEBUG
+			TM_USART_Puts(USART3, "GPS: Data received is not valid\n");
+#endif	
 			}
 		} else if (result == TM_GPS_Result_FirstDataWaiting && current != TM_GPS_Result_FirstDataWaiting) {
 			current = TM_GPS_Result_FirstDataWaiting;

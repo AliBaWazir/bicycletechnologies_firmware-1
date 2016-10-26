@@ -4,11 +4,7 @@
 #include "gfx.h"
 #include "tm_stm32_rtc.h"
 
-/* RTC structure */
-extern TM_RTC_t RTCD;
- 
-/* RTC Alarm structure */
-extern TM_RTC_AlarmTime_t RTCA;
+#define DEBUG
 
 extern GFILE *myfile;
 
@@ -19,5 +15,6 @@ void openTraceFile(void);
 void TRACE(const char *fmt, ...);
 
 TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format);
+TM_RTC_Result_t getRTC(TM_RTC_t* data, TM_RTC_Format_t format);
 
 #endif /* _TRACE_H_ */
