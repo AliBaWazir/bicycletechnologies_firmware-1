@@ -8,7 +8,11 @@
  */
 
 /**
- * @brief BLE Cycling Speed and Cadence Collector application main file.
+* @brief Shifty:Automatic Bicycle Transmission System- software main file.
+ * This software is based on nRF51822. It manages Blutooth Low Energy (BLE) 
+ * communications and data exchange between multiple BLE peripherals and an nRF41822 GATT client module. 
+ * It also manages data transfer between the BLE GATT client module and other microcontrollers 
+ * including an GUI microcontroller and a gear transmission controller. 
  *
  * This file contains the source code running on nRF51822 module for the SHIFTY project.
  */
@@ -36,11 +40,13 @@
 #include "ble_conn_state.h"
 
 #include "../cscs_app.h"
+#include "../hrs_app.h"
 #include "../spis_app.h"
 
-#define NRF_LOG_MODULE_NAME "MAIN"
+#define NRF_LOG_MODULE_NAME "SHIFTY-MAIN"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+
 
 #if (NRF_SD_BLE_API_VERSION == 3)
 #define NRF_BLE_MAX_MTU_SIZE      GATT_MTU_SIZE_DEFAULT              /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
@@ -60,8 +66,8 @@
 #define SEC_PARAM_KEYPRESS        0                                  /**< Keypress notifications not enabled. */
 #define SEC_PARAM_IO_CAPABILITIES BLE_GAP_IO_CAPS_NONE               /**< No I/O capabilities. */
 #define SEC_PARAM_OOB             0                                  /**< Out Of Band data not available. */
-#define SEC_PARAM_MIN_KEY_SIZE    7                                  /**< Minimum encryption key size. */
-#define SEC_PARAM_MAX_KEY_SIZE    16                                 /**< Maximum encryption key size. */
+#define SEC_PARAM_MIN_KEY_SIZE    7                                  /**< Minimum encryption key size in octets. */
+#define SEC_PARAM_MAX_KEY_SIZE    16                                 /**< Maximum encryption key size in octets. */
 
 #define SCAN_INTERVAL             0x00A0                             /**< Determines scan interval in units of 0.625 millisecond. */
 #define SCAN_WINDOW               0x0050                             /**< Determines scan window in units of 0.625 millisecond. */
@@ -69,15 +75,14 @@
 #define MIN_CONNECTION_INTERVAL   MSEC_TO_UNITS(7.5, UNIT_1_25_MS)   /**< Determines minimum connection interval in millisecond. */
 #define MAX_CONNECTION_INTERVAL   MSEC_TO_UNITS(30, UNIT_1_25_MS)    /**< Determines maximum connection interval in millisecond. */
 #define SLAVE_LATENCY             0                                  /**< Determines slave latency in counts of connection events. */
-//#define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(4000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
-#define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(12000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
+#define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(4000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
 
 #define TARGET_UUID_CYCLING_CADENCE  BLE_UUID_CYCLING_SPEED_AND_CADENCE /**< Target device name that application is looking for for Cycling Speed and Cadence */
 #define TARGET_UUID_HEART_RATE       BLE_UUID_HEART_RATE_SERVICE        /**< Target device name that application is looking for for Heart Rate */  
 
 #define UUID16_SIZE                  2                                  /**< Size of 16 bit UUID */
 
-
+/*TODO: figure out what is this for*/
 #define NRF_CLOCK_LFCLKSRC      {.source        = NRF_CLOCK_LF_SRC_RC,              \
                                  .rc_ctiv       = 16,                               \
                                  .rc_temp_ctiv  = 2,                                \
@@ -91,6 +96,7 @@
         (*(DST)) <<= 8;          \
         (*(DST))  |= (SRC)[0];   \
     } while (0)
+	
 
 /**@brief Variable length data encapsulation in terms of length and pointer to data */
 typedef struct
@@ -106,8 +112,9 @@ typedef enum
     BLE_FAST_SCAN,      /**< Fast advertising running. */
 } ble_scan_mode_t;
 
-static ble_db_discovery_t    m_ble_db_discovery;                       /**< Structure used to identify the DB Discovery module. */
+static ble_db_discovery_t    m_ble_db_discovery;                  /**< Structure used to identify the DB Discovery module. */
 static ble_gap_scan_params_t m_scan_param;                             /**< Scan parameters requested for scanning and connection. */
+static uint8_t               m_peer_count;                                /**< Number of peer's connected. */
 static ble_scan_mode_t       m_scan_mode = BLE_FAST_SCAN;              /**< Scan mode used by application. */
 static uint16_t              m_conn_handle;                            /**< Current connection handle. */
 static volatile bool         m_whitelist_temporarily_disabled = false; /**< True if whitelist has been temporarily disabled. */
@@ -123,6 +130,7 @@ static const ble_gap_conn_params_t m_connection_param =
     (uint16_t)SLAVE_LATENCY,           // Slave latency.
     (uint16_t)SUPERVISION_TIMEOUT      // Supervision time-out.
 };
+
 
 static void scan_start(void);
 
@@ -151,14 +159,15 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
  *          to their respective services.
  *
  * @param[in] p_event  Pointer to the database discovery event.
- *
  */
 static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
 {
 		if (p_evt->params.discovered_db.srv_uuid.uuid == TARGET_UUID_CYCLING_CADENCE){
-				cscsApp_on_db_disc_evt( p_evt );
+			cscsApp_on_db_disc_evt( p_evt );
 		} else if (p_evt->params.discovered_db.srv_uuid.uuid == TARGET_UUID_HEART_RATE){
 			/*TODO: call the heart rate app function*/
+			hrsApp_on_db_disc_evt( p_evt );
+			
 		} else{
 			NRF_LOG_ERROR("db_disc_handler called with unknown UUID: %d\r\n",
 			               p_evt->params.discovered_db.srv_uuid.uuid);
@@ -174,7 +183,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 {
     ret_code_t err_code;
 
-    switch (p_evt->evt_id)
+    switch(p_evt->evt_id)
     {
         case PM_EVT_BONDED_PEER_CONNECTED:
         {
@@ -187,7 +196,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
         } break; // PM_EVT_BONDED_PEER_CONNECTED
 
         case PM_EVT_CONN_SEC_START:
-            break; // PM_EVT_CONN_SEC_START
+			break; // PM_EVT_CONN_SEC_START
 
         case PM_EVT_CONN_SEC_SUCCEEDED:
         {
@@ -238,7 +247,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
             err_code = fds_gc();
             if (err_code == FDS_ERR_BUSY || err_code == FDS_ERR_NO_SPACE_IN_QUEUES)
             {
-                // Retry.
+                // Retry later.
             }
             else
             {
@@ -365,6 +374,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
+		{
+			NRF_LOG_INFO("Connected to a device with a connection handle= 0x%x.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
             // Discover peer's services.
             err_code = ble_db_discovery_start(&m_ble_db_discovery,
                                               p_ble_evt->evt.gap_evt.conn_handle);
@@ -372,8 +383,14 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
+			
+			m_peer_count++;
 
-            break; // BLE_GAP_EVT_CONNECTED
+            if (m_peer_count < CENTRAL_LINK_COUNT)
+            {
+                scan_start();
+            }
+		}break; // BLE_GAP_EVT_CONNECTED
 
         case BLE_GAP_EVT_ADV_REPORT:
         {
@@ -405,15 +422,16 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
                 for (uint32_t u_index = 0; u_index < (type_data.data_len / UUID16_SIZE); u_index++)
                 {
                     UUID16_EXTRACT(&extracted_uuid, &type_data.p_data[u_index * UUID16_SIZE]);
-
+					/*TODO: include battery service UUID if needed*/
                     if (extracted_uuid == TARGET_UUID_CYCLING_CADENCE || extracted_uuid == TARGET_UUID_HEART_RATE)
                     {
+						NRF_LOG_INFO("Got an advertisement with service UUID: %x\r\n",extracted_uuid);
                         // Stop scanning.
                         err_code = sd_ble_gap_scan_stop();
 
                         if (err_code != NRF_SUCCESS)
                         {
-                            NRF_LOG_DEBUG("Scan stop failed, reason %d\r\n", err_code);
+                            NRF_LOG_ERROR("Scan stop failed, reason %d\r\n", err_code);
                         }
                         err_code = bsp_indication_set(BSP_INDICATE_IDLE);
                         APP_ERROR_CHECK(err_code);
@@ -430,7 +448,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 
                         if (err_code != NRF_SUCCESS)
                         {
-                            NRF_LOG_DEBUG("Connection Request Failed, reason %d\r\n", err_code);
+                            NRF_LOG_ERROR("Connection Request Failed, reason %d\r\n", err_code);
                         }
                         break;
                     }
@@ -446,7 +464,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             }
             else if (p_gap_evt->params.timeout.src == BLE_GAP_TIMEOUT_SRC_CONN)
             {
-                NRF_LOG_DEBUG("Connection Request timed out.\r\n");
+                NRF_LOG_INFO("Connection Request timed out.\r\n");
             }
             break; // BLE_GAP_EVT_TIMEOUT
 
@@ -458,10 +476,24 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             break; // BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST
 
         case BLE_GAP_EVT_DISCONNECTED:
-            if (ble_conn_state_n_centrals() == 0)
+			NRF_LOG_INFO("Disconnected from a device with a connection handle= %d.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
+			if (ble_conn_state_n_centrals() == 0)
             {
                 scan_start();
             }
+			//not sure if the following commented lines are needed.
+			/*
+			err_code = bsp_indication_set(BSP_INDICATE_IDLE);
+            APP_ERROR_CHECK(err_code);
+
+            memset(&m_ble_db_discovery, 0 , sizeof (m_ble_db_discovery));
+
+            if (m_peer_count == CENTRAL_LINK_COUNT)
+            {
+                m_peer_count--;
+                scan_start();
+            }
+			*/
             break; // BLE_GAP_EVT_DISCONNECTED
 
         case BLE_GATTC_EVT_TIMEOUT:
@@ -529,10 +561,13 @@ static void on_sys_evt(uint32_t sys_evt)
  */
 static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 {
+	// Modules which depend on ble_conn_state, like Peer Manager,
+    // should have their callbacks invoked after ble_conn_state's.
     ble_conn_state_on_ble_evt(p_ble_evt);
     pm_on_ble_evt(p_ble_evt);
     ble_db_discovery_on_ble_evt(&m_ble_db_discovery, p_ble_evt);
     cscsApp_on_ble_evt(p_ble_evt);
+	hrsApp_on_ble_evt(p_ble_evt);
     bsp_btn_ble_on_ble_evt(p_ble_evt);
     on_ble_evt(p_ble_evt);
 }
@@ -900,17 +935,23 @@ int main(void)
     ble_stack_init();
     ble_conn_state_init();
     peer_manager_init(erase_bonds);
+	if (erase_bonds == true)
+    {
+        NRF_LOG_INFO("Bonds erased!\r\n");
+    }
     db_discovery_init();
-    if (!cscsApp_cscs_c_init()){
+    
+	if (!cscsApp_cscs_c_init()){
 		NRF_LOG_ERROR("Failed to initialize cscsApp\r\n");
  	}
- 
- 	
+	if (!hrsApp_hrs_c_init()){
+		NRF_LOG_ERROR("Failed to initialize hrsApp\r\n");
+ 	}
 
     whitelist_load();
 
     // Start scanning for peripherals and initiate connection
-    // with devices that advertise Cycling Speed and Cadence UUID.
+    // with devices that advertise target UUIDs.
     scan_start();
 
     for (;;)

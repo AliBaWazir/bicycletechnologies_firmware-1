@@ -307,7 +307,7 @@ void cscsApp_on_ble_evt(const ble_evt_t *p_ble_evt){
 		
 	// Check if the event if on the link for this instance
     if (m_ble_cscs_c.conn_handle != p_ble_evt->evt.gattc_evt.conn_handle){
-		NRF_LOG_INFO("cscsApp_on_ble_evt called with event not for this instance\r\n");
+		NRF_LOG_DEBUG("cscsApp_on_ble_evt called with event not for this instance\r\n");
 		return;
     } else{
 		ble_cscs_c_on_ble_evt(&m_ble_cscs_c, p_ble_evt);
@@ -344,12 +344,14 @@ bool cscsApp_cscs_c_init(void)
 	
     cscs_c_init_obj.evt_handler = cscsApp_cscs_c_evt_handler;
 	/*Added to accept all features from sensor*/
+	/*TODO: delete the .feature field if it is not used. Compare to RSCS*/
 	cscs_c_init_obj.feature = BLE_CSCS_FEATURE_WHEEL_REV_BIT 
                           	 | BLE_CSCS_FEATURE_CRANK_REV_BIT
 	                         | BLE_CSCS_FEATURE_MULTIPLE_SENSORS_BIT;
 
     err_code = ble_cscs_c_init(&m_ble_cscs_c, &cscs_c_init_obj);
     if ( err_code !=NRF_SUCCESS){
+		NRF_LOG_INFO("ble_cscs_c_init failed with error= %d\r\n", err_code);
 		ret_code = false;
 	}
 
