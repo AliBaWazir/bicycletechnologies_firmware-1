@@ -65,7 +65,6 @@ void app_error_handler_bare(ret_code_t error_code)
     UNUSED_VARIABLE(error_info);
 }
 
-
 void app_error_save_and_stop(uint32_t id, uint32_t pc, uint32_t info)
 {
     /* static error variables - in order to prevent removal by optimizers */

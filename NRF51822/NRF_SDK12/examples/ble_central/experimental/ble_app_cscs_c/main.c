@@ -52,7 +52,7 @@
 #define NRF_BLE_MAX_MTU_SIZE      GATT_MTU_SIZE_DEFAULT              /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
 #endif
 
-#define CENTRAL_LINK_COUNT        1                                  /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
+#define CENTRAL_LINK_COUNT        2                                  /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT     0                                  /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
 #define BOND_DELETE_ALL_BUTTON_ID 0                                  /**< Button used for deleting all bonded centrals during startup. */
@@ -476,7 +476,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             break; // BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST
 
         case BLE_GAP_EVT_DISCONNECTED:
-			NRF_LOG_INFO("Disconnected from a device with a connection handle= %d.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
+			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
 			if (ble_conn_state_n_centrals() == 0)
             {
                 scan_start();
@@ -879,10 +879,16 @@ static void scan_start(void)
     NRF_LOG_DEBUG("Starting scan.\r\n");
 
     ret = sd_ble_gap_scan_start(&m_scan_param);
-    APP_ERROR_CHECK(ret);
+	/*TODO: figure out why sd_ble_gap_scan_start returns NRF_ERROR_INVALID_STATE*/
+    if(ret == NRF_ERROR_INVALID_STATE){
+		    NRF_LOG_WARNING("sd_ble_gap_scan_start returned NRF_ERROR_INVALID_STATE but will skip it for now.\r\n");
+	} else{
+		APP_ERROR_CHECK(ret);
 
-    ret = bsp_indication_set(BSP_INDICATE_SCANNING);
-    APP_ERROR_CHECK(ret);
+		ret = bsp_indication_set(BSP_INDICATE_SCANNING);
+		APP_ERROR_CHECK(ret);
+	}
+
 }
 
 

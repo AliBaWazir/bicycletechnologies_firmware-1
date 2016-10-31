@@ -23,7 +23,14 @@
  */
 __WEAK void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 {
-    NRF_LOG_ERROR("Fatal\r\n");
+	error_info_t* error_info = (error_info_t*)info;
+    NRF_LOG_ERROR("Fatal+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\r\n");
+	if((char*)error_info->p_file_name != NULL){
+		NRF_LOG_ERROR("file: %s\r\n",nrf_log_push((char*)error_info->p_file_name));
+	}
+	NRF_LOG_ERROR("line: %d\r\n", error_info->line_num);
+	NRF_LOG_ERROR("error: %d\r\n", error_info->err_code);
+	NRF_LOG_ERROR("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\r\n");
     NRF_LOG_FINAL_FLUSH();
     // On assert, the system can only recover with a reset.
 #ifndef DEBUG

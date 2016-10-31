@@ -369,7 +369,7 @@ static void on_disconnected(ble_cscs_c_t * p_ble_cscs_c, const ble_evt_t * p_ble
     if (p_ble_cscs_c->conn_handle == p_ble_evt->evt.gap_evt.conn_handle)
     {
         p_ble_cscs_c->conn_handle             = BLE_CONN_HANDLE_INVALID;
-			  p_ble_cscs_c->peer_db.csc_cccd_handle = BLE_GATT_HANDLE_INVALID;
+		p_ble_cscs_c->peer_db.csc_cccd_handle = BLE_GATT_HANDLE_INVALID;
         p_ble_cscs_c->peer_db.csc_handle      = BLE_GATT_HANDLE_INVALID;
 			
 			 /*
