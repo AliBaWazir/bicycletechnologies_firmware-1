@@ -38,6 +38,7 @@ GHandle returnButton;
 // Map Container
 GHandle mapContainer;
 GHandle mapWindow;
+GHandle mapLabel;
 
 // Bluetooth Container
 GHandle bluetoothContainer;
@@ -126,6 +127,7 @@ char gearBuffer[5];
 char gearsStatus[26];
 
 char timeBuffer[23];
+char gpsOutput[50];
 
 int currentGearSide;
 int currentGearTeethWindow;
@@ -183,7 +185,7 @@ static void createMap(void)
 	wi.customStyle = 0;
 	mapContainer = gwinContainerCreate(0, &wi, 0);
     
-	//create map window
+	/*//create map window
   gwinSetDefaultBgColor(red_studio);
   GWindowInit windowInitStruct;
   windowInitStruct.x = 0;
@@ -192,7 +194,23 @@ static void createMap(void)
   windowInitStruct.height = 480;
   windowInitStruct.show = TRUE;
   windowInitStruct.parent = mapContainer;
-  mapWindow = gwinGWindowCreate(GDISP,NULL, &windowInitStruct);
+  mapWindow = gwinGWindowCreate(GDISP,NULL, &windowInitStruct);*/
+	
+	// Create label widget: gearsChangesFrontLabel
+	wi.g.show = TRUE;
+	wi.g.x = 20;
+	wi.g.y = 20;
+	wi.g.width = 350;
+	wi.g.height = 60;
+	wi.g.parent = mapContainer;
+	wi.text = "Hello";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	mapLabel = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(mapLabel, TRUE);
+	gwinSetFont(mapLabel, gdispOpenFont("Georgia24"));
+	//gwinSetText(mapLabel, gearsStatus, TRUE);
 }
 
 static void createData(void)
@@ -1594,6 +1612,9 @@ void guiEventLoop(void)
 	GEvent* pe;
 	int count = 0;
 	uint8_t previousSeconds = 0;
+	my_GPS gpsData;
+	TM_GPS_Float_t GPS_Float_Lat;
+	TM_GPS_Float_t GPS_Float_Lon;
 	
 	while (1) {		
 		if(gwinGetVisible(dataContainer)){
@@ -1626,7 +1647,7 @@ void guiEventLoop(void)
 		
     if(gwinGetVisible(mapContainer)){
 			gfxSleepMilliseconds(3);
-			//gdispGClear(GDISP, (LUMA2COLOR(0)));
+			/*///gdispGClear(GDISP, (LUMA2COLOR(0)));
 			gwinClear(mapWindow);
 			x=x+2;y=y+2;
 			for(int tempx = x+4*256; tempx>-256; tempx=tempx-256)
@@ -1645,8 +1666,24 @@ void guiEventLoop(void)
 							gwinDrawBox(mapWindow, tempx, tempy, 256, 256);
 							
 					}
+			}*/
+			memset(gpsOutput, 0, sizeof(gpsOutput));
+			gpsData = getGPS();	
+			if(!gpsData.Validity){
+				sprintf(gpsOutput, "GPS Data is Invalid");
+			}else{
+				/* Latitude */
+				/* Convert float to integer and decimal part, with 6 decimal places */
+				TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
+				
+				/* Longitude */
+				/* Convert float to integer and decimal part, with 6 decimal places */
+				TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
+				sprintf(gpsOutput, "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
 			}
+			gwinSetText(mapLabel, gpsOutput, TRUE);
 			//gwinRedraw(mapWindow);
+			
 		}
 		
 		// Get an event

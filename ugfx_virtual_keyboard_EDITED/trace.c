@@ -8,6 +8,8 @@ GFILE *myfile;
 
 osMutexId traceMutex;
 
+my_GPS myGPSData;
+
 void closeTraceFile(void)
 {
 #ifdef DEBUG
@@ -41,6 +43,7 @@ void openTraceFile(void)
 	}
 	myfile = gfileOpen(timedBuffer, "w");
 	
+	myGPSData.Validity = 0;
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {
 		// handle failure code
@@ -111,4 +114,40 @@ TM_RTC_Result_t getRTC(TM_RTC_t* data, TM_RTC_Format_t format)
 	if (status != osOK)  {
 		// handle failure code
 	}	
+}
+
+void saveGPS(TM_GPS_Data_t* gpsData){
+	osStatus status;
+	status  = osMutexWait(traceMutex, 0);
+	if (status != osOK){
+		// handle failure code
+	}
+	
+	myGPSData.Latitude = gpsData->Latitude;
+	myGPSData.Longitude = gpsData->Longitude;
+	myGPSData.Altitude = gpsData->Altitude;
+	myGPSData.Direction = gpsData->Direction;
+	myGPSData.Validity = gpsData->Validity;
+	
+	status = osMutexRelease(traceMutex);
+	if (status != osOK)  {
+		// handle failure code
+	}	
+}
+
+my_GPS getGPS(){
+	my_GPS temp;
+	osStatus status;
+	status  = osMutexWait(traceMutex, 0);
+	if (status != osOK){
+		// handle failure code
+	}
+	
+	temp = myGPSData;
+	
+	status = osMutexRelease(traceMutex);
+	if (status != osOK)  {
+		// handle failure code
+	}	
+	return temp;
 }

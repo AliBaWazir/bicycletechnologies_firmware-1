@@ -40,6 +40,8 @@ void runGPS(){
 			/* We received new packet of useful data from GPS */
 			current = TM_GPS_Result_NewData;
 			
+			saveGPS(&GPS_Data);
+			
 			/* Is GPS signal valid? */
 			if (GPS_Data.Validity) {
 				/* If you want to make a GPS tracker, now is the time to save your data on SD card */
