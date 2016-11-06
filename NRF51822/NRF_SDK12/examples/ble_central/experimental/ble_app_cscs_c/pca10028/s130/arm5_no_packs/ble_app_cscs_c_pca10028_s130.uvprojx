@@ -338,7 +338,7 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20002080</StartAddress>
+                <StartAddress>0x200022d8</StartAddress>
                 <Size>0x4000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
@@ -464,6 +464,11 @@
               <FileName>hrs_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hrs_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>connection_manager_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\connection_manager_app.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3271,6 +3276,11 @@
               <FileName>hrs_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hrs_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>connection_manager_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\connection_manager_app.c</FilePath>
             </File>
           </Files>
         </Group>

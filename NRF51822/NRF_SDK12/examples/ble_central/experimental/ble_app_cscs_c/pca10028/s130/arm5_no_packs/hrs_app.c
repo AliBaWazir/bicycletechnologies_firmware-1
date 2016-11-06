@@ -147,7 +147,7 @@ static void hrsApp_bas_c_evt_handler(ble_bas_c_t * p_bas_c, ble_bas_c_evt_t * p_
 void hrsApp_on_ble_evt(const ble_evt_t *p_ble_evt){
 	// Check if the event if on the link for this instance
     if (m_ble_hrs_c.conn_handle != p_ble_evt->evt.gattc_evt.conn_handle){
-		NRF_LOG_DEBUG("hrsApp_on_ble_evt called with event not for this instance\r\n");
+		NRF_LOG_DEBUG("hrsApp_on_ble_evt called with event not for this instance. event ID=0x%x\r\n", p_ble_evt->header.evt_id);
 		return;
     } else{
 		ble_hrs_c_on_ble_evt(&m_ble_hrs_c, p_ble_evt);
