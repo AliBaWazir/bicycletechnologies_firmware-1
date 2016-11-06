@@ -10,6 +10,16 @@ osMutexId traceMutex;
 
 my_GPS myGPSData;
 
+char filename[24];
+
+void deleteTraceFile(void)
+{
+#ifdef DEBUG
+					TM_USART_Puts(USART3, "Deleting File\n");
+#endif	
+	gfileDelete(filename);
+}
+
 void closeTraceFile(void)
 {
 #ifdef DEBUG
@@ -30,18 +40,17 @@ void openTraceFile(void)
 		// handle failure code
 	}
 	
-	char timedBuffer[128];
 	TM_RTC_GetDateTime(&rtcd, TM_RTC_Format_BIN);
-	sprintf(timedBuffer, "%d_%02d_%02d-%02d_%02d_%02d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
+	sprintf(filename, "%d_%02d_%02d-%02d_%02d_%02d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
 #ifdef DEBUG
 	char buffer[50];
 	sprintf(buffer, "Opening File: %d_%02d_%02d-%02d_%02d_%02d.csv\n",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
 	TM_USART_Puts(USART3, buffer);
 #endif		
-	if(gfileExists(timedBuffer)){
-		gfileDelete(timedBuffer);
+	if(gfileExists(filename)){
+		gfileDelete(filename);
 	}
-	myfile = gfileOpen(timedBuffer, "w");
+	myfile = gfileOpen(filename, "w");
 	
 	myGPSData.Validity = 0;
 	status = osMutexRelease(traceMutex);

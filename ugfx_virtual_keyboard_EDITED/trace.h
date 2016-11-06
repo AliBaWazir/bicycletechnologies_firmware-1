@@ -20,6 +20,7 @@ typedef struct {
 	uint8_t Validity;																			/*!< GPS validation; 1: valid; 0: invalid. */
 } my_GPS;
 
+void deleteTraceFile(void);
 void closeTraceFile(void);
 void openTraceFile(void);
 void TRACE(const char *fmt, ...);

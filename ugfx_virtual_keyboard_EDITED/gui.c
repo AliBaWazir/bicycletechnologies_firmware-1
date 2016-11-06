@@ -1879,6 +1879,7 @@ void guiEventLoop(void)
 						RTCD.Minutes = clockChangesStruct.Minutes;
 						RTCD.Seconds = 0;
 						updateRTC(&RTCD, TM_RTC_Format_BIN);
+						deleteTraceFile();
 						closeTraceFile();
 						openTraceFile();
 				}
