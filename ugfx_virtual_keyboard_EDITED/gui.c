@@ -8,7 +8,7 @@
 #include "widgetstyles.h"
 #include "gui.h"
 #include "trace.h"
-
+#include "gps.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -200,8 +200,8 @@ static void createMap(void)
 	wi.g.show = TRUE;
 	wi.g.x = 20;
 	wi.g.y = 20;
-	wi.g.width = 350;
-	wi.g.height = 60;
+	wi.g.width = 450;
+	wi.g.height = 100;
 	wi.g.parent = mapContainer;
 	wi.text = "Hello";
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
@@ -216,7 +216,7 @@ static void createMap(void)
 static void createData(void)
 {
 	TRACE("createData\n");
-	GWidgetInit wi;
+	GWidgetInit wi; 
 	gwinWidgetClearInit(&wi);
 		
 	// create container widget: dataContainer
@@ -1674,12 +1674,16 @@ void guiEventLoop(void)
 			}else{
 				/* Latitude */
 				/* Convert float to integer and decimal part, with 6 decimal places */
-				TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
+				//TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
 				
 				/* Longitude */
 				/* Convert float to integer and decimal part, with 6 decimal places */
-				TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
-				sprintf(gpsOutput, "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
+				//TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
+				//sprintf(gpsOutput, "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
+				int tilex = long2tilex(gpsData.Longitude, 15);
+				int tiley = lat2tiley(gpsData.Latitude, 15);
+				sprintf(gpsOutput, "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
+				TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
 			}
 			gwinSetText(mapLabel, gpsOutput, TRUE);
 			//gwinRedraw(mapWindow);
