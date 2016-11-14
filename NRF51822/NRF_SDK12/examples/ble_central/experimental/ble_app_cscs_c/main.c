@@ -785,6 +785,18 @@ static void power_manage(void)
 int main(void)
 {
     
+    //Turn on fast charging: 500 mA
+    
+    NRF_GPIO->PIN_CNF[26] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+                                            | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+                                            | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+                                            | (GPIO_PIN_CNF_INPUT_Disconnect << GPIO_PIN_CNF_INPUT_Pos)
+                                            | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+    
+    NRF_GPIO->OUTSET = (1UL << 26);
+    
+    
+    
 	bool erase_bonds;
 	//uint32_t err_code = NRF_SUCCESS;
 
