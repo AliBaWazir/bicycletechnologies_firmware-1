@@ -5,7 +5,7 @@
 #include "tm_stm32_rtc.h"
 #include "tm_stm32_gps.h"
 
-#define DEBUG
+//#define DEBUG
 
 extern GFILE *myfile;
 
@@ -24,7 +24,8 @@ void deleteTraceFile(void);
 void closeTraceFile(void);
 void openTraceFile(void);
 void TRACE(const char *fmt, ...);
-
+int formatString(char *str, int sizeOfString, const char *format, ...);
+	
 TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format);
 TM_RTC_Result_t getRTC(TM_RTC_t* data, TM_RTC_Format_t format);
 

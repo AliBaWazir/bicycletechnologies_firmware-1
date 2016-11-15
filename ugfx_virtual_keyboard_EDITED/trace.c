@@ -89,6 +89,26 @@ void TRACE(const char *fmt, ...)
 	}
 }
 
+int formatString(char *str, int sizeOfString, const char *format, ...)
+{
+	osStatus status;
+	status  = osMutexWait(traceMutex, 0);
+	if (status != osOK){
+		// handle failure code
+	}
+	int charcount = 0;
+	memset(str, 0, sizeOfString);
+  va_list args;
+  va_start (args, format);
+  charcount = vsprintf (str, format, args);
+	va_end(args);
+	status = osMutexRelease(traceMutex);
+	if (status != osOK)  {
+		// handle failure code
+	}
+	return charcount;
+}
+
 TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format)
 {
 	osStatus status;

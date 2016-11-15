@@ -127,7 +127,7 @@ char gearBuffer[5];
 char gearsStatus[26];
 
 char timeBuffer[23];
-char gpsOutput[50];
+char gpsOutput[70];
 
 int currentGearSide;
 int currentGearTeethWindow;
@@ -233,7 +233,7 @@ static void createData(void)
 	dataContainer = gwinContainerCreate(0, &wi, 0);
 	
 	speed = 0;
-	sprintf(speedout, "%d km/h", speed);
+	formatString(speedout, sizeof(speedout), "%d km/h", speed);
 	// Create label widget: speedLabel
 	wi.g.show = TRUE;
 	wi.g.x = 0;
@@ -588,8 +588,7 @@ static void createGearsSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
-	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-	sprintf(gearBuffer, "%d", gearFrontSettings[0]);
+	formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[0]);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -634,8 +633,7 @@ static void createGearsSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberOfGearsContainer;
-	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-	sprintf(gearBuffer, "%d", gearBackSettings[0]);
+	formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[0]);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -788,8 +786,7 @@ static void createTeethSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
-	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-	sprintf(gearBuffer, "%d", currentGearTeethWindow);
+	formatString(gearBuffer, sizeof(gearBuffer), "%d", currentGearTeethWindow);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -834,8 +831,7 @@ static void createTeethSettings(void)
 	wi.g.width = 80;
 	wi.g.height = 80;
 	wi.g.parent = numberofTeethContainer;
-	memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-	sprintf(gearBuffer, "%d", currentTeethTeethWindow);
+	formatString(gearBuffer, sizeof(gearBuffer), "%d", currentTeethTeethWindow);
 	wi.text = gearBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -956,8 +952,7 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = gearsChangesContainer;
-	memset(&gearsStatus[0], 0, sizeof(gearsStatus));
-	sprintf(gearsStatus, "Number of Front Gears = %d", gearFrontSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontSettings[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -979,8 +974,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	
 	for(int i = 1; i <= gearFrontSettings[0]; i++){
-		memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-		sprintf(gearBuffer, "%d", gearFrontSettings[i]);
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[i]);
 		wi.text = gearBuffer;
 		gearsChangesFrontGearLabel[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(gearsChangesFrontGearLabel[i], TRUE);
@@ -996,8 +990,7 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = gearsChangesContainer;
-	memset(&gearsStatus[0], 0, sizeof(gearsStatus));
-	sprintf(gearsStatus, "Number of Back Gears = %d", gearBackSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackSettings[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -1019,8 +1012,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	
 	for(int i = 1; i <= gearBackSettings[0]; i++){
-		memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-		sprintf(gearBuffer, "%d", gearBackSettings[i]);
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[i]);
 		wi.text = gearBuffer;
 		gearsChangesBackGearLabel[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(gearsChangesBackGearLabel[i], TRUE);
@@ -1078,8 +1070,7 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = gearsCurrentContainer;
-	memset(&gearsStatus[0], 0, sizeof(gearsStatus));
-	sprintf(gearsStatus, "Number of Front Gears = %d", gearFrontSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontSettings[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -1101,8 +1092,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	
 	for(int i = 1; i <= gearFrontSettings[0]; i++){
-		memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-		sprintf(gearBuffer, "%d", gearFrontSettings[i]);
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[i]);
 		wi.text = gearBuffer;
 		gearsCurrentFrontGearLabel[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(gearsCurrentFrontGearLabel[i], TRUE);
@@ -1118,8 +1108,7 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = gearsCurrentContainer;
-	memset(&gearsStatus[0], 0, sizeof(gearsStatus));
-	sprintf(gearsStatus, "Number of Back Gears = %d", gearBackSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackSettings[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -1141,8 +1130,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	
 	for(int i = 1; i <= gearBackSettings[0]; i++){
-		memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-		sprintf(gearBuffer, "%d", gearBackSettings[i]);
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[i]);
 		wi.text = gearBuffer;
 		gearsCurrentBackGearLabel[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(gearsCurrentBackGearLabel[i], TRUE);
@@ -1264,8 +1252,7 @@ static void createClockSettings(void)
 	wi.g.width = 120;
 	wi.g.height = 50;
 	wi.g.parent = clockChangesContainer;
-	memset(&timeBuffer[0], 0, sizeof(timeBuffer));
-	sprintf(timeBuffer, "%d", clockChangesStruct.Year);
+	formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Year);
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
@@ -1276,19 +1263,18 @@ static void createClockSettings(void)
 	
 	for(int i = 1; i < 5; i++){
 		wi.g.y += 55;
-		memset(&timeBuffer[0], 0, sizeof(timeBuffer));
 		switch(i){
 		case 1:
-			sprintf(timeBuffer, "%d",clockChangesStruct.Month);
+			formatString(timeBuffer, sizeof(timeBuffer), "%d",clockChangesStruct.Month);
 			break;
 		case 2:
-			sprintf(timeBuffer, "%d",clockChangesStruct.Day);
+			formatString(timeBuffer, sizeof(timeBuffer), "%d",clockChangesStruct.Day);
 			break;
 		case 3:
-			sprintf(timeBuffer, "%d",clockChangesStruct.Hours);
+			formatString(timeBuffer, sizeof(timeBuffer), "%d",clockChangesStruct.Hours);
 			break;
 		case 4:
-			sprintf(timeBuffer, "%d",clockChangesStruct.Minutes);
+			formatString(timeBuffer, sizeof(timeBuffer), "%d",clockChangesStruct.Minutes);
 			break;
 		}
 		clockChangesValue[i] = gwinLabelCreate(0, &wi);
@@ -1392,7 +1378,7 @@ static void createClockSettings(void)
 	wi.g.height = 50;
 	wi.g.parent = clockCurrentContainer;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
-	sprintf(timeBuffer, "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+	formatString(timeBuffer, sizeof(timeBuffer), "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
 	wi.text = timeBuffer;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -1615,8 +1601,11 @@ void guiEventLoop(void)
 	my_GPS gpsData;
 	TM_GPS_Float_t GPS_Float_Lat;
 	TM_GPS_Float_t GPS_Float_Lon;
+	int tilex;
+	int tiley;
 	
 	while (1) {		
+		getRTC(&RTCD, TM_RTC_Format_BIN);
 		if(gwinGetVisible(dataContainer)){
 			if(count == 50){
 				count = 0;
@@ -1624,7 +1613,7 @@ void guiEventLoop(void)
 				if(speed == 200){
 					speed = 0;
 				}
-				sprintf(speedout, "%d km/h", speed);
+				formatString(speedout, sizeof(speedout), "%d km/h", speed);
 				gwinSetText(speedLabel, speedout, TRUE);
 			}else{
 				count++;
@@ -1632,10 +1621,8 @@ void guiEventLoop(void)
 		}
 		
 		if(gwinGetVisible(clockSettingsContainer)){
-			getRTC(&RTCD, TM_RTC_Format_BIN);
 			if(RTCD.Seconds != previousSeconds){
-				memset(&timeBuffer[0], 0, sizeof(timeBuffer));
-				sprintf(timeBuffer, "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
+				formatString(timeBuffer, sizeof(timeBuffer), "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
 				gwinSetText(clockCurrentTimeLabel, timeBuffer, TRUE);
 				previousSeconds = RTCD.Seconds;
 			}
@@ -1667,27 +1654,33 @@ void guiEventLoop(void)
 							
 					}
 			}*/
-			memset(gpsOutput, 0, sizeof(gpsOutput));
 			gpsData = getGPS();	
 			if(!gpsData.Validity){
-				sprintf(gpsOutput, "GPS Data is Invalid");
+				if(RTCD.Seconds != previousSeconds){
+					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
+					TRACE("GPS Data is Invalid\n");
+					previousSeconds = RTCD.Seconds;
+				}
 			}else{
 				/* Latitude */
 				/* Convert float to integer and decimal part, with 6 decimal places */
-				//TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
+				TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
 				
 				/* Longitude */
 				/* Convert float to integer and decimal part, with 6 decimal places */
-				//TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
-				//sprintf(gpsOutput, "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
-				int tilex = long2tilex(gpsData.Longitude, 15);
-				int tiley = lat2tiley(gpsData.Latitude, 15);
-				sprintf(gpsOutput, "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
-				TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+				TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
+				
+				tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL);
+				tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL);
+				
+				if(RTCD.Seconds != previousSeconds){
+					formatString(gpsOutput, sizeof(gpsOutput), "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
+					//formatString(gpsOutput, sizeof(gpsOutput), "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
+					TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+					previousSeconds = RTCD.Seconds;
+				}
 			}
 			gwinSetText(mapLabel, gpsOutput, TRUE);
-			//gwinRedraw(mapWindow);
-			
 		}
 		
 		// Get an event
@@ -1727,32 +1720,28 @@ void guiEventLoop(void)
 						if(gearFrontSettings[0] != MAXIMUM_FRONT_GEARS){
 							gearFrontSettings[0]++;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[0]);
 						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsFMinus) {
 						// FRONT GEARS MINUS
 					  if(gearFrontSettings[0] != 1){
 							gearFrontSettings[0]--;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", gearFrontSettings[0]);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[0]);
 						gwinSetText(numberOfGearsFNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBPlus) {
 						// BACK GEARS PLUS
 						if(gearBackSettings[0] != MAXIMUM_BACK_GEARS){
 							gearBackSettings[0]++;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", gearBackSettings[0]);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[0]);
 						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfGearsBMinus){ 
 						// BACK GEARS MINUS
 						if(gearBackSettings[0] != 1){
 							gearBackSettings[0]--;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", gearBackSettings[0]);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[0]);
 						gwinSetText(numberOfGearsBNumberLabel, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethFrontButton){ 
 						// FRONT GEARS TEETH PAGE
@@ -1760,8 +1749,7 @@ void guiEventLoop(void)
 						gwinSetText(numberOfTeethFBLabel, "F", TRUE);
 						if(currentGearTeethWindow > gearFrontSettings[0]){
 							currentGearTeethWindow = gearFrontSettings[0];
-							memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-							sprintf(gearBuffer, "%d", currentGearTeethWindow);
+							formatString(gearBuffer, sizeof(gearBuffer), "%d", currentGearTeethWindow);
 							gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 						}
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethBackButton){ 
@@ -1770,8 +1758,7 @@ void guiEventLoop(void)
 						gwinSetText(numberOfTeethFBLabel, "B", TRUE);
 						if(currentGearTeethWindow > gearBackSettings[0]){
 							currentGearTeethWindow = gearBackSettings[0];
-							memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-							sprintf(gearBuffer, "%d", currentGearTeethWindow);
+							formatString(gearBuffer, sizeof(gearBuffer), "%d", currentGearTeethWindow);
 							gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 						}
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethGNumberPlus) {
@@ -1785,32 +1772,28 @@ void guiEventLoop(void)
 								currentGearTeethWindow++;
 							}
 						}
-					  memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", currentGearTeethWindow);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", currentGearTeethWindow);
 						gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethGNumberMinus) {
 						// GEAR PLUS TEETH
 					  if(currentGearTeethWindow != 1){
 							currentGearTeethWindow--;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", currentGearTeethWindow);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", currentGearTeethWindow);
 						gwinSetText(numberOfTeethGNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethTNumberPlus) {
 						// TEETH PLUS TEETH
 					  if(currentTeethTeethWindow != MAXIMUM_TEETH){
 							currentTeethTeethWindow++;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", currentTeethTeethWindow);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", currentTeethTeethWindow);
 						gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethTNumberMinus) {
 						// TEETH MINUS TEETH
 					  if(currentTeethTeethWindow != MINIMUM_TEETH){
 							currentTeethTeethWindow--;
 						}
-						memset(&gearBuffer[0], 0, sizeof(gearBuffer));
-						sprintf(gearBuffer, "%d", currentTeethTeethWindow);
+						formatString(gearBuffer, sizeof(gearBuffer), "%d", currentTeethTeethWindow);
 						gwinSetText(numberOfTeethTNumber, gearBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == numberOfTeethEnter) {
 						// SAVE TEETH
@@ -1823,54 +1806,52 @@ void guiEventLoop(void)
 						if(clockChangeSelectedItem != 4){clockChangeSelectedItem++;}
 				}else if (((GEventGWinButton*)pe)->gwin == clockChangesPlus) {
 						// Clock Changes Selection Down
-						memset(&timeBuffer[0], 0, sizeof(timeBuffer));
 						switch(clockChangeSelectedItem){
 							case 0:
 								//if(clockChangeSelectedItem.Year)
 								clockChangesStruct.Year++;
-								sprintf(timeBuffer, "%d", clockChangesStruct.Year);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Year);
 								break;
 							case 1:
 								if(clockChangesStruct.Month != MAXIMUM_MONTH){clockChangesStruct.Month++;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Month);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Month);
 								break;
 							case 2:
 								if(clockChangesStruct.Day != MAXIMUM_DAY){clockChangesStruct.Day++;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Day);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Day);
 								break;
 							case 3:
 								if(clockChangesStruct.Hours != MAXIMUM_HOUR){clockChangesStruct.Hours++;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Hours);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Hours);
 								break;
 							case 4:
 								if(clockChangesStruct.Minutes != MAXIMUM_MINUTES){clockChangesStruct.Minutes++;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Minutes);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Minutes);
 								break;
 						}
 						gwinSetText(clockChangesValue[clockChangeSelectedItem], timeBuffer, TRUE);
 				}else if (((GEventGWinButton*)pe)->gwin == clockChangesMinus) {
 						// Clock Changes Selection Down
-						memset(&timeBuffer[0], 0, sizeof(timeBuffer));
 						switch(clockChangeSelectedItem){
 							case 0:
 								clockChangesStruct.Year--;
-								sprintf(timeBuffer, "%d", clockChangesStruct.Year);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Year);
 								break;
 							case 1:
 								if(clockChangesStruct.Month != 1){clockChangesStruct.Month--;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Month);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Month);
 								break;
 							case 2:
 								if(clockChangesStruct.Day != 1){clockChangesStruct.Day--;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Day);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Day);
 								break;
 							case 3:
 								if(clockChangesStruct.Hours != 0){clockChangesStruct.Hours--;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Hours);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Hours);
 								break;
 							case 4:
 								if(clockChangesStruct.Minutes != 0){clockChangesStruct.Minutes--;};
-								sprintf(timeBuffer, "%d", clockChangesStruct.Minutes);
+								formatString(timeBuffer, sizeof(timeBuffer), "%d", clockChangesStruct.Minutes);
 								break;
 						}
 						gwinSetText(clockChangesValue[clockChangeSelectedItem], timeBuffer, TRUE);
