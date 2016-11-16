@@ -92,7 +92,7 @@ void runGPS(){
 							TM_USART_Puts(USART3, "ERROR: Saving RTC Based on GPS Failed\n.");
 #endif	
 						};
-						deleteTraceFile();
+						//deleteTraceFile();
 						closeTraceFile();
 						openTraceFile();
 					}

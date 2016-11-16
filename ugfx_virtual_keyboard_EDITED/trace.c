@@ -11,6 +11,7 @@ osMutexId traceMutex;
 my_GPS myGPSData;
 
 char filename[24];
+TM_RTC_t fileTime;
 
 void deleteTraceFile(void)
 {
@@ -41,6 +42,14 @@ void openTraceFile(void)
 	}
 	
 	TM_RTC_GetDateTime(&rtcd, TM_RTC_Format_BIN);
+	
+	fileTime.Year = rtcd.Year;
+	fileTime.Month = rtcd.Month;
+	fileTime.Day = rtcd.Day;
+	fileTime.Hours = rtcd.Hours;
+	fileTime.Minutes = rtcd.Minutes;
+	fileTime.Seconds = rtcd.Seconds;
+	
 	sprintf(filename, "%d_%02d_%02d-%02d_%02d_%02d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
 #ifdef DEBUG
 	char buffer[50];

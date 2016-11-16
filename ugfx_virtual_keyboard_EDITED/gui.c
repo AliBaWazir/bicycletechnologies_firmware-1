@@ -1606,6 +1606,13 @@ void guiEventLoop(void)
 	
 	while (1) {		
 		getRTC(&RTCD, TM_RTC_Format_BIN);
+		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
+		uint32_t fileSavedTime = TM_RTC_GetUnixTimeStamp(&fileTime);
+		if((rtcTime - fileSavedTime) > 300){
+			closeTraceFile();
+			openTraceFile();
+		}
+		
 		if(gwinGetVisible(dataContainer)){
 			if(count == 50){
 				count = 0;
@@ -1864,7 +1871,7 @@ void guiEventLoop(void)
 						RTCD.Minutes = clockChangesStruct.Minutes;
 						RTCD.Seconds = 0;
 						updateRTC(&RTCD, TM_RTC_Format_BIN);
-						deleteTraceFile();
+						//deleteTraceFile();
 						closeTraceFile();
 						openTraceFile();
 				}

@@ -22,12 +22,14 @@ SSD1289       - Mid-sized color LCD displays eg RGB565 320x240
 SSD1306       - Small monochrome LCD
 SSD1331       - Small hardware accelerated OLED display RGB565 96x64
 SSD1351       - Mid-sized color LCD displays eg RGB565 320x240
+SSD1848       - Small grayscale LCD eg 2-Bit 130x130
 SSD1963       - Mid-sized color LCD displays eg RGB565 320x240
 SSD2119       - Mid-sized color LCD displays eg RGB565 320x240
 ST7565        - Small monochrome LCD
 STM32LTDC     - STM32 ART graphics STM32F4 and STM32F7 series CPU's
 TestStub      - NULL driver just to test compile
 TLS8204       - Small monochrome LCD
+QImage        - Driver that allows rendering into a QImage object (of the Qt framework)
 uGFXnet       - Remote Network display (in drivers/multiple/uGFXnet directory)
 Win32         - Microsoft Windows (in drivers/multiple/Win32 directory)
 X             - X Windows (Xlib) (in drivers/multiple/X directory)

@@ -482,6 +482,16 @@
               <FileType>1</FileType>
               <FilePath>.\gps.c</FilePath>
             </File>
+            <File>
+              <FileName>gmouse_lld_FT6x06_board.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\gmouse_lld_FT6x06_board.h</FilePath>
+            </File>
+            <File>
+              <FileName>tm_stm32_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tm_stm32_i2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

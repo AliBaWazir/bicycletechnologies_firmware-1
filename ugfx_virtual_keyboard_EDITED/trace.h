@@ -11,6 +11,8 @@ extern GFILE *myfile;
 
 extern osMutexId traceMutex;
 
+extern TM_RTC_t fileTime;
+
 typedef struct {
 	float Latitude;                                       /*!< Latitude position from GPS, -90 to 90 degrees response. */
 	float Longitude;                                      /*!< Longitude position from GPS, -180 to 180 degrees response. */
