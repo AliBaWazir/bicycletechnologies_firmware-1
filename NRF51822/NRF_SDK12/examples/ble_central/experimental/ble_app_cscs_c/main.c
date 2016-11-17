@@ -455,7 +455,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 		
         case BLE_GAP_EVT_DISCONNECTED:
 			
-			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x BLE_HCI Reason= %d \r\n", 
+			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x BLE_HCI Reason= 0x%x \r\n", 
 							p_ble_evt->evt.gap_evt.conn_handle,
 							p_ble_evt->evt.gap_evt.params.disconnected.reason);
 			if (ble_conn_state_n_centrals() == 0)
