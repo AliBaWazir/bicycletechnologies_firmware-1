@@ -32,6 +32,7 @@
 * MACRO DEFINITIONS
 ***********************************************************************************************/
 #define ADVERTISED_DEVICES_COUNT_MAX   10          //max of advertised devices to store data of
+#define MAX_CONNECTIONS_COUNT          2           //same as CENTRAL_LINK_COUNT
 
 #define SCAN_INTERVAL                  0x00A0      /**< Determines scan interval in units of 0.625 millisecond. */
 #define SCAN_WINDOW                    0x0050      /**< Determines scan window in units of 0.625 millisecond. */
@@ -44,8 +45,8 @@
 #define SCANNING_WAITING_PERIOD_MS     10000       //during this period central will continue scanning for any advertising peripherals
 #define BETWEEN_CONNECTIONS_DELAY_MS   5000        //sequent connections will be performed with a delay between them to allow handling connections
 
-#define CONN_MANAGER_APP_SIM_MODE      1           /*This boolean is set to true only if connection_manager_app
-													*is in simulation mode. That means no interaction with SPI will be made
+#define CONN_MANAGER_APP_STANDALONE_MODE      1           /*This boolean is set to true only if connection_manager_app
+													*is in standalone mode. That means no interaction with SPI will be made
 													**/
 
 /**********************************************************************************************
@@ -62,6 +63,11 @@ typedef struct{
 	uint8_t                    count;
 	advertised_devices_data_t  advertised_devices_data [ADVERTISED_DEVICES_COUNT_MAX];
 } advertised_devices_t;
+
+typedef struct{
+	uint16_t              conn_handle;
+	ble_gap_conn_params_t conn_params;
+} periph_set_conn_params_t;
 
 typedef enum
 {
@@ -89,8 +95,9 @@ static ble_gap_conn_params_t m_connection_param =
     (uint16_t)SUPERVISION_TIMEOUT      // Supervision time-out.
 };
 
-static advertised_devices_t      advertised_devices;                       /* Structure used to contain data for advertised sensors results after ble scan */
-static advertised_devices_t* advertised_devices_p = &advertised_devices;   //for debugging
+static advertised_devices_t      advertised_devices;                                 /* Structure used to contain data for advertised sensors results after ble scan */
+static advertised_devices_t*     advertised_devices_p       = &advertised_devices;   //for debugging
+static periph_set_conn_params_t  periph_set_conn_params[MAX_CONNECTIONS_COUNT];
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -293,7 +300,7 @@ bool connManagerApp_scan_start(void){
 		ret_code = false;
 	}
 	
-	if (CONN_MANAGER_APP_SIM_MODE){
+	if (CONN_MANAGER_APP_STANDALONE_MODE){
 		/*if in simulation mode, connect to all advertized devices once scannig is finished*/
 		ret_code= connManagerApp_connect_all();
 	}
@@ -418,7 +425,7 @@ bool connManagerApp_init(void){
 	
 	memset(&advertised_devices, 0, sizeof(advertised_devices_t));
 	
-	if (CONN_MANAGER_APP_SIM_MODE){
+	if (CONN_MANAGER_APP_STANDALONE_MODE){
 		/*if in simulation mode, scan for all devices at initialization and store results of up to 
 		 *ADVERTISED_DEVICES_COUNT_MAX
 		 **/

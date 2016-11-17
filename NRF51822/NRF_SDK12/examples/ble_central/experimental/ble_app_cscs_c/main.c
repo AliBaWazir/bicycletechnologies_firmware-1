@@ -443,8 +443,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			NRF_LOG_DEBUG("on_ble_evt: debugging conn params updated by peripheral with conn handle= 0x%x.\r\n", p_gap_evt->conn_handle);
 		    connManagerApp_debug_print_conn_params(&(p_gap_evt->params.conn_param_update_request.conn_params));
 			/*TODO: figure out whether sd_ble_gap_conn_param_update should be replaced here or in BLE_GAP_EVT_CONN_PARAM_UPDATE*/
-            //err_code = sd_ble_gap_conn_param_update(p_gap_evt->conn_handle, &(p_gap_evt->params.conn_param_update_request.conn_params));
-		    //APP_ERROR_CHECK(err_code);
+            err_code = sd_ble_gap_conn_param_update(p_gap_evt->conn_handle, &(p_gap_evt->params.conn_param_update_request.conn_params));
+		    APP_ERROR_CHECK(err_code);
             break; // BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST
 		
 		case BLE_GAP_EVT_CONN_PARAM_UPDATE:
@@ -454,7 +454,10 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			break; //BLE_GAP_EVT_CONN_PARAM_UPDATE
 		
         case BLE_GAP_EVT_DISCONNECTED:
-			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
+			
+			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x BLE_HCI Reason= %d \r\n", 
+							p_ble_evt->evt.gap_evt.conn_handle,
+							p_ble_evt->evt.gap_evt.params.disconnected.reason);
 			if (ble_conn_state_n_centrals() == 0)
             {
                 connManagerApp_scan_start();
