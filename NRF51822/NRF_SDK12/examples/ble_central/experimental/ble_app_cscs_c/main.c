@@ -135,9 +135,7 @@ static void db_disc_handler(ble_db_discovery_evt_t * p_evt)
 		if (p_evt->params.discovered_db.srv_uuid.uuid == TARGET_UUID_CYCLING_CADENCE){
 			cscsApp_on_db_disc_evt( p_evt );
 		} else if (p_evt->params.discovered_db.srv_uuid.uuid == TARGET_UUID_HEART_RATE){
-			/*TODO: call the heart rate app function*/
 			hrsApp_on_db_disc_evt( p_evt );
-			
 		} else{
 			NRF_LOG_ERROR("db_disc_handler called with unknown UUID: %d\r\n",
 			               p_evt->params.discovered_db.srv_uuid.uuid);
@@ -331,7 +329,7 @@ static void sleep_mode_enter(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
+/*TODO: move the connection events to connection_manager app and change public function to static*/
 /**@brief Function for handling the Application's BLE Stack events.
  *
  * @param[in]   p_ble_evt   Bluetooth stack event.
@@ -345,7 +343,16 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
     {
         case BLE_GAP_EVT_CONNECTED:
 		{
+			advertised_device_type_e device_type      = ADVERTISED_DEVICE_TYPE_UNKNOWN;
+			
 			NRF_LOG_INFO("Connected to a device with a connection handle= 0x%x.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
+			device_type= connManagerApp_get_device_type(&(p_gap_evt->params.connected.peer_addr));
+			if (device_type == ADVERTISED_DEVICE_TYPE_UNKNOWN){
+				NRF_LOG_ERROR("on_ble_evt: connManagerApp_get_device_type returned ADVERTISED_DEVICE_TYPE_UNKNOWN\r\n");
+			} else{
+				connManagerApp_map_conn_handler_to_device_type(device_type, p_ble_evt->evt.gap_evt.conn_handle);
+			}
+			
             // Discover peer's services.
             err_code = ble_db_discovery_start(&m_ble_db_discovery,
                                               p_ble_evt->evt.gap_evt.conn_handle);
@@ -440,7 +447,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 		/*TODO: move such event into an new event handler function in connection_manager_app*/
         case BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST:
             // Accepting parameters requested by peer.
-			NRF_LOG_DEBUG("on_ble_evt: debugging conn params updated by peripheral with conn handle= 0x%x.\r\n", p_gap_evt->conn_handle);
+		NRF_LOG_DEBUG("on_ble_evt: event BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST received. Conn params updated by peripheral with conn handle= 0x%x:\r\n",
+						p_gap_evt->conn_handle);
 		    connManagerApp_debug_print_conn_params(&(p_gap_evt->params.conn_param_update_request.conn_params));
 			/*TODO: figure out whether sd_ble_gap_conn_param_update should be replaced here or in BLE_GAP_EVT_CONN_PARAM_UPDATE*/
             err_code = sd_ble_gap_conn_param_update(p_gap_evt->conn_handle, &(p_gap_evt->params.conn_param_update_request.conn_params));
@@ -448,9 +456,10 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             break; // BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST
 		
 		case BLE_GAP_EVT_CONN_PARAM_UPDATE:
-			NRF_LOG_DEBUG("on_ble_evt: debugging conn params updated by peripheral with conn handle= 0x%x.\r\n", p_gap_evt->conn_handle);
+			NRF_LOG_DEBUG("on_ble_evt: event BLE_GAP_EVT_CONN_PARAM_UPDATE received. Conn params updated by peripheral with conn handle= 0x%x:\r\n",
+							p_gap_evt->conn_handle);
 		    connManagerApp_debug_print_conn_params(&(p_gap_evt->params.conn_param_update.conn_params));
-			connManagerApp_conn_params_update(&(p_gap_evt->params.conn_param_update_request.conn_params));
+			connManagerApp_conn_params_update(p_gap_evt->conn_handle, &(p_gap_evt->params.conn_param_update_request.conn_params));
 			break; //BLE_GAP_EVT_CONN_PARAM_UPDATE
 		
         case BLE_GAP_EVT_DISCONNECTED:

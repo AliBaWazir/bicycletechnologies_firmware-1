@@ -64,10 +64,12 @@ typedef struct{
 	advertised_devices_data_t  advertised_devices_data [ADVERTISED_DEVICES_COUNT_MAX];
 } advertised_devices_t;
 
+/*
 typedef struct{
-	uint16_t              conn_handle;
-	ble_gap_conn_params_t conn_params;
+	advertised_device_type_e   device_type;
+	ble_gap_conn_params_t      conn_params;
 } periph_set_conn_params_t;
+*/
 
 typedef enum
 {
@@ -87,17 +89,38 @@ static volatile bool             m_whitelist_temporarily_disabled = false; /**< 
 /**
  * @brief Connection parameters requested for connection.
  */
-static ble_gap_conn_params_t m_connection_param =
+static ble_gap_conn_params_t cscs_connection_params =
 {
-    (uint16_t)MIN_CONNECTION_INTERVAL, // Minimum connection.
-    (uint16_t)MAX_CONNECTION_INTERVAL, // Maximum connection.
-    (uint16_t)SLAVE_LATENCY,           // Slave latency.
-    (uint16_t)SUPERVISION_TIMEOUT      // Supervision time-out.
+    (uint16_t)MIN_CONNECTION_INTERVAL, // Default Minimum connection.
+    (uint16_t)MAX_CONNECTION_INTERVAL, // Default Maximum connection.
+    (uint16_t)SLAVE_LATENCY,           // Default Slave latency.
+    (uint16_t)SUPERVISION_TIMEOUT      // Default Supervision time-out.
+};
+
+static ble_gap_conn_params_t hr_connection_params =
+{
+    (uint16_t)MIN_CONNECTION_INTERVAL, // Default Minimum connection.
+    (uint16_t)MAX_CONNECTION_INTERVAL, // Default Maximum connection.
+    (uint16_t)SLAVE_LATENCY,           // Default Slave latency.
+    (uint16_t)SUPERVISION_TIMEOUT      // Default Supervision time-out.
+};
+
+static ble_gap_conn_params_t phone_connection_params =
+{
+    (uint16_t)MIN_CONNECTION_INTERVAL, // Default Minimum connection.
+    (uint16_t)MAX_CONNECTION_INTERVAL, // Default Maximum connection.
+    (uint16_t)SLAVE_LATENCY,           // Default Slave latency.
+    (uint16_t)SUPERVISION_TIMEOUT      // Default Supervision time-out.
 };
 
 static advertised_devices_t      advertised_devices;                                 /* Structure used to contain data for advertised sensors results after ble scan */
-static advertised_devices_t*     advertised_devices_p       = &advertised_devices;   //for debugging
-static periph_set_conn_params_t  periph_set_conn_params[MAX_CONNECTIONS_COUNT];
+static advertised_devices_t*     advertised_devices_p       = &advertised_devices;   // for debugging
+
+/*static periph_set_conn_params_t  periph_set_conn_params[MAX_CONNECTIONS_COUNT];     * Array to hold connection params for HR and CSCS sensors.
+																					  * All devices in the same category assumed to have the same connection params
+																					  * Array entries are indexes by conn handler
+																					  **/
+static uint8_t device_type_at_conn_handler [MAX_CONNECTIONS_COUNT];
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -127,6 +150,7 @@ static bool connManagerApp_is_peer_address_matching(const uint8_t* existing_peer
 		
 	return is_matching;
 }
+
 
 static bool connManagerApp_connect_all(){
 	
@@ -160,12 +184,77 @@ void connManagerApp_debug_print_conn_params(const ble_gap_conn_params_t* conn_pa
 	NRF_LOG_DEBUG("connManagerApp_debug_print_conn_params: -----------------------------------------------------------\r\n");
 }
 
-void connManagerApp_conn_params_update (const ble_gap_conn_params_t* conn_params){
-	m_connection_param.min_conn_interval= conn_params->min_conn_interval;
-	m_connection_param.max_conn_interval= conn_params->max_conn_interval;
-	m_connection_param.slave_latency    = conn_params->slave_latency;
-	m_connection_param.conn_sup_timeout = conn_params->conn_sup_timeout;
+//function to get device type based of peer address
+advertised_device_type_e connManagerApp_get_device_type (const ble_gap_addr_t *peer_addr){
+	
+	advertised_device_type_e ret_code      = ADVERTISED_DEVICE_TYPE_UNKNOWN;
+	uint8_t                  i             = 0;
+	ble_gap_addr_t*          tmp_gap_addr  = NULL;
+	
+	for (i=0; i<advertised_devices.count; i++){
+		
+		tmp_gap_addr = connManagerApp_get_peer_addr(i);
+		if (tmp_gap_addr == NULL){
+			NRF_LOG_ERROR("connManagerApp_get_device_type: failed to get peer address of advertised device with index= %d\r\n",i);
+			break;
+		} else{
+			if (connManagerApp_is_peer_address_matching(tmp_gap_addr->addr,peer_addr->addr)){
+				return advertised_devices.advertised_devices_data[i].device_type;
+			}
+		}
+		
+	}
+	
+	return ret_code;
+	
 }
+
+//function to map connection handler to a device category
+void connManagerApp_map_conn_handler_to_device_type (advertised_device_type_e device_type, const uint16_t conn_handle){
+	
+	device_type_at_conn_handler[conn_handle] = device_type;
+}
+
+
+//function to update connection parameters of for a device category
+void connManagerApp_conn_params_update (const uint16_t conn_handle, const ble_gap_conn_params_t* conn_params){
+	if (device_type_at_conn_handler[conn_handle]== ADVERTISED_DEVICE_TYPE_CSCS_SENSOR){
+		
+		//update connection parameters for CSCS devices category
+		cscs_connection_params.min_conn_interval= conn_params->min_conn_interval;
+		cscs_connection_params.max_conn_interval= conn_params->max_conn_interval;
+		cscs_connection_params.slave_latency    = conn_params->slave_latency;
+		cscs_connection_params.conn_sup_timeout = conn_params->conn_sup_timeout;
+		NRF_LOG_DEBUG("connManagerApp_conn_params_update: updated conn params for CSCS \r\n");
+
+	} else if(device_type_at_conn_handler[conn_handle]== ADVERTISED_DEVICE_TYPE_HRS_SENSOR){
+		
+		//update connection parameters for HR devices category
+		hr_connection_params.min_conn_interval= conn_params->min_conn_interval;
+		hr_connection_params.max_conn_interval= conn_params->max_conn_interval;
+		hr_connection_params.slave_latency    = conn_params->slave_latency;
+		hr_connection_params.conn_sup_timeout = conn_params->conn_sup_timeout;
+		NRF_LOG_DEBUG("connManagerApp_conn_params_update: updated conn params for HR \r\n");
+		
+	} else if (device_type_at_conn_handler[conn_handle]== ADVERTISED_DEVICE_TYPE_PHONE){
+		
+		//update connection parameters for phone devices category
+		phone_connection_params.min_conn_interval= conn_params->min_conn_interval;
+		phone_connection_params.max_conn_interval= conn_params->max_conn_interval;
+		phone_connection_params.slave_latency    = conn_params->slave_latency;
+		phone_connection_params.conn_sup_timeout = conn_params->conn_sup_timeout;
+		NRF_LOG_DEBUG("connManagerApp_conn_params_update: updated conn params for phone \r\n");
+		
+	} else{
+		
+		NRF_LOG_WARNING("connManagerApp_conn_params_update: called with ADVERTISED_DEVICE_TYPE_UNKNOWN \r\n");
+		
+	}
+	/*TODO save the updated connection parameters in flash once updated*/
+	
+}
+
+
 
 bool connManagerApp_get_memory_access_in_progress (void){
 	return m_memory_access_in_progress;
@@ -267,7 +356,9 @@ bool connManagerApp_scan_start(void){
     }
 
     NRF_LOG_DEBUG("connManagerApp_scan_start: starting scan.\r\n");
-
+	//delete all previous advertising devices
+	/*TODO: figure out why this memset causes no advertisement reports to be received */
+	//memset(&advertised_devices, 0x00, sizeof(advertised_devices_t));
     ret = sd_ble_gap_scan_start(&m_scan_param);
 	/*TODO: figure out why sd_ble_gap_scan_start returns NRF_ERROR_INVALID_STATE*/
     if(ret == NRF_ERROR_INVALID_STATE){
@@ -280,6 +371,7 @@ bool connManagerApp_scan_start(void){
 		APP_ERROR_CHECK(ret);
 		
 		//wait 10 seconds
+		/*TODO: replace this with a timer. Timer value should be specified by SPI scan command*/
 		nrf_delay_ms(SCANNING_WAITING_PERIOD_MS);
 		
 		NRF_LOG_DEBUG("connManagerApp_scan_start: stopping scan.\r\n");
@@ -301,7 +393,7 @@ bool connManagerApp_scan_start(void){
 	}
 	
 	if (CONN_MANAGER_APP_STANDALONE_MODE){
-		/*if in simulation mode, connect to all advertized devices once scannig is finished*/
+		/*if in standalone mode, connect to all advertized devices once scannig is finished*/
 		ret_code= connManagerApp_connect_all();
 	}
 	
@@ -334,19 +426,13 @@ void connManagerApp_whitelist_disable(void){
 
 bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 	
-	bool               ret_code                   = true;
-	uint32_t           err_code                   = NRF_SUCCESS;
-	ble_gap_addr_t    *peer_addr                  = NULL;
-	uint8_t            advertised_device_index    = advertised_device_id;  /* for now the id is the same index inside array
-														                    * advertised_devices.advertised_devices_data[]
-														                    **/
-
-	// Stop scanning.
-    err_code = sd_ble_gap_scan_stop();
-
-    if (err_code != NRF_SUCCESS){
-		NRF_LOG_ERROR("connManagerApp_advertised_device_connect: scan stop failed, reason %d\r\n", err_code);
-    }
+	bool                     ret_code                   = true;
+	uint32_t                 err_code                   = NRF_SUCCESS;
+	ble_gap_addr_t          *peer_addr                  = NULL;
+	ble_gap_conn_params_t   *connection_params          = NULL;
+	uint8_t                  advertised_device_index    = advertised_device_id;  /* for now the id is the same index inside array
+														                          * advertised_devices.advertised_devices_data[]
+														                          **/
     
 	/*TODO: figure out whether to cintinue or not if err_code != NRF_SUCCESS*/
 	err_code = bsp_indication_set(BSP_INDICATE_IDLE);
@@ -362,17 +448,42 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 		NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connManagerApp_get_peer_addr for device index= %d returned NULL\r\n", advertised_device_index);
 		ret_code = false;
 	} else{
+		
 		NRF_LOG_DEBUG("connManagerApp_advertised_device_connect: debugging conn params set by central before connecting\r\n");
-		connManagerApp_debug_print_conn_params(&m_connection_param);
-		err_code = sd_ble_gap_connect(peer_addr,
-                                      &m_scan_param,
-                                      &m_connection_param);
-
-		m_whitelist_temporarily_disabled = false;
-
-		if (err_code != NRF_SUCCESS){
-			NRF_LOG_ERROR("Connection Request Failed, reason %d\r\n", err_code);
+		switch (advertised_devices.advertised_devices_data[advertised_device_index].device_type){
+			case ADVERTISED_DEVICE_TYPE_CSCS_SENSOR:
+				connection_params = &cscs_connection_params;
+				break;
+			case ADVERTISED_DEVICE_TYPE_HRS_SENSOR:
+				connection_params = &hr_connection_params;
+				break;
+			case ADVERTISED_DEVICE_TYPE_PHONE:
+				connection_params = &phone_connection_params;
+				break;
+			default:
+				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: advertised device type[%d] is of type=%d \r\n",
+								advertised_device_index,
+								advertised_devices.advertised_devices_data[advertised_device_index].device_type);
+				break;
 		}
+		
+		if (connection_params == NULL){
+			NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection_params is NULL\r\n");
+		} else {
+			connManagerApp_debug_print_conn_params(connection_params);
+			err_code = sd_ble_gap_connect(peer_addr,
+										  &m_scan_param,
+										  connection_params);
+
+			m_whitelist_temporarily_disabled = false;
+
+			if (err_code != NRF_SUCCESS){
+				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection Request failed. Device= %d. Failure reason %d\r\n",
+								advertised_devices.advertised_devices_data[advertised_device_index].device_type,
+								err_code);
+			}
+		}
+
 		
 	}	
 		
@@ -402,8 +513,7 @@ bool connManagerApp_advertised_device_store(advertised_device_type_e device_type
 		
 		NRF_LOG_DEBUG("connManagerApp_store_advertised_device: stored advertised devices reached max. last_count=%d \r\n", last_count);
 	
-	}
-	else{
+	} else{
 		//this is a new advertised device. Store its connection info  and increase count
 		advertised_devices.advertised_devices_data[last_count].device_type = device_type;
 		advertised_devices.advertised_devices_data[last_count].peer_addr = adv_report->peer_addr;
@@ -426,7 +536,7 @@ bool connManagerApp_init(void){
 	memset(&advertised_devices, 0, sizeof(advertised_devices_t));
 	
 	if (CONN_MANAGER_APP_STANDALONE_MODE){
-		/*if in simulation mode, scan for all devices at initialization and store results of up to 
+		/*if in standalone mode, scan for all devices at initialization and store results of up to 
 		 *ADVERTISED_DEVICES_COUNT_MAX
 		 **/
 		ret_code = connManagerApp_scan_start();

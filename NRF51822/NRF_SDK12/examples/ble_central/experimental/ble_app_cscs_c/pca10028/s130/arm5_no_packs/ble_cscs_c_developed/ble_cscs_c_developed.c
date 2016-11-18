@@ -272,8 +272,8 @@ void ble_cscs_on_db_disc_evt(ble_cscs_c_t * p_ble_cscs_c, const ble_db_discovery
                     p_evt->params.discovered_db.charateristics[i].characteristic.handle_value;
                 break;
             } else{
-								NRF_LOG_ERROR("Cycling Speed and Cadence characteristic is not found in discovered database.\r\n");
-						}
+				NRF_LOG_ERROR("Cycling Speed and Cadence characteristic is not found in discovered database.\r\n");
+			}
 							
         }
 
