@@ -23,9 +23,6 @@
 #define BTN_TOP_FADE			50		// (BTN_TOP_FADE/255)% fade to white for top of button
 #define BTN_BOTTOM_FADE			25		// (BTN_BOTTOM_FADE/255)% fade to black for bottom of button
 
-// Our pressed state
-#define GBUTTON_FLG_PRESSED		(GWIN_FIRST_CONTROL_FLAG<<0)
-
 #if GINPUT_NEED_MOUSE
 	// A mouse down has occurred over the button
 	static void ButtonMouseDown(GWidgetObject *gw, coord_t x, coord_t y) {
@@ -241,9 +238,9 @@ static const GColorSet *getButtonColors(GWidgetObject *gw) {
 		pcol = getButtonColors(gw);
 
 		gdispGFillArea(gw->g.display, gw->g.x, gw->g.y, gw->g.width, gw->g.height, gw->pstyle->background);
-		gdispGFillEllipse(gw->g.display, gw->g.x+1, gw->g.y+1, gw->g.width/2-1, gw->g.height/2-1, pcol->fill);
+		gdispGFillEllipse(gw->g.display, gw->g.x+gw->g.width/2, gw->g.y+gw->g.height/2, gw->g.width/2-2, gw->g.height/2-2, pcol->fill);
 		gdispGDrawStringBox(gw->g.display, gw->g.x+1, gw->g.y+1, gw->g.width-2, gw->g.height-2, gw->text, gw->g.font, pcol->text, justifyCenter);
-		gdispGDrawEllipse(gw->g.display, gw->g.x, gw->g.y, gw->g.width/2, gw->g.height/2, pcol->edge);
+		gdispGDrawEllipse(gw->g.display, gw->g.x+gw->g.width/2, gw->g.y+gw->g.height/2, gw->g.width/2-1, gw->g.height/2-1, pcol->edge);
 	}
 #endif
 

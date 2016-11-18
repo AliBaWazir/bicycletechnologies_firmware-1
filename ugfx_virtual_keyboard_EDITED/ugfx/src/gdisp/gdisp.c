@@ -3231,7 +3231,7 @@ void gdispGDrawBox(GDisplay *g, coord_t x, coord_t y, coord_t cx, coord_t cy, co
 		g->t.font = font;
 		g->t.clipx0 = x;
 		g->t.clipy0 = y;
-		g->t.clipx1 = x + mf_get_string_width(font, str, 0, 0);
+		g->t.clipx1 = x + mf_get_string_width(font, str, 0, 0) + font->baseline_x;
 		g->t.clipy1 = y + font->height;
 		g->t.color = color;
 
@@ -3242,7 +3242,7 @@ void gdispGDrawBox(GDisplay *g, coord_t x, coord_t y, coord_t cx, coord_t cy, co
 
 	void gdispGFillString(GDisplay *g, coord_t x, coord_t y, const char *str, font_t font, color_t color, color_t bgcolor) {
 		MUTEX_ENTER(g);
-		g->p.cx = mf_get_string_width(font, str, 0, 0);
+		g->p.cx = mf_get_string_width(font, str, 0, 0) + font->baseline_x;
 		g->p.cy = font->height;
 		g->t.font = font;
 		g->t.clipx0 = g->p.x = x;
