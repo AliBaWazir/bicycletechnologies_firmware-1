@@ -1,3 +1,3 @@
-DEMODIR = $(GFXLIB)/demos/modules/gwin/textedit_virtual_keyboard
+DEMODIR = $(GFXLIB)/demos/modules/gwin/textedit
 GFXINC +=   $(DEMODIR)
 GFXSRC +=	$(DEMODIR)/main.c
