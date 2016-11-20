@@ -25,16 +25,21 @@
 #include "nrf_delay.h"
 #include "app_error.h"
 #include "app_timer.h"
-#define NRF_LOG_MODULE_NAME "CI2C APP"
+#define NRF_LOG_MODULE_NAME "I2C APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 
 #include "i2c_app.h"
+#include "i2c_sim_driver.h"
 
 
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
+#define I2C_IN_SIMULATION_MODE   1        /*This is set to 1 only if the I2C app is running in debugging mode 
+                                           *to charecterize the I2C link between nRF module and gear controller
+										   */
+
 #define I2C_BASE_REGISTER_ADDRESS   0x1234         //address of I2C base register
 
 
@@ -64,6 +69,9 @@ bool i2cApp_init(void){
 	bool         ret_code         = true;
 	ret_code_t   nrf_err          = NRF_SUCCESS;
 	
+	if (I2C_IN_SIMULATION_MODE){
+		ret_code = i2cSimDriver_init();
+	}
 		
 	return ret_code;	
 }
