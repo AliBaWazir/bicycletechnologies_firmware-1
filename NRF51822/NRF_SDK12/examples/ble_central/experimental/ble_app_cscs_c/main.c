@@ -57,6 +57,7 @@
 /*TODO: figure out whether CENTRAL_LINK_COUNT should be the same as ADVERTISED_DEVICES_COUNT_MAX in connection_manager_app.c*/
 #define CENTRAL_LINK_COUNT        2                                  /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT     0                                  /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
+#define TOTAL_LINK_COUNT          CENTRAL_LINK_COUNT + PERIPHERAL_LINK_COUNT /**< Total number of links used by the application. */
 
 #define BOND_DELETE_ALL_BUTTON_ID 0                                  /**< Button used for deleting all bonded centrals during startup. */
 
@@ -100,7 +101,7 @@ typedef struct
     uint16_t  data_len; /**< Length of data. */
 }data_t;
 
-static ble_db_discovery_t    m_ble_db_discovery;                  /**< Structure used to identify the DB Discovery module. */
+static ble_db_discovery_t    m_ble_db_discovery [TOTAL_LINK_COUNT];                  /**< Structure used to identify the DB Discovery module. */
 static uint8_t               m_peer_count;                                /**< Number of peer's connected. */
 static uint16_t              m_conn_handle;                            /**< Current connection handle. */
 
@@ -346,6 +347,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			advertised_device_type_e device_type      = ADVERTISED_DEVICE_TYPE_UNKNOWN;
 			
 			NRF_LOG_INFO("Connected to a device with a connection handle= 0x%x.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
+			APP_ERROR_CHECK_BOOL(p_gap_evt->conn_handle < TOTAL_LINK_COUNT);
+			
 			device_type= connManagerApp_get_device_type(&(p_gap_evt->params.connected.peer_addr));
 			if (device_type == ADVERTISED_DEVICE_TYPE_UNKNOWN){
 				NRF_LOG_ERROR("on_ble_evt: connManagerApp_get_device_type returned ADVERTISED_DEVICE_TYPE_UNKNOWN\r\n");
@@ -354,9 +357,12 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			}
 			
             // Discover peer's services.
-            err_code = ble_db_discovery_start(&m_ble_db_discovery,
-                                              p_ble_evt->evt.gap_evt.conn_handle);
-            APP_ERROR_CHECK(err_code);
+            err_code = ble_db_discovery_start(&m_ble_db_discovery[p_gap_evt->conn_handle],
+                                              p_gap_evt->conn_handle);
+            if (err_code != NRF_ERROR_BUSY)
+            {
+                APP_ERROR_CHECK(err_code);
+            }
 
             err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
             APP_ERROR_CHECK(err_code);
@@ -467,6 +473,8 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x BLE_HCI Reason= 0x%x \r\n", 
 							p_ble_evt->evt.gap_evt.conn_handle,
 							p_ble_evt->evt.gap_evt.params.disconnected.reason);
+			/*TODO: Figure out when to perform automatic scan*/
+			//if (ble_conn_state_n_centrals() < CENTRAL_LINK_COUNT)
 			if (ble_conn_state_n_centrals() == 0)
             {
                 connManagerApp_scan_start();
@@ -551,15 +559,26 @@ static void on_sys_evt(uint32_t sys_evt)
  */
 static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 {
+	uint16_t conn_handle= p_ble_evt->evt.gap_evt.conn_handle;
+	
 	// Modules which depend on ble_conn_state, like Peer Manager,
     // should have their callbacks invoked after ble_conn_state's.
     ble_conn_state_on_ble_evt(p_ble_evt);
     pm_on_ble_evt(p_ble_evt);
-    ble_db_discovery_on_ble_evt(&m_ble_db_discovery, p_ble_evt);
+	on_ble_evt(p_ble_evt);
+    
+	// Make sure taht an invalid connection handle are not passed since
+    // our array of modules is bound to TOTAL_LINK_COUNT.
+    if (conn_handle < TOTAL_LINK_COUNT)
+    {
+        ble_db_discovery_on_ble_evt(&m_ble_db_discovery[conn_handle], p_ble_evt);
+    }
+	
     cscsApp_on_ble_evt(p_ble_evt);
 	hrsApp_on_ble_evt(p_ble_evt);
     bsp_btn_ble_on_ble_evt(p_ble_evt);
-    on_ble_evt(p_ble_evt);
+	//on_ble_evt(p_ble_evt);
+
 }
 
 
