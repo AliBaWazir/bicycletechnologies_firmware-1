@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 #include "ble_gap.h"
+	
+#define SCANNING_WAITING_PERIOD_MS     10000       //during this period central will continue scanning for any advertising peripherals
 
 typedef enum{
 	ADVERTISED_DEVICE_TYPE_UNKNOWN = 0,
@@ -22,7 +24,7 @@ void connManagerApp_map_conn_handler_to_device_type (advertised_device_type_e de
 void connManagerApp_conn_params_update (const uint16_t conn_handle, const ble_gap_conn_params_t* conn_params);
 bool connManagerApp_get_memory_access_in_progress (void);
 void connManagerApp_set_memory_access_in_progress (bool is_in_progress);
-bool connManagerApp_scan_start(void);
+bool connManagerApp_scan_start(uint32_t scanning_interval_ms);
 void connManagerApp_whitelist_disable(void);
 bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id);
 bool connManagerApp_advertised_device_store(advertised_device_type_e device_type, const ble_gap_evt_adv_report_t* adv_report);

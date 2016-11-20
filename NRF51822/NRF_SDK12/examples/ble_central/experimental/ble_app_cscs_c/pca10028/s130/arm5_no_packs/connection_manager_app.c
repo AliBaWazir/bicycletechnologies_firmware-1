@@ -21,6 +21,7 @@
 #include "app_error.h"
 #include "fstorage.h"
 #include "peer_manager.h"
+#include "app_timer.h"
 #include "bsp.h" /*TODO: move all bsp code from main file to this file*/
 #define NRF_LOG_MODULE_NAME "CONN_MANAGER APP"
 #include "nrf_log.h"
@@ -42,12 +43,14 @@
 #define SLAVE_LATENCY             0                                  /**< Determines slave latency in counts of connection events. */
 #define SUPERVISION_TIMEOUT       MSEC_TO_UNITS(4000, UNIT_10_MS)    /**< Determines supervision time-out in units of 10 millisecond. */
 
-#define SCANNING_WAITING_PERIOD_MS     10000       //during this period central will continue scanning for any advertising peripherals
 #define BETWEEN_CONNECTIONS_DELAY_MS   5000        //sequent connections will be performed with a delay between them to allow handling connections
 
-#define CONN_MANAGER_APP_STANDALONE_MODE      1           /*This boolean is set to true only if connection_manager_app
+#define CONN_MANAGER_APP_STANDALONE_MODE      1    /*This boolean is set to true only if connection_manager_app
 													*is in standalone mode. That means no interaction with SPI will be made
 													**/
+													
+#define APP_TIMER_PRESCALER        0               /**< Value of the RTC1 PRESCALER register. If changed, remember to change prescaler in main.c*/
+#define CONNMANAGER_MS_TO_TICK(MS) (APP_TIMER_TICKS(100, APP_TIMER_PRESCALER) * (MS / 100))
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -121,6 +124,8 @@ static advertised_devices_t*     advertised_devices_p       = &advertised_device
 																					  * Array entries are indexes by conn handler
 																					  **/
 static uint8_t device_type_at_conn_handler [MAX_CONNECTIONS_COUNT];
+APP_TIMER_DEF(scanning_timer_id);
+
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -171,6 +176,33 @@ static bool connManagerApp_connect_all(){
 	return ret_code;
 }
 
+static void scanning_timer_handler( void * callback_data){
+	
+	uint32_t* scanning_request_id_p = (uint32_t*) callback_data;
+	uint32_t  err                   = NRF_SUCCESS;   
+	
+	if (scanning_request_id_p != NULL){
+		NRF_LOG_DEBUG("scanning_timer_handler: scanning request with ID=%d timed out\r\n", *scanning_request_id_p);
+	}
+	
+	// Stop scanning.
+	NRF_LOG_DEBUG("scanning_timer_handler: stopping scan.\r\n");
+	err = sd_ble_gap_scan_stop();
+
+	if (err != NRF_SUCCESS){
+		NRF_LOG_ERROR("scanning_timer_handler: sd_ble_gap_scan_stop failed, reason %d\r\n", err);
+	}
+	
+	//stop scanning timer
+	(void)app_timer_stop(scanning_timer_id);
+	
+	if (CONN_MANAGER_APP_STANDALONE_MODE){
+		/*if in standalone mode, connect to all advertized devices once scannig is finished*/
+		if(!connManagerApp_connect_all()){
+			NRF_LOG_ERROR("scanning_timer_handler: connManagerApp_connect_all failed \r\n");
+		}
+	}
+}
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
@@ -265,7 +297,7 @@ void connManagerApp_set_memory_access_in_progress (bool is_in_progress){
 }
 /**@brief Function to start scanning.
  */
-bool connManagerApp_scan_start(void){
+bool connManagerApp_scan_start(uint32_t scanning_interval_ms){
 	
     uint32_t flash_busy;
 	bool     ret_code = true;
@@ -366,21 +398,16 @@ bool connManagerApp_scan_start(void){
 	} else{
 		
 		APP_ERROR_CHECK(ret);
+		
+		//timeout scanning after the specified time interval
+	    ret = app_timer_start(scanning_timer_id, CONNMANAGER_MS_TO_TICK(scanning_interval_ms), (void*)NULL);
+		if (ret != NRF_SUCCESS)
+		{
+			NRF_LOG_ERROR("connManagerApp_scan_start: app_timer_start failed with error = %d\r\n",ret);
+		}
 
 		ret = bsp_indication_set(BSP_INDICATE_SCANNING);
 		APP_ERROR_CHECK(ret);
-		
-		//wait 10 seconds
-		/*TODO: replace this with a timer. Timer value should be specified by SPI scan command*/
-		nrf_delay_ms(SCANNING_WAITING_PERIOD_MS);
-		
-		NRF_LOG_DEBUG("connManagerApp_scan_start: stopping scan.\r\n");
-		// Stop scanning.
-		ret = sd_ble_gap_scan_stop();
-
-		if (ret != NRF_SUCCESS){
-			NRF_LOG_ERROR("connManagerApp_scan_start: scan stop failed, reason %d\r\n", ret);
-		}
     
 		/*TODO: figure out whether to cintinue or not if err_code != NRF_SUCCESS*/
 		ret = bsp_indication_set(BSP_INDICATE_IDLE);
@@ -390,11 +417,6 @@ bool connManagerApp_scan_start(void){
 	
 	if(ret != NRF_SUCCESS){
 		ret_code = false;
-	}
-	
-	if (CONN_MANAGER_APP_STANDALONE_MODE){
-		/*if in standalone mode, connect to all advertized devices once scannig is finished*/
-		ret_code= connManagerApp_connect_all();
 	}
 	
 	return ret_code;
@@ -413,7 +435,7 @@ void connManagerApp_whitelist_disable(void){
         err_code = sd_ble_gap_scan_stop();
         if (err_code == NRF_SUCCESS)
         {
-            connManagerApp_scan_start();
+            connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
         }
         else if (err_code != NRF_ERROR_INVALID_STATE)
         {
@@ -531,15 +553,25 @@ bool connManagerApp_advertised_device_store(advertised_device_type_e device_type
  */
 bool connManagerApp_init(void){
 	
-	bool     ret_code          = true;
+	bool       ret_code          = true;
+	uint32_t   err_code          = NRF_SUCCESS;
 	
 	memset(&advertised_devices, 0, sizeof(advertised_devices_t));
 	
-	if (CONN_MANAGER_APP_STANDALONE_MODE){
+	//Create timer to be used to timeout ble scanning
+	err_code = app_timer_create(&scanning_timer_id,
+                                 APP_TIMER_MODE_SINGLE_SHOT,
+                                 scanning_timer_handler);
+	if (err_code != NRF_SUCCESS){
+		NRF_LOG_DEBUG("connManagerApp_init: failed with error= %d\r\n", err_code);
+		ret_code = false;
+    }
+		
+	if (CONN_MANAGER_APP_STANDALONE_MODE && ret_code){
 		/*if in standalone mode, scan for all devices at initialization and store results of up to 
 		 *ADVERTISED_DEVICES_COUNT_MAX
 		 **/
-		ret_code = connManagerApp_scan_start();
+		ret_code = connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
 	}
 		
 	return ret_code;	

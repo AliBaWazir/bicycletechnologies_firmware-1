@@ -102,8 +102,8 @@ typedef struct
 }data_t;
 
 static ble_db_discovery_t    m_ble_db_discovery [TOTAL_LINK_COUNT];                  /**< Structure used to identify the DB Discovery module. */
-static uint8_t               m_peer_count;                                /**< Number of peer's connected. */
-static uint16_t              m_conn_handle;                            /**< Current connection handle. */
+static uint8_t               m_peer_count;                                           /**< Number of peer's connected. */
+static uint16_t              m_conn_handle;                                          /**< Current connection handle. */
 
 
 /**@brief Function for asserts in the SoftDevice.
@@ -246,7 +246,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
             break; // PM_EVT_PEER_DELETE_FAILED
 
         case PM_EVT_PEERS_DELETE_SUCCEEDED:
-            connManagerApp_scan_start();
+            connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
             break; // PM_EVT_PEERS_DELETE_SUCCEEDED
 
         case PM_EVT_PEERS_DELETE_FAILED:
@@ -442,7 +442,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
             if (p_gap_evt->params.timeout.src == BLE_GAP_TIMEOUT_SRC_SCAN)
             {
                 NRF_LOG_DEBUG("Scan timed out.\r\n");
-                connManagerApp_scan_start();
+                connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
             }
             else if (p_gap_evt->params.timeout.src == BLE_GAP_TIMEOUT_SRC_CONN)
             {
@@ -477,7 +477,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			//if (ble_conn_state_n_centrals() < CENTRAL_LINK_COUNT)
 			if (ble_conn_state_n_centrals() == 0)
             {
-                connManagerApp_scan_start();
+                connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
             }
 			//not sure if the following commented lines are needed.
 			/*
@@ -539,7 +539,7 @@ static void on_sys_evt(uint32_t sys_evt)
             if (connManagerApp_get_memory_access_in_progress())
             {
                 connManagerApp_set_memory_access_in_progress(false);
-                connManagerApp_scan_start();
+                connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
             }
             break; // NRF_EVT_FLASH_OPERATION_SUCCESS and NRF_EVT_FLASH_OPERATION_ERROR
 
