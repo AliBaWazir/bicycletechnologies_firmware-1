@@ -272,8 +272,8 @@ void ble_cscs_on_db_disc_evt(ble_cscs_c_t * p_ble_cscs_c, const ble_db_discovery
                     p_evt->params.discovered_db.charateristics[i].characteristic.handle_value;
                 break;
             } else{
-								NRF_LOG_ERROR("Cycling Speed and Cadence characteristic is not found in discovered database.\r\n");
-						}
+				NRF_LOG_ERROR("Cycling Speed and Cadence characteristic is not found in discovered database.\r\n");
+			}
 							
         }
 
@@ -290,11 +290,11 @@ void ble_cscs_on_db_disc_evt(ble_cscs_c_t * p_ble_cscs_c, const ble_db_discovery
         }
 
         evt.evt_type = BLE_CSCS_C_EVT_DISCOVERY_COMPLETE;
-				if(p_ble_cscs_c->evt_handler != NULL){
-						p_ble_cscs_c->evt_handler(p_ble_cscs_c, &evt);
-				} else{
-					  NRF_LOG_ERROR("p_ble_cscs_c->evt_handler is NULL\r\n");
-				}
+		if(p_ble_cscs_c->evt_handler != NULL){
+			p_ble_cscs_c->evt_handler(p_ble_cscs_c, &evt);
+		} else{
+			NRF_LOG_ERROR("p_ble_cscs_c->evt_handler is NULL\r\n");
+		}
         
     }
 }
@@ -369,7 +369,7 @@ static void on_disconnected(ble_cscs_c_t * p_ble_cscs_c, const ble_evt_t * p_ble
     if (p_ble_cscs_c->conn_handle == p_ble_evt->evt.gap_evt.conn_handle)
     {
         p_ble_cscs_c->conn_handle             = BLE_CONN_HANDLE_INVALID;
-			  p_ble_cscs_c->peer_db.csc_cccd_handle = BLE_GATT_HANDLE_INVALID;
+		p_ble_cscs_c->peer_db.csc_cccd_handle = BLE_GATT_HANDLE_INVALID;
         p_ble_cscs_c->peer_db.csc_handle      = BLE_GATT_HANDLE_INVALID;
 			
 			 /*
