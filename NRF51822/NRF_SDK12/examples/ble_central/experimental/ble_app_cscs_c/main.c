@@ -793,6 +793,11 @@ int main(void)
     if (!spisApp_init()){
  		NRF_LOG_ERROR("Failed to initialize spisApp\r\n");
  	}
+	
+	if (!i2cApp_init()){
+ 		NRF_LOG_ERROR("Failed to initialize i2cApp\r\n");
+ 	}
+	
     ble_stack_init();
     ble_conn_state_init();
     peer_manager_init(erase_bonds);
