@@ -469,29 +469,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 			break; //BLE_GAP_EVT_CONN_PARAM_UPDATE
 		
         case BLE_GAP_EVT_DISCONNECTED:
-			
-			NRF_LOG_INFO("Disconnected from a device with a connection handle= 0x%x BLE_HCI Reason= 0x%x \r\n", 
-							p_ble_evt->evt.gap_evt.conn_handle,
-							p_ble_evt->evt.gap_evt.params.disconnected.reason);
-			/*TODO: Figure out when to perform automatic scan*/
-			//if (ble_conn_state_n_centrals() < CENTRAL_LINK_COUNT)
-			if (ble_conn_state_n_centrals() == 0)
-            {
-                connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
-            }
-			//not sure if the following commented lines are needed.
-			/*
-			err_code = bsp_indication_set(BSP_INDICATE_IDLE);
-            APP_ERROR_CHECK(err_code);
-
-            memset(&m_ble_db_discovery, 0 , sizeof (m_ble_db_discovery));
-
-            if (m_peer_count == CENTRAL_LINK_COUNT)
-            {
-                m_peer_count--;
-                scan_start();
-            }
-			*/
+			connManagerApp_on_disconnection(&(p_ble_evt->evt.gap_evt));
             break; // BLE_GAP_EVT_DISCONNECTED
 
         case BLE_GATTC_EVT_TIMEOUT:

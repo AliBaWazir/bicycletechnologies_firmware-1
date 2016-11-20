@@ -20,6 +20,7 @@
 #include "nrf_delay.h"
 #include "app_error.h"
 #include "fstorage.h"
+#include "ble_conn_state.h"
 #include "peer_manager.h"
 #include "app_timer.h"
 #include "bsp.h" /*TODO: move all bsp code from main file to this file*/
@@ -123,8 +124,13 @@ static advertised_devices_t*     advertised_devices_p       = &advertised_device
 																					  * All devices in the same category assumed to have the same connection params
 																					  * Array entries are indexes by conn handler
 																					  **/
-static uint8_t device_type_at_conn_handler [MAX_CONNECTIONS_COUNT];
+static advertised_device_type_e device_type_at_conn_handler [MAX_CONNECTIONS_COUNT];
 APP_TIMER_DEF(scanning_timer_id);
+
+static bool cscs_peripheral_connected = false;           //this boolean is set to true when a CSCS sensor is connected "paired" 
+static bool hr_peripheral_connected = false;             //this boolean is set to true when a HR sensor is connected "paired" 
+static bool phone_peripheral_connected = false;             //this boolean is set to true when a phone peripheral is connected "paired" 
+
 
 
 /**********************************************************************************************
@@ -159,18 +165,50 @@ static bool connManagerApp_is_peer_address_matching(const uint8_t* existing_peer
 
 static bool connManagerApp_connect_all(){
 	
-	uint8_t  i           = 0;
-	bool     ret_code    = true;
+	uint8_t        i            = 0;
+	bool           ret_code     = true;
 	
 	//connect to all advertised devices
 	for (i=0; (i<(advertised_devices.count)) && (ret_code); i++){
-		if (!connManagerApp_advertised_device_connect(i)){
-			NRF_LOG_ERROR("connManagerApp_init: failed to connect to advertised device with index= %d\r\n",i);
-			ret_code = false;
-		} else{
-			//delay to allow handling the connection event
-			nrf_delay_ms(BETWEEN_CONNECTIONS_DELAY_MS);
+		
+		advertised_device_type_e  tmp_device_type          = ADVERTISED_DEVICE_TYPE_UNKNOWN;
+		bool                      device_already_connected = false;
+		
+		//skip peripheral that is already connected
+		tmp_device_type = advertised_devices.advertised_devices_data[i].device_type;
+		switch (tmp_device_type){
+			case ADVERTISED_DEVICE_TYPE_CSCS_SENSOR:
+				if(cscs_peripheral_connected){
+					device_already_connected = true;
+				}
+				break;
+			case ADVERTISED_DEVICE_TYPE_HRS_SENSOR:
+				if(hr_peripheral_connected){
+					device_already_connected = true;
+				}
+				break;
+			case ADVERTISED_DEVICE_TYPE_PHONE:
+				if(phone_peripheral_connected){
+					device_already_connected = true;
+				}
+				break;
+			default:
+				NRF_LOG_ERROR("connManagerApp_connect_all: advertised device is of unknown type=%d \r\n", tmp_device_type);
+				ret_code = false;
+			break;
 		}
+		
+		if (!device_already_connected){
+			if (!connManagerApp_advertised_device_connect(i)){
+				NRF_LOG_ERROR("connManagerApp_init: failed to connect to advertised device with index= %d\r\n",i);
+				ret_code = false;
+			} else{
+				/*TODO: figure out if this delay is a must*/
+				//delay to allow handling the connection event
+				nrf_delay_ms(BETWEEN_CONNECTIONS_DELAY_MS);
+			}	
+		}
+		
 	}
 	
 	return ret_code;
@@ -471,8 +509,8 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 		ret_code = false;
 	} else{
 		
-		NRF_LOG_DEBUG("connManagerApp_advertised_device_connect: debugging conn params set by central before connecting\r\n");
-		switch (advertised_devices.advertised_devices_data[advertised_device_index].device_type){
+		advertised_device_type_e device_type = advertised_devices.advertised_devices_data[advertised_device_index].device_type;
+		switch (device_type){
 			case ADVERTISED_DEVICE_TYPE_CSCS_SENSOR:
 				connection_params = &cscs_connection_params;
 				break;
@@ -483,15 +521,16 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 				connection_params = &phone_connection_params;
 				break;
 			default:
-				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: advertised device type[%d] is of type=%d \r\n",
-								advertised_device_index,
-								advertised_devices.advertised_devices_data[advertised_device_index].device_type);
+				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: advertised device[%d] is of unknown type=%d \r\n",
+								advertised_device_index, device_type);
 				break;
 		}
 		
 		if (connection_params == NULL){
 			NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection_params is NULL\r\n");
+			ret_code = false;
 		} else {
+			NRF_LOG_DEBUG("connManagerApp_advertised_device_connect: debugging conn params set by central before connecting\r\n");
 			connManagerApp_debug_print_conn_params(connection_params);
 			err_code = sd_ble_gap_connect(peer_addr,
 										  &m_scan_param,
@@ -503,6 +542,23 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection Request failed. Device= %d. Failure reason %d\r\n",
 								advertised_devices.advertised_devices_data[advertised_device_index].device_type,
 								err_code);
+			} else{
+				switch (device_type){
+					case ADVERTISED_DEVICE_TYPE_CSCS_SENSOR:
+						cscs_peripheral_connected = true;
+						break;
+					case ADVERTISED_DEVICE_TYPE_HRS_SENSOR:
+						hr_peripheral_connected = true;
+						break;
+					case ADVERTISED_DEVICE_TYPE_PHONE:
+						phone_peripheral_connected = true;
+						break;
+					default:
+						NRF_LOG_ERROR("connManagerApp_advertised_device_connect: advertised device [%d] is of unknown type=%d \r\n",
+										advertised_device_index, device_type);
+						break;
+		}
+				
 			}
 		}
 
@@ -547,6 +603,57 @@ bool connManagerApp_advertised_device_store(advertised_device_type_e device_type
 	return ret_code;
 }	
 
+void connManagerApp_on_disconnection(ble_gap_evt_t* evt){
+	
+	advertised_device_type_e disconnected_device_type = ADVERTISED_DEVICE_TYPE_UNKNOWN;
+	
+	NRF_LOG_DEBUG("Disconnected from a device with a connection handle= 0x%x BLE_HCI Reason= 0x%x \r\n", 
+					evt->conn_handle, evt->params.disconnected.reason);
+	
+	
+	//indicate this device is disconnected
+	if (evt->conn_handle < MAX_CONNECTIONS_COUNT){
+		
+		disconnected_device_type = device_type_at_conn_handler[evt->conn_handle];
+		switch (disconnected_device_type){
+			case ADVERTISED_DEVICE_TYPE_CSCS_SENSOR:
+				cscs_peripheral_connected = false;
+				break;
+			case ADVERTISED_DEVICE_TYPE_HRS_SENSOR:
+				hr_peripheral_connected = false;
+				break;
+			case ADVERTISED_DEVICE_TYPE_PHONE:
+				phone_peripheral_connected = false;
+				break;
+			default:
+				NRF_LOG_ERROR("connManagerApp_on_disconnection: advertised device is of unknown type=%d \r\n", disconnected_device_type);
+				break;
+		}
+
+	} else {
+		NRF_LOG_ERROR("connManagerApp_on_disconnection: connection handle= 0x%x is beyond MAX_CONNECTIONS_COUNT\r\n",
+						evt->conn_handle);
+	}
+	
+	/*TODO: Figure out when to perform automatic scan*/
+	//if (ble_conn_state_n_centrals() < CENTRAL_LINK_COUNT)
+	if (ble_conn_state_n_centrals() == 0){
+		connManagerApp_scan_start(SCANNING_WAITING_PERIOD_MS);
+    }
+	//not sure if the following commented lines are needed.
+	/*
+	err_code = bsp_indication_set(BSP_INDICATE_IDLE);
+    APP_ERROR_CHECK(err_code);
+
+    memset(&m_ble_db_discovery, 0 , sizeof (m_ble_db_discovery));
+
+    if (m_peer_count == CENTRAL_LINK_COUNT)
+    {
+		m_peer_count--;
+        scan_start();
+    }
+	*/
+}
 
 /**
  * @brief Connection Manager App initialization.
