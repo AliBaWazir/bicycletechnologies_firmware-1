@@ -530,8 +530,8 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 			NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection_params is NULL\r\n");
 			ret_code = false;
 		} else {
-			NRF_LOG_DEBUG("connManagerApp_advertised_device_connect: debugging conn params set by central before connecting\r\n");
-			connManagerApp_debug_print_conn_params(connection_params);
+			//NRF_LOG_DEBUG("connManagerApp_advertised_device_connect: debugging conn params set by central before connecting\r\n");
+			//connManagerApp_debug_print_conn_params(connection_params);
 			err_code = sd_ble_gap_connect(peer_addr,
 										  &m_scan_param,
 										  connection_params);

@@ -307,7 +307,7 @@ void cscsApp_on_ble_evt(const ble_evt_t *p_ble_evt){
 		
 	// Check if the event if on the link for this instance
     if (m_ble_cscs_c.conn_handle != p_ble_evt->evt.gattc_evt.conn_handle){
-		NRF_LOG_DEBUG("cscsApp_on_ble_evt called with event not for this instance\r\n");
+		//NRF_LOG_DEBUG("cscsApp_on_ble_evt called with event not for this instance\r\n");
 		return;
     } else{
 		ble_cscs_c_on_ble_evt(&m_ble_cscs_c, p_ble_evt);
