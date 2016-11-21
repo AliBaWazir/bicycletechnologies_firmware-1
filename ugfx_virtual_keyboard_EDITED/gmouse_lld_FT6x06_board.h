@@ -9,6 +9,8 @@
 #define _GINPUT_LLD_MOUSE_BOARD_H
 
 #include "tm_stm32_i2c.h"
+#include "stm32469i_discovery_ts.h"
+#include "ft6x06.h"
 
 // Resolution and Accuracy Settings
 #define GMOUSE_FT6x06_PEN_CALIBRATE_ERROR		8
@@ -31,13 +33,10 @@
 
 static bool_t init_board(GMouse* m, unsigned driverinstance) {
 	(void)m;
-
-	// Initialize the I2C1 peripheral
-	if (TM_I2C_Init(I2C1, TM_I2C_PinsPack_2, 100000)) {
-		return FALSE;
-	}
-
-	return TRUE;
+	
+	TS_StateTypeDef ts_state;
+	
+	return TS_OK == BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
 }
 /*
 static GFXINLINE void aquire_bus(GMouse* m) {
@@ -49,23 +48,41 @@ static GFXINLINE void release_bus(GMouse* m) {
 static void write_reg(GMouse* m, uint8_t reg, uint8_t val) {
 	(void)m;
 
-	TM_I2C_Write(I2C1, FT6x06_SLAVE_ADDR, reg, val);
+	//TM_I2C_Write(I2C1, FT6x06_SLAVE_ADDR, reg, val);
 }
 
 static uint8_t read_byte(GMouse* m, uint8_t reg) {
 	(void)m;
 	
-  uint8_t data;
+  /*uint8_t data;
 	TM_I2C_Read(I2C1, FT6x06_SLAVE_ADDR, reg, &data);
-	return data;
+	return data;*/
+	TS_StateTypeDef ts_state;
+	if(reg == FT6x06_TOUCH_POINTS){
+		if (TS_OK != BSP_TS_GetState(&ts_state))
+    {
+        return FALSE;
+    }
+		return ts_state.touchDetected;
+	}
 }
 
 static uint16_t read_word(GMouse* m, uint8_t reg) {
 	(void)m;
   
-	uint8_t data[2];
+	/*uint8_t data[2];
 	TM_I2C_ReadMulti(I2C1, FT6x06_SLAVE_ADDR, reg, data, 2);
-	return (data[0]<<8 | data[1]);
+	return (data[1]<<8 | data[0]);*/
+	
+	TS_StateTypeDef ts_state;
+	if (TS_OK == BSP_TS_GetState(&ts_state))
+	{
+		if(reg == FT6x06_TOUCH1_XH){
+			return (coord_t)ts_state.touchX[0];
+		}else if(reg == FT6x06_TOUCH1_YH){
+			return (coord_t)ts_state.touchY[0];
+		}
+	}
 }
 
 #endif /* _GINPUT_LLD_MOUSE_BOARD_H */

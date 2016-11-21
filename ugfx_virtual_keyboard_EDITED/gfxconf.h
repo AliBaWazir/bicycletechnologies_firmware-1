@@ -27,7 +27,7 @@
 // Options that (should where relevant) apply to all operating systems
     #define GFX_COMPILER                             GFX_COMPILER_KEIL
     #define GFX_CPU                                  GFX_CPU_CORTEX_M4_FP
-	#define GFX_CPU_ENDIAN                           GFX_CPU_ENDIAN_LITTLE
+		#define GFX_CPU_ENDIAN                           GFX_CPU_ENDIAN_LITTLE
     #define GFX_OS_HEAP_SIZE                         20480
     #define GFX_OS_NO_INIT                           TRUE
     #define GFX_OS_INIT_NO_WARNING                   TRUE
@@ -48,6 +48,11 @@
 #define GDISP_NEED_IMAGE TRUE
 	#define GDISP_NEED_IMAGE_BMP TRUE
 	#define GDISP_NEED_IMAGE_GIF TRUE
+	#define GDISP_NEED_IMAGE_PNG TRUE
+	#define GDISP_NEED_IMAGE_PNG_TRANSPARENCY   TRUE
+	#define GDISP_NEED_IMAGE_PNG_ALPHACLIFF   32
+	#define GDISP_NEED_IMAGE_PNG_BACKGROUND   TRUE
+	#define GDISP_NEED_IMAGE_ACCOUNTING   TRUE
 #define GDISP_NEED_STARTUP_LOGO FALSE
 #define GDISP_NEED_CIRCLE TRUE
 #define GDISP_NEED_MULTITHREAD TRUE

@@ -1667,6 +1667,12 @@ void guiEventLoop(void)
 					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
 					TRACE("GPS Data is Invalid\n");
 					previousSeconds = RTCD.Seconds;
+					gdispImageOpenFile(&myImage, "11737.bmp");
+					gdispImageDraw(&myImage, 305, 0, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					//gdispImageDraw(&myImage, 561, 0, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					//gdispImageDraw(&myImage, 305, 256, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					//gdispImageDraw(&myImage, 561, 256, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					gdispImageClose(&myImage);
 				}
 			}else{
 				/* Latitude */
@@ -1932,7 +1938,7 @@ void guiEventLoop(void)
 		}*/
 	}
 }
-
+/*
 void drawTile(int xx, int yy)
 {
     coord_t	swidth, sheight;
@@ -1941,5 +1947,5 @@ void drawTile(int xx, int yy)
     gdispImageOpenFile(&myImage, "maptile_bmp.bmp");
 	gdispImageDraw(&myImage, xx, yy, swidth, sheight, 0, 0);
     gdispImageClose(&myImage);
-}
+}*/
 

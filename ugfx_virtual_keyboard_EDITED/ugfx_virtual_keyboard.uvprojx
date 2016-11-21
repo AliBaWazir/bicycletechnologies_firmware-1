@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;.\ugfx;.\ugfx\drivers\gdisp\STM32LTDC;.\ugfx\drivers\ginput\touch\FT5336;.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery;.\ugfx\3rdparty\fatfs-0.10b\src</IncludePath>
+              <IncludePath>.;.\ugfx;.\ugfx\drivers\gdisp\STM32LTDC;.\ugfx\drivers\ginput\touch\FT6x06;.\STM32CubeF4\Drivers\BSP\STM32469I-Discovery;.\ugfx\3rdparty\fatfs-0.10b\src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

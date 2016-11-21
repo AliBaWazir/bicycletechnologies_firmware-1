@@ -27,10 +27,6 @@
 #include "../../../src/gdisp/gdisp_driver.h"
 
 #include "stm32_ltdc.h"
-#include "stm32f4xx_hal_gpio.h"
-#include "stm32f4xx_hal_ltdc.h"
-
-#include "stm32469i_discovery_lcd.h"
 
 #if LTDC_USE_DMA2D
  	#include "stm32_dma2d.h"
@@ -160,7 +156,9 @@ static void _ltdc_init(void) {
 	RCC->APB2RSTR = 0;
 
 	// Enable the LTDC clock
-	#if defined(STM32F4) || defined(STM32F429_439xx) || defined(STM32F429xx)
+	#if defined(STM32F469xx)
+		RCC->DCKCFGR = (RCC->DCKCFGR & ~RCC_DCKCFGR_PLLSAIDIVR);
+	#elif defined(STM32F4) || defined(STM32F429_439xx) || defined(STM32F429xx)
 		RCC->DCKCFGR = (RCC->DCKCFGR & ~RCC_DCKCFGR_PLLSAIDIVR) | (1 << 16);
 	#elif defined(STM32F7) || defined(STM32F746xx)
 		RCC->DCKCFGR1 = (RCC->DCKCFGR1 & ~RCC_DCKCFGR1_PLLSAIDIVR) | (1 << 16);
