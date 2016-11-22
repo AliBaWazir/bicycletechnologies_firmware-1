@@ -165,22 +165,6 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>1670</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134335982</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\gui.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\gui.c\1670</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
           <LineNumber>105</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>134334412</Address>
@@ -195,7 +179,7 @@
           <Expression>\\ugfx_virtual_keyboard\ugfx/src/gos/gos_x_heap.c\105</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>1519</LineNumber>
           <EnabledFlag>1</EnabledFlag>

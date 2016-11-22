@@ -28,7 +28,7 @@
     #define GFX_COMPILER                             GFX_COMPILER_KEIL
     #define GFX_CPU                                  GFX_CPU_CORTEX_M4_FP
 		#define GFX_CPU_ENDIAN                           GFX_CPU_ENDIAN_LITTLE
-    #define GFX_OS_HEAP_SIZE                         20480
+    #define GFX_OS_HEAP_SIZE                         40480
     #define GFX_OS_NO_INIT                           TRUE
     #define GFX_OS_INIT_NO_WARNING                   TRUE
 //    #define GFX_OS_EXTRA_INIT_FUNCTION               myOSInitRoutine

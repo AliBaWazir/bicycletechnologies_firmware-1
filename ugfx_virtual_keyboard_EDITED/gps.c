@@ -5,14 +5,20 @@
 
 #define M_PI (3.141592653589793)
 
-int long2tilex(double lon, int z) 
+int long2tilex(double lon, int zoomlevel, int *tileOffset) 
 { 
-	return (int)(floor((lon + 180.0) / 360.0 * pow(2.0, z))); 
+	double tmp = (lon + 180.0) / 360.0 * pow(2.0, zoomlevel);
+	int ret = (int)(floor(tmp));
+	*tileOffset = (int)((tmp - ret)*256);
+	return ret; 
 }
 
-int lat2tiley(double lat, int z)
+int lat2tiley(double lat, int zoomlevel, int *tileOffset)
 { 
-	return (int)(floor((1.0 - log( tan(lat * M_PI/180.0) + 1.0 / cos(lat * M_PI/180.0)) / M_PI) / 2.0 * pow(2.0, z))); 
+	double tmp = (1.0 - log( tan(lat * M_PI/180.0) + 1.0 / cos(lat * M_PI/180.0)) / M_PI) / 2.0 * pow(2.0, zoomlevel);
+	int ret = (int)(floor(tmp));
+	*tileOffset = (int)((tmp - ret)*256);
+	return ret; 
 }
 
 double tilex2long(int x, int z) 

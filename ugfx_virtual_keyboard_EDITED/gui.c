@@ -12,6 +12,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#define MAP_TILE_TEST_CANAL
+//#define MAP_TILE_TEST_MAYTHAM
+//#define MAP_TILE_TEST_JON
+
+#define MAP_CENTERX 552
+#define MAP_CENTERY 240
+
 // GListeners
 GListener glistener;
 
@@ -1603,6 +1610,8 @@ void guiEventLoop(void)
 	TM_GPS_Float_t GPS_Float_Lon;
 	int tilex;
 	int tiley;
+	int tilexOffset;
+	int tileyOffset;
 	
 	while (1) {		
 		getRTC(&RTCD, TM_RTC_Format_BIN);
@@ -1662,38 +1671,106 @@ void guiEventLoop(void)
 					}
 			}*/
 			gpsData = getGPS();	
+#ifdef MAP_TILE_TEST_CANAL
+			gpsData.Validity = true;
+			gpsData.Latitude = 45.384365;
+			gpsData.Longitude = -75.698600;
+#endif
+#ifdef MAP_TILE_TEST_MAYTHAM
+			gpsData.Validity = true;
+			gpsData.Latitude = 45.378962;
+			gpsData.Longitude = -75.667347;
+#endif
+#ifdef MAP_TILE_TEST_JON
+			gpsData.Validity = true;
+			gpsData.Latitude = 45.409269;
+			gpsData.Longitude = -75.706862;
+#endif
 			if(!gpsData.Validity){
 				if(RTCD.Seconds != previousSeconds){
 					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
 					TRACE("GPS Data is Invalid\n");
+					gwinSetText(mapLabel, gpsOutput, TRUE);
 					previousSeconds = RTCD.Seconds;
-					gdispImageOpenFile(&myImage, "11737.bmp");
-					gdispImageDraw(&myImage, 305, 0, gdispGetWidth(), gdispGetHeight(), 0, 0);
-					//gdispImageDraw(&myImage, 561, 0, gdispGetWidth(), gdispGetHeight(), 0, 0);
-					//gdispImageDraw(&myImage, 305, 256, gdispGetWidth(), gdispGetHeight(), 0, 0);
-					//gdispImageDraw(&myImage, 561, 256, gdispGetWidth(), gdispGetHeight(), 0, 0);
-					gdispImageClose(&myImage);
 				}
 			}else{
-				/* Latitude */
-				/* Convert float to integer and decimal part, with 6 decimal places */
-				TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
-				
-				/* Longitude */
-				/* Convert float to integer and decimal part, with 6 decimal places */
-				TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
-				
-				tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL);
-				tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL);
-				
 				if(RTCD.Seconds != previousSeconds){
-					formatString(gpsOutput, sizeof(gpsOutput), "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
+					gwinHide(mapLabel);
+					/* Latitude */
+					/* Convert float to integer and decimal part, with 6 decimal places */
+					TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
+					
+					/* Longitude */
+					/* Convert float to integer and decimal part, with 6 decimal places */
+					TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
+					
+					tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
+					tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
+					
+					//formatString(gpsOutput, sizeof(gpsOutput), "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
 					//formatString(gpsOutput, sizeof(gpsOutput), "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
 					TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+					
+					// X11
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex-1, tiley-1);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, 305, 0, gdispGetWidth(), gdispGetHeight(), 256-247+tilexOffset, 256-240+tileyOffset);
+					gdispImageClose(&myImage);
+					
+					// X9
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex-1, tiley);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, 305, MAP_CENTERY-tileyOffset, gdispGetWidth(), gdispGetHeight(), 256-247+tilexOffset, 0);
+					gdispImageClose(&myImage);
+					
+					// X10
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex-1, tiley+1);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, 305, MAP_CENTERY-tileyOffset+256, gdispGetWidth(), gdispGetHeight(), 256-247+tilexOffset, 0);
+					gdispImageClose(&myImage);
+					
+					// X5
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex, tiley-1);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, MAP_CENTERX-tilexOffset, 0, gdispGetWidth(), gdispGetHeight(), 0, 256-240+tileyOffset);
+					gdispImageClose(&myImage);
+					
+					// X1
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex, tiley);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, MAP_CENTERX-tilexOffset, MAP_CENTERY-tileyOffset, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					gdispImageClose(&myImage);
+					
+					// X2
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex, tiley+1);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, MAP_CENTERX-tilexOffset, MAP_CENTERY-tileyOffset+256, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					gdispImageClose(&myImage);
+					
+					// X7
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex+1, tiley-1);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, MAP_CENTERX-tilexOffset+256, 0, gdispGetWidth(), gdispGetHeight(), 0, 256-240+tileyOffset);
+					gdispImageClose(&myImage);
+
+					// X3
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex+1, tiley);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, MAP_CENTERX-tilexOffset+256, MAP_CENTERY-tileyOffset, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					gdispImageClose(&myImage);
+					
+					// X4
+					formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex+1, tiley+1);
+					gdispImageOpenFile(&myImage, gpsOutput);
+					gdispImageDraw(&myImage, MAP_CENTERX-tilexOffset+256, MAP_CENTERY-tileyOffset+256, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					gdispImageClose(&myImage);
+					
+					gdispImageOpenFile(&myImage, "Tiles/marker32.png");
+					gdispImageDraw(&myImage, MAP_CENTERX-16, MAP_CENTERY-32, gdispGetWidth(), gdispGetHeight(), 0, 0);
+					gdispImageClose(&myImage);
 					previousSeconds = RTCD.Seconds;
 				}
 			}
-			gwinSetText(mapLabel, gpsOutput, TRUE);
 		}
 		
 		// Get an event
