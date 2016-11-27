@@ -461,14 +461,9 @@
               <FilePath>.\spis_app.c</FilePath>
             </File>
             <File>
-              <FileName>hrs_app.c</FileName>
+              <FileName>algorithm_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hrs_app.c</FilePath>
-            </File>
-            <File>
-              <FileName>connection_manager_app.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\connection_manager_app.c</FilePath>
+              <FilePath>.\algorithm_app.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3293,14 +3288,9 @@
               <FilePath>.\spis_app.c</FilePath>
             </File>
             <File>
-              <FileName>hrs_app.c</FileName>
+              <FileName>algorithm_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hrs_app.c</FilePath>
-            </File>
-            <File>
-              <FileName>connection_manager_app.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\connection_manager_app.c</FilePath>
+              <FilePath>.\algorithm_app.c</FilePath>
             </File>
           </Files>
         </Group>
