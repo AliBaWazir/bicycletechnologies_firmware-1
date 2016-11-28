@@ -95,7 +95,17 @@
 /*************************************************
  *SPI data availability FLAGS
  *************************************************/
-
+#define SPI_AVAIL_FLAG_SPEED                  (0x01<<0)
+#define SPI_AVAIL_FLAG_CADENCE                (0x01<<1)
+#define SPI_AVAIL_FLAG_DISTANCE               (0x01<<2)
+#define SPI_AVAIL_FLAG_HR                     (0x01<<3)
+#define SPI_AVAIL_FLAG_BIKE_CONFIG_PAMAS      (0x01<<8)
+#define SPI_AVAIL_FLAG_ADVER_DEVICES_COUNT    (0x01<<16)
+#define SPI_AVAIL_FLAG_PAIRED_DEVICES         (0x01<<17)
+#define SPI_AVAIL_FLAG_CONNECTED_DEVICES      (0x01<<18)
+#define SPI_AVAIL_FLAG_CSC_DEVICE_NAME        (0x01<<19) 
+#define SPI_AVAIL_FLAG_HR_DEVICE_NAME         (0x01<<20)
+#define SPI_AVAIL_FLAG_PHONE_DEVICE_NAME      (0x01<<21)
 
 
 
@@ -153,8 +163,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			
 			/**************************** GETTERS ********************************/
 			case SPI_GET_AVAILABLE_DATA_FLAGS:
-				//memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
-				memcpy(m_tx_buf, &dtat_availability_flags, sizeof(dtat_availability_flags));
+				memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
 			break;
 			
 			case SPI_GET_SPEED:
@@ -191,8 +200,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					//m_tx_buf[0] = 0xEA;
 					m_tx_buf[0] = hrsApp_get_current_hr_bpm();
 				}
-			break;//SPI_GET_HR
-	
+			break;
 			//not used
 			//case SPI_GET_BATTERY:
 				/*TODO: figure out which device's battery*/
