@@ -214,7 +214,7 @@ static bool connManagerApp_connect_all(){
 			} else{
 				/*TODO: figure out if this delay is a must*/
 				//delay to allow handling the connection event. This is replaced by storing connection requests in queue
-				//nrf_delay_ms(BETWEEN_CONNECTIONS_DELAY_MS);
+				nrf_delay_ms(BETWEEN_CONNECTIONS_DELAY_MS);
 			}	
 		}
 		
@@ -261,7 +261,6 @@ static void connManagerApp_handle_queue_conn_requests(){
 			NRF_LOG_ERROR("connManagerApp_handle_queue_conn_requests: connManagerApp_advertised_device_connect failed \r\n");
 		}else{
 			connection_requests_queue.queued_request_count--;
-			NRF_LOG_DEBUG("connManagerApp_handle_queue_conn_requests: handled queued connection request for device id= %d \r\n", connection_requests_queue.queue_request[current_queued_conn_count-1]);
 		}
 	}
 }
@@ -523,10 +522,6 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 		if (connection_requests_queue.queued_request_count < MAX_CONNECTIONS_COUNT){
 			connection_requests_queue.queue_request[connection_requests_queue.queued_request_count] = advertised_device_id;
 			connection_requests_queue.queued_request_count++;
-			return true;
-		} else{
-			NRF_LOG_ERROR("connManagerApp_advertised_device_connect: queued connection requests already reached max\r\n");
-			return false;
 		}
 	}
 	
