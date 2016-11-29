@@ -153,7 +153,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			
 			/**************************** GETTERS ********************************/
 			case SPI_GET_AVAILABLE_DATA_FLAGS:
-				memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
+				//memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
+				memcpy(m_tx_buf, &dtat_availability_flags, sizeof(dtat_availability_flags));
 			break;
 			
 			case SPI_GET_SPEED:
@@ -190,7 +191,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					//m_tx_buf[0] = 0xEA;
 					m_tx_buf[0] = hrsApp_get_current_hr_bpm();
 				}
-			break;
+			break;//SPI_GET_HR
+	
 			//not used
 			//case SPI_GET_BATTERY:
 				/*TODO: figure out which device's battery*/
