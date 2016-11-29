@@ -93,17 +93,7 @@
 /*************************************************
  *SPI data availability FLAGS
  *************************************************/
-#define SPI_AVAIL_FLAG_SPEED                  (0x01<<0)
-#define SPI_AVAIL_FLAG_CADENCE                (0x01<<1)
-#define SPI_AVAIL_FLAG_DISTANCE               (0x01<<2)
-#define SPI_AVAIL_FLAG_HR                     (0x01<<3)
-#define SPI_AVAIL_FLAG_BIKE_CONFIG_PAMAS      (0x01<<8)
-#define SPI_AVAIL_FLAG_ADVER_DEVICES_COUNT    (0x01<<16)
-#define SPI_AVAIL_FLAG_PAIRED_DEVICES         (0x01<<17)
-#define SPI_AVAIL_FLAG_CONNECTED_DEVICES      (0x01<<18)
-#define SPI_AVAIL_FLAG_CSC_DEVICE_NAME        (0x01<<19) 
-#define SPI_AVAIL_FLAG_HR_DEVICE_NAME         (0x01<<20)
-#define SPI_AVAIL_FLAG_PHONE_DEVICE_NAME      (0x01<<21)
+
 
 
 
@@ -116,6 +106,7 @@
 /**********************************************************************************************
 * TYPE DEFINITIONS
 ***********************************************************************************************/
+
 
 
 /**********************************************************************************************
@@ -131,6 +122,9 @@ static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. *
 static volatile bool spis_xfer_done = true; /**< Flag used to indicate that SPIS instance completed the transfer. */
 
 uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
+
+static uint32_t dtat_availability_flags = 0x00000000; 
+
 
 
 /**********************************************************************************************
@@ -270,6 +264,17 @@ static void spisApp_config(void){
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
+
+void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag_index, bool data_available){
+	
+	if (data_available){
+		dtat_availability_flags|= flag_index;
+	} else{
+		dtat_availability_flags&= ~flag_index;
+	}
+}
+
+
 bool spisApp_init(void)
 {
 	bool ret_code = true;
