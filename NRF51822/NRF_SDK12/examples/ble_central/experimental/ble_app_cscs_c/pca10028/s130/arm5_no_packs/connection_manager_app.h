@@ -12,6 +12,11 @@ extern "C" {
 	
 #define SCANNING_WAITING_PERIOD_MS     10000       //during this period central will continue scanning for any advertising peripherals
 
+/*TODO: figure out whether CENTRAL_LINK_COUNT should be the same as ADVERTISED_DEVICES_COUNT_MAX in connection_manager_app.c*/
+#define CENTRAL_LINK_COUNT        2                                  /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
+#define PERIPHERAL_LINK_COUNT     0                                  /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
+#define TOTAL_LINK_COUNT          CENTRAL_LINK_COUNT + PERIPHERAL_LINK_COUNT /**< Total number of links used by the application. */
+	
 typedef enum{
 	ADVERTISED_DEVICE_TYPE_UNKNOWN = 0,
 	ADVERTISED_DEVICE_TYPE_CSCS_SENSOR =1,
@@ -29,6 +34,7 @@ void connManagerApp_whitelist_disable(void);
 bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id);
 bool connManagerApp_advertised_device_store(advertised_device_type_e device_type, const ble_gap_evt_adv_report_t* adv_report);
 advertised_device_type_e connManagerApp_get_device_type (const ble_gap_addr_t *peer_addr);
+void connManagerApp_on_connection(const ble_gap_evt_t* evt);
 void connManagerApp_on_disconnection (ble_gap_evt_t* evt);
 bool connManagerApp_init(void);
 

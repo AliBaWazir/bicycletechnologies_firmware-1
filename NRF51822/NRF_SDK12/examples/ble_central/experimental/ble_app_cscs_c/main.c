@@ -54,11 +54,6 @@
 #define NRF_BLE_MAX_MTU_SIZE      GATT_MTU_SIZE_DEFAULT              /**< MTU size used in the softdevice enabling and to reply to a BLE_GATTS_EVT_EXCHANGE_MTU_REQUEST event. */
 #endif
 
-/*TODO: figure out whether CENTRAL_LINK_COUNT should be the same as ADVERTISED_DEVICES_COUNT_MAX in connection_manager_app.c*/
-#define CENTRAL_LINK_COUNT        2                                  /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
-#define PERIPHERAL_LINK_COUNT     0                                  /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
-#define TOTAL_LINK_COUNT          CENTRAL_LINK_COUNT + PERIPHERAL_LINK_COUNT /**< Total number of links used by the application. */
-
 #define BOND_DELETE_ALL_BUTTON_ID 0                                  /**< Button used for deleting all bonded centrals during startup. */
 
 #define APP_TIMER_PRESCALER       0                                  /**< Value of the RTC1 PRESCALER register. */
@@ -343,18 +338,9 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
-		{
-			advertised_device_type_e device_type      = ADVERTISED_DEVICE_TYPE_UNKNOWN;
+		{	
 			
-			NRF_LOG_INFO("Connected to a device with a connection handle= 0x%x.\r\n", p_ble_evt->evt.gap_evt.conn_handle);
-			APP_ERROR_CHECK_BOOL(p_gap_evt->conn_handle < TOTAL_LINK_COUNT);
-			
-			device_type= connManagerApp_get_device_type(&(p_gap_evt->params.connected.peer_addr));
-			if (device_type == ADVERTISED_DEVICE_TYPE_UNKNOWN){
-				NRF_LOG_ERROR("on_ble_evt: connManagerApp_get_device_type returned ADVERTISED_DEVICE_TYPE_UNKNOWN\r\n");
-			} else{
-				connManagerApp_map_conn_handler_to_device_type(device_type, p_ble_evt->evt.gap_evt.conn_handle);
-			}
+			connManagerApp_on_connection(p_gap_evt);
 			
             // Discover peer's services.
             err_code = ble_db_discovery_start(&m_ble_db_discovery[p_gap_evt->conn_handle],
