@@ -100,18 +100,18 @@ static volatile bool             m_whitelist_temporarily_disabled = false; /**< 
  */
 static ble_gap_conn_params_t cscs_connection_params =
 {
-    (uint16_t)MIN_CONNECTION_INTERVAL, // Default Minimum connection.
-    (uint16_t)MAX_CONNECTION_INTERVAL, // Default Maximum connection.
+    (uint16_t)0x4b0, // Default Minimum connection.
+    (uint16_t)0x4b0, // Default Maximum connection.
     (uint16_t)SLAVE_LATENCY,           // Default Slave latency.
-    (uint16_t)SUPERVISION_TIMEOUT      // Default Supervision time-out.
+    (uint16_t)0x258      // Default Supervision time-out.
 };
 
 static ble_gap_conn_params_t hr_connection_params =
 {
-    (uint16_t)MIN_CONNECTION_INTERVAL, // Default Minimum connection.
-    (uint16_t)MAX_CONNECTION_INTERVAL, // Default Maximum connection.
+    (uint16_t)0x320, // Default Minimum connection.
+    (uint16_t)0x320, // Default Maximum connection.
     (uint16_t)SLAVE_LATENCY,           // Default Slave latency.
-    (uint16_t)SUPERVISION_TIMEOUT      // Default Supervision time-out.
+    (uint16_t)0x258      // Default Supervision time-out.
 };
 
 static ble_gap_conn_params_t phone_connection_params =
@@ -451,7 +451,7 @@ bool connManagerApp_scan_start(uint32_t scanning_interval_ms){
     NRF_LOG_DEBUG("connManagerApp_scan_start: starting scan.\r\n");
 	//delete all previous advertising devices
 	/*TODO: figure out why this memset causes no advertisement reports to be received */
-	//memset(&advertised_devices, 0x00, sizeof(advertised_devices_t));
+	memset(&advertised_devices, 0x00, sizeof(advertised_devices_t));
     ret = sd_ble_gap_scan_start(&m_scan_param);
 	/*TODO: figure out why sd_ble_gap_scan_start returns NRF_ERROR_INVALID_STATE*/
     if(ret == NRF_ERROR_INVALID_STATE){
