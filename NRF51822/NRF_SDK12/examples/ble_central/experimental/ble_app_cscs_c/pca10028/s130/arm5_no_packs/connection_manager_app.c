@@ -82,6 +82,11 @@ typedef enum
     BLE_FAST_SCAN,      /**< Fast advertising running. */
 } ble_scan_mode_t;
 
+typedef struct{
+	uint8_t queued_request_count;
+	uint8_t queue_request[MAX_CONNECTIONS_COUNT];  //connection requests will be queued in terms of device IDs.
+}connection_requests_queue_t;
+
 /**********************************************************************************************
 * STATIC VARIABLES
 ***********************************************************************************************/
@@ -127,10 +132,14 @@ static advertised_devices_t*     advertised_devices_p       = &advertised_device
 static advertised_device_type_e device_type_at_conn_handler [MAX_CONNECTIONS_COUNT];
 APP_TIMER_DEF(scanning_timer_id);
 
-static bool cscs_peripheral_connected = false;           //this boolean is set to true when a CSCS sensor is connected "paired" 
-static bool hr_peripheral_connected = false;             //this boolean is set to true when a HR sensor is connected "paired" 
-static bool phone_peripheral_connected = false;             //this boolean is set to true when a phone peripheral is connected "paired" 
+static bool cscs_peripheral_connected  = false;           //this boolean is set to true when a CSCS sensor is connected "paired" 
+static bool hr_peripheral_connected    = false;           //this boolean is set to true when a HR sensor is connected "paired" 
+static bool phone_peripheral_connected = false;           //this boolean is set to true when a phone peripheral is connected "paired" 
 
+static bool busy_connecting            = false;           //set to true when softdevice stack is busy connecting to a peripheral
+														  //reset to false when BLE_GAP_EVT_CONNECTED is received
+
+static connection_requests_queue_t connection_requests_queue;       //queued connection request in terms of advertising devices IDs
 
 
 /**********************************************************************************************
@@ -204,7 +213,7 @@ static bool connManagerApp_connect_all(){
 				ret_code = false;
 			} else{
 				/*TODO: figure out if this delay is a must*/
-				//delay to allow handling the connection event
+				//delay to allow handling the connection event. This is replaced by storing connection requests in queue
 				nrf_delay_ms(BETWEEN_CONNECTIONS_DELAY_MS);
 			}	
 		}
@@ -238,6 +247,20 @@ static void scanning_timer_handler( void * callback_data){
 		/*if in standalone mode, connect to all advertized devices once scannig is finished*/
 		if(!connManagerApp_connect_all()){
 			NRF_LOG_ERROR("scanning_timer_handler: connManagerApp_connect_all failed \r\n");
+		}
+	}
+}
+
+static void connManagerApp_handle_queue_conn_requests(){
+	
+	uint8_t current_queued_conn_count = connection_requests_queue.queued_request_count;
+	//ensure that there are only MAX_CONNECTIONS_COUNT-1 connection requests in queue
+	if ( current_queued_conn_count < MAX_CONNECTIONS_COUNT){
+		//serve last connection request in queue
+		if(!connManagerApp_advertised_device_connect(connection_requests_queue.queue_request[current_queued_conn_count-1])){
+			NRF_LOG_ERROR("connManagerApp_handle_queue_conn_requests: connManagerApp_advertised_device_connect failed \r\n");
+		}else{
+			connection_requests_queue.queued_request_count--;
 		}
 	}
 }
@@ -493,7 +516,15 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 	uint8_t                  advertised_device_index    = advertised_device_id;  /* for now the id is the same index inside array
 														                          * advertised_devices.advertised_devices_data[]
 														                          **/
-    
+    //check if there is an older connection request that is not completely served
+	if(busy_connecting){
+		//queue this connection request if there is spcace
+		if (connection_requests_queue.queued_request_count < MAX_CONNECTIONS_COUNT){
+			connection_requests_queue.queue_request[connection_requests_queue.queued_request_count] = advertised_device_id;
+			connection_requests_queue.queued_request_count++;
+		}
+	}
+	
 	/*TODO: figure out whether to cintinue or not if err_code != NRF_SUCCESS*/
 	err_code = bsp_indication_set(BSP_INDICATE_IDLE);
     APP_ERROR_CHECK(err_code);
@@ -535,14 +566,20 @@ bool connManagerApp_advertised_device_connect(uint8_t advertised_device_id){
 			err_code = sd_ble_gap_connect(peer_addr,
 										  &m_scan_param,
 										  connection_params);
-
+			
 			m_whitelist_temporarily_disabled = false;
 
 			if (err_code != NRF_SUCCESS){
-				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection Request failed. Device= %d. Failure reason %d\r\n",
+				NRF_LOG_ERROR("connManagerApp_advertised_device_connect: connection Request failed. Device= %d. Failure reason= %d\r\n",
 								advertised_devices.advertised_devices_data[advertised_device_index].device_type,
 								err_code);
 			} else{
+				NRF_LOG_DEBUG("connManagerApp_advertised_device_connect: connection request to device type= %d was sent to softdevice successfully\r\n",
+								advertised_devices.advertised_devices_data[advertised_device_index].device_type);
+				
+				//set busy flag to avoid serving next connection request until the current request is served
+				busy_connecting = true;
+				
 				switch (device_type){
 					case ADVERTISED_DEVICE_TYPE_CSCS_SENSOR:
 						cscs_peripheral_connected = true;
@@ -601,7 +638,29 @@ bool connManagerApp_advertised_device_store(advertised_device_type_e device_type
 	}
 	
 	return ret_code;
-}	
+}
+
+void connManagerApp_on_connection(const ble_gap_evt_t* evt){
+	
+	advertised_device_type_e device_type      = ADVERTISED_DEVICE_TYPE_UNKNOWN;
+			
+	NRF_LOG_INFO("Connected to a device with a connection handle= 0x%x.\r\n", evt->conn_handle);
+	
+	//reset busy_connecting flag
+	busy_connecting= false;
+	
+	APP_ERROR_CHECK_BOOL(evt->conn_handle < TOTAL_LINK_COUNT);
+			
+	device_type= connManagerApp_get_device_type(&(evt->params.connected.peer_addr));
+	if (device_type == ADVERTISED_DEVICE_TYPE_UNKNOWN){
+		NRF_LOG_ERROR("on_ble_evt: connManagerApp_get_device_type returned ADVERTISED_DEVICE_TYPE_UNKNOWN\r\n");
+	} else{
+		connManagerApp_map_conn_handler_to_device_type(device_type, evt->conn_handle);
+	}
+	
+	//serve remaining connection requests in queue
+	connManagerApp_handle_queue_conn_requests();
+}
 
 void connManagerApp_on_disconnection(ble_gap_evt_t* evt){
 	
@@ -655,6 +714,7 @@ void connManagerApp_on_disconnection(ble_gap_evt_t* evt){
 	*/
 }
 
+
 /**
  * @brief Connection Manager App initialization.
  */
@@ -663,7 +723,8 @@ bool connManagerApp_init(void){
 	bool       ret_code          = true;
 	uint32_t   err_code          = NRF_SUCCESS;
 	
-	memset(&advertised_devices, 0, sizeof(advertised_devices_t));
+	memset(&advertised_devices, 0x00, sizeof(advertised_devices_t));
+	memset(&connection_requests_queue, 0x00, sizeof(connection_requests_queue_t));
 	
 	//Create timer to be used to timeout ble scanning
 	err_code = app_timer_create(&scanning_timer_id,
