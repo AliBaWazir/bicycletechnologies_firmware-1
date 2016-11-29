@@ -10,6 +10,7 @@
 extern "C" {
 #endif
 
+uint8_t algorithmApp_get_cadence_setpoint(void);
 
 void algorithmApp_set_cadence_setpoint (uint8_t new_cadence_setpoint);
 void algorithmApp_set_wheel_diameter (uint8_t new_wheel_diameter);
