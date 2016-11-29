@@ -317,13 +317,24 @@ void cscsApp_on_db_disc_evt(const ble_db_discovery_evt_t *p_evt){
 }
 
 
-/*Wrapper function*/
 void cscsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 {
 	
 	ble_cscs_c_on_ble_evt(&m_ble_cscs_c, p_ble_evt);
 }
-	  
+
+uint8_t cscsApp_get_current_speed_kmph(void){
+	return (uint8_t)cscs_instantanious_data.wheel_speed_kmph.value;
+}
+
+uint8_t cscsApp_get_current_cadence_rpm(void){
+	return (uint8_t)cscs_instantanious_data.crank_cadence_rpm.value;
+}
+
+uint8_t cscsApp_get_current_distance_km(void){
+	//convert from m to km
+	return (uint8_t)((cscs_instantanious_data.travelDistance_m.value)/1000);
+}
 
 /**
  * @brief Cycling Speed and Cadence collector initialization.

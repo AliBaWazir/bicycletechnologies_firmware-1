@@ -180,7 +180,11 @@ void hrsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 	 */
 	ble_bas_c_on_ble_evt(&m_ble_bas_c, p_ble_evt);
 }
-	  
+
+//function to return current instantanious heart rate
+uint8_t hrsApp_get_current_hr_bpm(void){
+	return (uint8_t)inst_hr_value;
+}
 
 /**
  * @brief Heart Rate collector initialization.

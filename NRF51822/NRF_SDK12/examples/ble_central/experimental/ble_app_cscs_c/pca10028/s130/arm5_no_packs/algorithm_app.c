@@ -67,6 +67,15 @@ static void algorithmApp_fire_event (algorithmApp_event_e event){
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
+
+/************************* GETTERS ****************************/
+uint8_t algorithmApp_get_cadence_setpoint(void){
+	return (uint8_t)user_defined_properties.cadence_setpoint;
+}
+
+
+
+/************************* SETTERS ****************************/
 void algorithmApp_set_cadence_setpoint(uint8_t new_cadence_setpoint){
 	user_defined_properties.cadence_setpoint = new_cadence_setpoint;
 	

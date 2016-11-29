@@ -22,6 +22,11 @@ typedef enum{
 void cscsApp_on_ble_evt(const ble_evt_t *p_ble_evt);
 void cscsApp_on_db_disc_evt(const ble_db_discovery_evt_t *p_evt);
 void cscsApp_on_ble_event(const ble_evt_t *p_ble_evt);
+
+uint8_t cscsApp_get_current_speed_kmph(void);
+uint8_t cscsApp_get_current_cadence_rpm(void);
+uint8_t cscsApp_get_current_distance_km(void);
+
 bool cscsApp_cscs_c_init(void);
 
 #ifdef __cplusplus

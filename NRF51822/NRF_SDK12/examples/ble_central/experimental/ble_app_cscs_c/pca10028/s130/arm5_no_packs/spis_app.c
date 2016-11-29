@@ -23,8 +23,10 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 
+#include "cscs_app.h"
 #include "spis_sim_driver.h"
 #include "algorithm_app.h"
+#include "hrs_app.h"
 #include "../spis_app.h"
 
 /**********************************************************************************************
@@ -151,15 +153,16 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			
 			/**************************** GETTERS ********************************/
 			case SPI_GET_AVAILABLE_DATA_FLAGS:
-				memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
+				//memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
+				memcpy(m_tx_buf, &dtat_availability_flags, sizeof(dtat_availability_flags));
 			break;
 			
 			case SPI_GET_SPEED:
 				if (SPI_DRIVER_SIM_MODE){
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_SPEED);
 				} else {
-					/*TODO: get data from CSCS app*/
-					m_tx_buf[0] = 0xFA;
+					//m_tx_buf[0] = 0xFA;
+					m_tx_buf[0]= cscsApp_get_current_speed_kmph();
 				}
 			break;
 			
@@ -167,8 +170,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPI_DRIVER_SIM_MODE){
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_CADENCE);
 				} else {
-					/*TODO: get data from CSCS app*/
-					m_tx_buf[0] = 0xCA;
+					//m_tx_buf[0] = 0xCA;
+					m_tx_buf[0]= cscsApp_get_current_cadence_rpm();
 				}
 			break;
 				
@@ -176,8 +179,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPI_DRIVER_SIM_MODE){
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_DISTANCE);
 				} else {
-					/*TODO: get data from CSCS app*/
-					m_tx_buf[0] = 0xDE;
+					//m_tx_buf[0] = 0xDE;
+					m_tx_buf[0]= cscsApp_get_current_distance_km();
 				}
 			break;
 			
@@ -185,16 +188,21 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				if (SPI_DRIVER_SIM_MODE){
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_HR);
 				} else {
-					/*TODO: get data from CSCS app*/
-					m_tx_buf[0] = 0xEA;
+					//m_tx_buf[0] = 0xEA;
+					m_tx_buf[0] = hrsApp_get_current_hr_bpm();
 				}
-			break;
+			break;//SPI_GET_HR
+	
 			//not used
 			//case SPI_GET_BATTERY:
 				/*TODO: figure out which device's battery*/
 				//m_tx_buf[0] = 0xBA;
 			//break;
 			
+			case SPI_GET_CADENCE_SETPOINT:
+				m_tx_buf[0] = algorithmApp_get_cadence_setpoint();
+			break;//SPI_GET_CADENCE_SETPOINT
+				
 			/**************************** SETTERS ********************************/
 			case SPI_SET_CADENCE_SETPOINT:
 				if (SPI_DRIVER_SIM_MODE){
