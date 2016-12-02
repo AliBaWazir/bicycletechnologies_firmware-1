@@ -8,6 +8,7 @@
 extern "C" {
 #endif
 
+void i2cApp_wait(void);
 bool i2cApp_init(void);
 
 
