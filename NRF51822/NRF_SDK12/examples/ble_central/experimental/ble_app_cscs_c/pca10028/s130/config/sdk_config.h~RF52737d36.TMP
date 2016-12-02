@@ -6,12 +6,6 @@
 #ifdef USE_APP_CONFIG
 #include "app_config.h"
 #endif
-
-#define USE_SHIFTY_CONFIG 1  //set to 0 if the target hardware is not the shifty custom board
-#ifdef USE_SHIFTY_CONFIG
-#include "../arm5_no_packs/shifty_config.h"
-#endif
-
 // <h> nRF_BLE 
 
 //==========================================================
@@ -233,8 +227,8 @@
 // <h> SPIS_CONFIGURATION - Spi slave configuration
 
 //==========================================================
-
 // <o> APP_SPIS_SCK_PIN - Pin number  <0-31> 
+
 
 #ifndef APP_SPIS_SCK_PIN
 #define APP_SPIS_SCK_PIN 25
@@ -1506,7 +1500,7 @@
 // <e> TWI_ENABLED - nrf_drv_twi - TWI/TWIM peripheral driver
 //==========================================================
 #ifndef TWI_ENABLED
-#define TWI_ENABLED 1
+#define TWI_ENABLED 0
 #endif
 #if  TWI_ENABLED
 // <o> TWI_DEFAULT_CONFIG_FREQUENCY  - Frequency
@@ -1549,7 +1543,7 @@
 // <e> TWI0_ENABLED - Enable TWI0 instance
 //==========================================================
 #ifndef TWI0_ENABLED
-#define TWI0_ENABLED 1
+#define TWI0_ENABLED 0
 #endif
 #if  TWI0_ENABLED
 // <q> TWI0_USE_EASY_DMA  - Use EasyDMA (if present)
@@ -2342,7 +2336,6 @@
 // <o> NRF_LOG_BACKEND_SERIAL_UART_RX_PIN - UART RX pin 
 #ifndef NRF_LOG_BACKEND_SERIAL_UART_RX_PIN
 #define NRF_LOG_BACKEND_SERIAL_UART_RX_PIN 11
-//#define NRF_LOG_BACKEND_SERIAL_UART_RX_PIN 24 //for shifty board
 #endif
 
 // <o> NRF_LOG_BACKEND_SERIAL_UART_RTS_PIN - UART RTS pin 
