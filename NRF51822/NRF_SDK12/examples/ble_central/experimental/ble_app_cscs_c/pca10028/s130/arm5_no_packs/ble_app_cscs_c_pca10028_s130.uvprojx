@@ -481,9 +481,14 @@
               <FilePath>.\hrs_app.c</FilePath>
             </File>
             <File>
-              <FileName>application_fds_app.c</FileName>
+              <FileName>i2c_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application_fds_app.c</FilePath>
+              <FilePath>.\i2c_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_sim_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\i2c_sim_driver.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3308,9 +3313,14 @@
               <FilePath>.\hrs_app.c</FilePath>
             </File>
             <File>
-              <FileName>application_fds_app.c</FileName>
+              <FileName>i2c_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\application_fds_app.c</FilePath>
+              <FilePath>.\i2c_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_sim_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\i2c_sim_driver.c</FilePath>
             </File>
           </Files>
         </Group>
