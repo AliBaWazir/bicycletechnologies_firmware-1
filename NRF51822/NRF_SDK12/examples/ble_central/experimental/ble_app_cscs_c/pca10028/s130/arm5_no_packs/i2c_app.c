@@ -10,7 +10,7 @@
  */
 
 /**
- * @brief BLE Connection Manager application file.
+ * @brief I2C communication application file.
  *
  */
  
@@ -40,7 +40,17 @@
                                            *to charecterize the I2C link between nRF module and gear controller
 										   */
 
-#define I2C_BASE_REGISTER_ADDRESS   0x1234         //address of I2C base register
+/* TWI instance ID. */
+#define TWI_INSTANCE_ID     0
+
+/* Common addresses definition for Gear Controller */
+#define GEAR_CONTROLLER_I2C_ADDR            (0x90U >> 1)
+
+#define GEAR_CONTROLLER_REG_GEAR_STATUS      0x00U
+
+/* Pin Assignments */
+#define GEAR_CONTROLLER_I2C_SCL_PIN          27
+#define GEAR_CONTROLLER_I2C_SDA_PIN          28 /*TODO: get the correct pin numbers*/
 
 
 /**********************************************************************************************
@@ -51,27 +61,119 @@
 /**********************************************************************************************
 * STATIC VARIABLES
 ***********************************************************************************************/
+/* Indicates if operation on TWI has ended. */
+static volatile bool m_xfer_done = false;
+
+/* TWI instance. */
+static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
+
+/* Buffer for current gear status read from gear controller */
+static uint8_t m_gear_status;
+
 
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
+/**
+ * @brief Function for reading data from gear sttus register.
+ */
+static void read_gear_status()
+{
+    m_xfer_done = false;
+
+    /* Read 1 byte from the specified address*/
+    ret_code_t err_code = nrf_drv_twi_rx(&m_twi, GEAR_CONTROLLER_I2C_ADDR, &m_gear_status, sizeof(m_gear_status));
+    APP_ERROR_CHECK(err_code);
+}
+
+
+/**
+ * @brief Function for handling data from gear controller.
+ *
+ * @param[in] gear_status          Current gear status reported from Gear Controller
+ */
+__STATIC_INLINE void data_handler(uint8_t gear_status)
+{
+    uint8_t crank_gear = 0;
+	uint8_t wheel_gear = 0;
+	
+	crank_gear = gear_status & 0x0F;
+	wheel_gear = (gear_status >> 4);
+	
+	NRF_LOG_INFO("current crank_gear status: %d\r\n", crank_gear);
+	NRF_LOG_INFO("current wheel_gear status: %d\r\n", wheel_gear);
+}
+
+
+/**
+ * @brief TWI events handler.
+ */
+void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
+{
+    switch (p_event->type)
+    {
+        case NRF_DRV_TWI_EVT_DONE:
+            if (p_event->xfer_desc.type == NRF_DRV_TWI_XFER_RX)
+            {
+                data_handler(m_gear_status);
+            }
+            m_xfer_done = true;
+            break;
+        default:
+            break;
+    }
+}
+
+
+/**
+ * @brief TWI initialization.
+ */
+static void twi_init (void)
+{
+    ret_code_t err_code;
+
+    const nrf_drv_twi_config_t twi_lm75b_config = {
+       .scl                = GEAR_CONTROLLER_I2C_SCL_PIN,
+       .sda                = GEAR_CONTROLLER_I2C_SDA_PIN,
+       .frequency          = NRF_TWI_FREQ_100K,
+       .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
+       .clear_bus_init     = false
+    };
+
+    err_code = nrf_drv_twi_init(&m_twi, &twi_lm75b_config, twi_handler, NULL);
+    APP_ERROR_CHECK(err_code);
+
+    nrf_drv_twi_enable(&m_twi);
+}
 
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
+void i2cApp_wait(){
+	//nrf_delay_ms(500);
 
+	do
+    {
+		__WFE();
+    }while (m_xfer_done == false);
+
+    read_gear_status();
+	
+}
 /**
  * @brief Connection Manager App initialization.
  */
 bool i2cApp_init(void){
 	
-	bool         ret_code         = true;
-	ret_code_t   nrf_err          = NRF_SUCCESS;
+	bool         ret                = true;
+	//ret_code_t   nrf_err          = NRF_SUCCESS;
+	
+	twi_init();
 	
 	if (I2C_IN_SIMULATION_MODE){
-		ret_code = i2cSimDriver_init();
+		ret = i2cSimDriver_init();
 	}
 		
-	return ret_code;	
+	return ret;	
 }
