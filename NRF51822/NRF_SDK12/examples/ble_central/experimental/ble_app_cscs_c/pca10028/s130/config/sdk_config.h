@@ -7,7 +7,7 @@
 #include "app_config.h"
 #endif
 
-#define USE_SHIFTY_CONFIG 1  //set to 0 if the target hardware is not the shifty custom board
+#define USE_SHIFTY_CONFIG 1  //set to 0 other target hardware is used
 #ifdef USE_SHIFTY_CONFIG
 #include "../arm5_no_packs/shifty_config.h"
 #endif
@@ -2337,7 +2337,6 @@
 // <o> NRF_LOG_BACKEND_SERIAL_UART_TX_PIN - UART TX pin 
 #ifndef NRF_LOG_BACKEND_SERIAL_UART_TX_PIN
 #define NRF_LOG_BACKEND_SERIAL_UART_TX_PIN 9
-//#define NRF_LOG_BACKEND_SERIAL_UART_TX_PIN 25 //for shifty board
 #endif
 
 // <o> NRF_LOG_BACKEND_SERIAL_UART_RX_PIN - UART RX pin 
