@@ -6,6 +6,12 @@
 #ifdef USE_APP_CONFIG
 #include "app_config.h"
 #endif
+
+#define USE_SHIFTY_CONFIG 1  //set to 0 other target hardware is used
+#ifdef USE_SHIFTY_CONFIG
+#include "../arm5_no_packs/shifty_config.h"
+#endif
+
 // <h> nRF_BLE 
 
 //==========================================================
@@ -227,8 +233,8 @@
 // <h> SPIS_CONFIGURATION - Spi slave configuration
 
 //==========================================================
-// <o> APP_SPIS_SCK_PIN - Pin number  <0-31> 
 
+// <o> APP_SPIS_SCK_PIN - Pin number  <0-31> 
 
 #ifndef APP_SPIS_SCK_PIN
 #define APP_SPIS_SCK_PIN 25
@@ -2331,7 +2337,6 @@
 // <o> NRF_LOG_BACKEND_SERIAL_UART_TX_PIN - UART TX pin 
 #ifndef NRF_LOG_BACKEND_SERIAL_UART_TX_PIN
 #define NRF_LOG_BACKEND_SERIAL_UART_TX_PIN 9
-//#define NRF_LOG_BACKEND_SERIAL_UART_TX_PIN 25 //for shifty board
 #endif
 
 // <o> NRF_LOG_BACKEND_SERIAL_UART_RX_PIN - UART RX pin 
