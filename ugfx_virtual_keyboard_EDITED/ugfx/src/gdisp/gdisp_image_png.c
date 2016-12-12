@@ -1183,9 +1183,11 @@ gdispImageError gdispImageOpen_PNG(gdispImage *img) {
 	pinfo = (PNG_info *)img->priv;
 	pinfo->flags = 0;
 	pinfo->cache = 0;
+#if GDISP_NEED_IMAGE_PNG_TRANSPARENCY
 	pinfo->trans_r = 0;
 	pinfo->trans_g = 0;
 	pinfo->trans_b = 0;
+#endif
 	#if GDISP_NEED_IMAGE_PNG_PALETTE_124 || GDISP_NEED_IMAGE_PNG_PALETTE_8
 		pinfo->palsize = 0;
 		pinfo->palette = 0;

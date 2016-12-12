@@ -149,9 +149,41 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1520</LineNumber>
+          <LineNumber>1989</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134322172</Address>
+          <Address>134288010</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\gui.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ugfx_virtual_keyboard\gui.c\1989</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>1565</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134286806</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>ugfx\src\gfile/../../3rdparty/fatfs-0.10b/src/ff.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ugfx_virtual_keyboard\ugfx/src/gfile/../../3rdparty/fatfs-0.10b/src/ff.c\1565</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>1603</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134315142</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -160,28 +192,12 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>ugfx\src\gdisp/gdisp_image_png.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\ugfx/src/gdisp/gdisp_image_png.c\1520</Expression>
+          <Expression>\\ugfx_virtual_keyboard\ugfx/src/gdisp/gdisp_image_png.c\1603</Expression>
         </Bp>
         <Bp>
-          <Number>1</Number>
+          <Number>3</Number>
           <Type>0</Type>
-          <LineNumber>105</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134334412</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>ugfx\src\gos/gos_x_heap.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\ugfx/src/gos/gos_x_heap.c\105</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>1519</LineNumber>
+          <LineNumber>1605</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -191,6 +207,22 @@
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
           <Filename>ugfx\src\gdisp/gdisp_image_png.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>2000</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>.\gui.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>

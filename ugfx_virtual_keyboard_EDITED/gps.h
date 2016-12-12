@@ -1,7 +1,7 @@
 #ifndef _GPS_H_
 #define _GPS_H_
 
-#define ZOOM_LEVEL 15
+#define ZOOM_LEVEL 16
 
 int lat2tiley(double lat, int zoomlevel, int *tileOffset);
 int long2tilex(double lon, int zoomlevel, int *tileOffset);
