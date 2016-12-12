@@ -149,22 +149,6 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1989</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134288010</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\gui.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\gui.c\1989</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>1565</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>134286806</Address>
@@ -179,7 +163,7 @@
           <Expression>\\ugfx_virtual_keyboard\ugfx/src/gfile/../../3rdparty/fatfs-0.10b/src/ff.c\1565</Expression>
         </Bp>
         <Bp>
-          <Number>2</Number>
+          <Number>1</Number>
           <Type>0</Type>
           <LineNumber>1603</LineNumber>
           <EnabledFlag>1</EnabledFlag>
@@ -195,7 +179,7 @@
           <Expression>\\ugfx_virtual_keyboard\ugfx/src/gdisp/gdisp_image_png.c\1603</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>1605</LineNumber>
           <EnabledFlag>1</EnabledFlag>
@@ -207,22 +191,6 @@
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
           <Filename>ugfx\src\gdisp/gdisp_image_png.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>2000</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\gui.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>

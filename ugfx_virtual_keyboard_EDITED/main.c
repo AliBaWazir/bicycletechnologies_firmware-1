@@ -180,14 +180,19 @@ int main (void)
   if (traceMutex != NULL)  {
     // Mutex object created
   }   
-  osThreadId guiThread;
-  osThreadId gpsThread;
-  guiThread = osThreadCreate (osThread (Thread_1), NULL);
-	gpsThread = osThreadCreate (osThread (Thread_2), NULL);
+  //osThreadId guiThread;
+  //osThreadId gpsThread;
+  //guiThread = osThreadCreate (osThread (Thread_1), NULL);
+	//gpsThread = osThreadCreate (osThread (Thread_2), NULL);
 	
-	while(1){
-		i++;
-	}
+	guiEventLoop();
+	
+//	while(1){
+//		i++;
+//		if(i > 100){
+//			i = 0;
+//		}
+//	}
 
 }
 
