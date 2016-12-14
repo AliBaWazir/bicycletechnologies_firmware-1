@@ -26,7 +26,7 @@
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
-      <CLKADS>180000000</CLKADS>
+      <CLKADS>12000000</CLKADS>
       <OPTTT>
         <gFlags>1</gFlags>
         <BeepAtEnd>1</BeepAtEnd>
@@ -116,96 +116,33 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>ARMRTXEVENTFLAGS</Key>
-          <Name>-L70 -Z18 -C0 -M0 -T1</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>DLGTARM</Key>
-          <Name>(1010=0,284,410,830,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>ARMDBGFLAGS</Key>
-          <Name></Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
-          <Key>DLGUARM</Key>
-          <Name>(105=-1,-1,-1,-1,0)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
-          <Name>-U066DFF544949847067083217 -O8399 -S0 -C0 -A0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC180000000 -TP21 -TDS8059 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20010000 -FC1000 -FN1 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM)</Name>
+          <Name>-U0672FF515456707067163425 -O206 -S0 -C0 -A0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC1000 -FN2 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM) -FF1STM32F469_Quad_SPI.FLM -FS190000000 -FL12000000 -FP1($$Device:STM32F469NIHx$CMSIS\Flash\STM32F469_Quad_SPI.FLM)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>ULP2CM3</Key>
+          <Name>-U -O206 -S8 -C0 -P00 -N00("") -D00(00000000) -L00(0) -TO18 -TC10000000 -TP18 -TDX0 -TDD0 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC1000 -FN2 -FF0STM32F4xx_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM) -FF1STM32F469_Quad_SPI.FLM -FS190000000 -FL12000000 -FP1($$Device:STM32F469NIHx$CMSIS\Flash\STM32F469_Quad_SPI.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
-          <Name>UL2CM3(-S0 -C0 -P0 ) -FN2 -FC1000 -FD20000000 -FF0STM32F4xx_2048 -FF1STM32F469_Quad_SPI -FL0200000 -FL12000000 -FS08000000 -FS190000000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM) -FP1($$Device:STM32F469NIHx$CMSIS\Flash\STM32F469_Quad_SPI.FLM)</Name>
+          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN2 -FF0STM32F4xx_2048 -FS08000000 -FL0200000 -FF1STM32F469_Quad_SPI -FS190000000 -FL12000000 -FP0($$Device:STM32F469NIHx$CMSIS\Flash\STM32F4xx_2048.FLM) -FP1($$Device:STM32F469NIHx$CMSIS\Flash\STM32F469_Quad_SPI.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>1565</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134290410</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>ugfx\src\gfile/../../3rdparty/fatfs-0.10b/src/ff.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\ugfx/src/gfile/../../3rdparty/fatfs-0.10b/src/ff.c\1565</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>1605</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134318050</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>ugfx\src\gdisp/gdisp_image_png.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ugfx_virtual_keyboard\ugfx/src/gdisp/gdisp_image_png.c\1605</Expression>
-        </Bp>
-      </Breakpoint>
-      <WatchWindow1>
-        <Ww>
-          <count>0</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>gtCounter</ItemText>
-        </Ww>
-      </WatchWindow1>
-      <MemoryWindow1>
-        <Mm>
-          <WinNumber>1</WinNumber>
-          <SubType>0</SubType>
-          <ItemText>LCD_FB_START_ADDRESS</ItemText>
-          <AccSizeX>0</AccSizeX>
-        </Mm>
-      </MemoryWindow1>
+      <Breakpoint/>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
       <DebugFlag>
         <trace>0</trace>
-        <periodic>1</periodic>
+        <periodic>0</periodic>
         <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
-        <viewmode>1</viewmode>
+        <viewmode>0</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>
@@ -218,7 +155,7 @@
         <aPa1>0</aPa1>
         <AscS4>0</AscS4>
         <aSer4>0</aSer4>
-        <StkLoc>1</StkLoc>
+        <StkLoc>0</StkLoc>
         <TrcWin>0</TrcWin>
         <newCpu>0</newCpu>
         <uProt>0</uProt>
@@ -572,25 +509,13 @@
 
   <Group>
     <GroupName>ugfx</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>28</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>.\ugfx\src\gfx_mk.c</PathWithFileName>
-      <FilenameWithoutPath>gfx_mk.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>29</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -602,7 +527,7 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>30</FileNumber>
+      <FileNumber>29</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -612,17 +537,53 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+    <File>
+      <GroupNumber>2</GroupNumber>
+      <FileNumber>30</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\ugfx\src\gdisp\gdisp_pixmap.c</PathWithFileName>
+      <FilenameWithoutPath>gdisp_pixmap.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>2</GroupNumber>
+      <FileNumber>31</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\ugfx\src\gos\gos_x_heap.c</PathWithFileName>
+      <FilenameWithoutPath>gos_x_heap.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>2</GroupNumber>
+      <FileNumber>32</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\ugfx\src\gfx_mk.c</PathWithFileName>
+      <FilenameWithoutPath>gfx_mk.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
   <Group>
     <GroupName>STM32CubeF4</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>31</FileNumber>
+      <FileNumber>33</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -634,7 +595,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>32</FileNumber>
+      <FileNumber>34</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -646,7 +607,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>33</FileNumber>
+      <FileNumber>35</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -658,7 +619,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>34</FileNumber>
+      <FileNumber>36</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -670,7 +631,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>35</FileNumber>
+      <FileNumber>37</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -682,7 +643,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>36</FileNumber>
+      <FileNumber>38</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -694,7 +655,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>37</FileNumber>
+      <FileNumber>39</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -708,7 +669,7 @@
 
   <Group>
     <GroupName>::CMSIS</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>
@@ -716,7 +677,7 @@
 
   <Group>
     <GroupName>::Device</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>
