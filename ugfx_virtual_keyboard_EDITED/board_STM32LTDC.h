@@ -22,7 +22,7 @@ static const ltdcConfig driverCfg = {
 	0x000000,								// Clear color (RGB888)
 
 	{										// Background layer config
-		(LLDCOLOR_TYPE *)(SDRAM_DEVICE_ADDR + 0x00200000),	// Frame buffer address
+		(LLDCOLOR_TYPE *)(SDRAM_DEVICE_ADDR),	// Frame buffer address
 		800, 480,							// Width, Height (pixels)
 		800 * LTDC_PIXELBYTES,				// Line pitch (bytes)
 		LTDC_PIXELFORMAT,					// Pixel format
