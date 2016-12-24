@@ -13,49 +13,103 @@
 #include "../../../../src/ginput/ginput_driver_mouse.h"
 
 // Get the hardware interface
-#include "stm32469i_discovery_ts.h"
-#include "stm32469i_discovery_lcd.h"
+#include "gmouse_lld_FT6x06_board.h"
 
-static bool_t MouseInit(GMouse* m, unsigned driverinstance)
-{
-    // We only support one of these on this board
-	if (driverinstance)
+// Hardware definitions
+#include "ft6x06.h"
+
+static bool_t MouseInit(GMouse* m, unsigned driverinstance) {
+	if (!init_board(m, driverinstance))
 		return FALSE;
-    
-	return TS_OK == BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+
+	//aquire_bus(m);
+
+	// Init default values. (From NHD-3.5-320240MF-ATXL-CTP-1 datasheet)
+	// Valid touching detect threshold
+	write_reg(m, FT6x06_ID_G_THGROUP, 0x16);
+
+	// valid touching peak detect threshold
+	write_reg(m, FT6x06_ID_G_THPEAK, 0x3C);
+
+	// Touch focus threshold
+	write_reg(m, FT6x06_ID_G_THCAL, 0xE9);
+
+	// threshold when there is surface water
+	write_reg(m, FT6x06_ID_G_THWATER, 0x01);
+
+	// threshold of temperature compensation
+	write_reg(m, FT6x06_ID_G_THTEMP, 0x01);
+
+	// Touch difference threshold
+	write_reg(m, FT6x06_ID_G_THDIFF, 0xA0);
+
+	// Delay to enter 'Monitor' status (s)
+	write_reg(m, FT6x06_ID_G_TIME_ENTER_MONITOR, 0x0A);
+
+	// Period of 'Active' status (ms)
+	write_reg(m, FT6x06_ID_G_PERIODACTIVE, 0x06);
+
+	// Timer to enter 'idle' when in 'Monitor' (ms)
+	write_reg(m, FT6x06_ID_G_PERIODMONITOR, 0x28);
+
+	//release_bus(m);
+	return TRUE;
 }
 
 static bool_t read_xyz(GMouse* m, GMouseReading* pdr)
 {
-    TS_StateTypeDef ts_state;
+	// Assume not touched.
+	pdr->buttons = 0;
+	pdr->z = 0;
 
-    if (TS_OK != BSP_TS_GetState(&ts_state))
-    {
-        return FALSE;
-    }
-    
-    if (ts_state.touchDetected)
-    {
-        pdr->x = (coord_t)ts_state.touchX[0];
-		pdr->y = (coord_t)ts_state.touchY[0];
+	//aquire_bus(m);
+
+	// Only take a reading if we are touched.
+	if ((read_byte(m, FT6x06_TOUCH_POINTS) & 0x07)) {
+
+		/* Get the X, Y, Z values */
+		pdr->x = (coord_t)(read_word(m, FT6x06_TOUCH1_XH) & 0x0fff);
+		pdr->y = (coord_t)read_word(m, FT6x06_TOUCH1_YH);
 		pdr->z = 1;
-        pdr->buttons = GINPUT_TOUCH_PRESSED;  
-    }
-    else
-    {
-        pdr->buttons = 0;
-        pdr->z = 0;
-    }
-    
-    return TRUE;
+
+		// Rescale X,Y if we are using self-calibration
+		#if GMOUSE_FT6x06_SELF_CALIBRATE
+			#if GDISP_NEED_CONTROL
+				switch(gdispGGetOrientation(m->display)) {
+				default:
+				case GDISP_ROTATE_0:
+					break;
+				case GDISP_ROTATE_180:
+					pdr->x = gdispGGetWidth(m->display) - pdr->x / (4096/gdispGGetWidth(m->display));
+					pdr->y = pdr->y / (4096/gdispGGetHeight(m->display));
+					break;
+				case GDISP_ROTATE_90:
+					break;
+				case GDISP_ROTATE_270:
+					pdr->x = gdispGGetHeight(m->display) - pdr->x / (4096/gdispGGetHeight(m->display));
+					pdr->y = pdr->y / (4096/gdispGGetWidth(m->display));
+					break;
+				}
+			#else
+				pdr->x = gdispGGetWidth(m->display) - pdr->x / (4096/gdispGGetWidth(m->display));
+				pdr->y = pdr->y / (4096/gdispGGetHeight(m->display));
+			#endif
+		#endif
+	}
+
+	//release_bus(m);
+	return TRUE;
 }
 
-const GMouseVMT GMOUSE_DRIVER_VMT[1] = {{
+const GMouseVMT const GMOUSE_DRIVER_VMT[1] = {{
 	{
 		GDRIVER_TYPE_TOUCH,
-        #warning This driver could be interrupt driven
-		GMOUSE_VFLG_TOUCH | GMOUSE_VFLG_ONLY_DOWN | GMOUSE_VFLG_POORUPDOWN | GMOUSE_VFLG_DEFAULTFINGER, // | GMOUSE_VFLG_CALIBRATE | GMOUSE_VFLG_CAL_TEST,
-		sizeof(GMouse),
+		#if GMOUSE_FT6x06_SELF_CALIBRATE
+			GMOUSE_VFLG_TOUCH | GMOUSE_VFLG_ONLY_DOWN | GMOUSE_VFLG_POORUPDOWN,
+		#else
+			GMOUSE_VFLG_TOUCH | GMOUSE_VFLG_ONLY_DOWN | GMOUSE_VFLG_POORUPDOWN | GMOUSE_VFLG_CALIBRATE | GMOUSE_VFLG_CAL_TEST,
+		#endif
+		sizeof(GMouse) + GMOUSE_FT6x06_BOARD_DATA_SIZE,
 		_gmouseInitDriver,
 		_gmousePostInitDriver,
 		_gmouseDeInitDriver
@@ -64,22 +118,21 @@ const GMouseVMT GMOUSE_DRIVER_VMT[1] = {{
 	0,				// z_min - (currently?) not supported
 	1,				// z_touchon
 	0,				// z_touchoff
-    #warning Look into (self-)calibration and error values
 	{				// pen_jitter
-		0, // GMOUSE_FT6x06_PEN_CALIBRATE_ERROR,			// calibrate
-		0, // GMOUSE_FT6x06_PEN_CLICK_ERROR,				// click
-		0, // GMOUSE_FT6x06_PEN_MOVE_ERROR				// move
+		GMOUSE_FT6x06_PEN_CALIBRATE_ERROR,			// calibrate
+		GMOUSE_FT6x06_PEN_CLICK_ERROR,				// click
+		GMOUSE_FT6x06_PEN_MOVE_ERROR				// move
 	},
 	{				// finger_jitter
-		0, // GMOUSE_FT6x06_FINGER_CALIBRATE_ERROR,		// calibrate
-		0, // GMOUSE_FT6x06_FINGER_CLICK_ERROR,			// click
-		0, // GMOUSE_FT6x06_FINGER_MOVE_ERROR             // move
+		GMOUSE_FT6x06_FINGER_CALIBRATE_ERROR,		// calibrate
+		GMOUSE_FT6x06_FINGER_CLICK_ERROR,			// click
+		GMOUSE_FT6x06_FINGER_MOVE_ERROR			// move
 	},
 	MouseInit, 		// init
-	NULL,           // deinit
+	0,				// deinit
 	read_xyz,		// get
-	NULL,           // calsave
-	NULL            // calload
+	0,				// calsave
+	0				// calload
 }};
 
 #endif /* GFX_USE_GINPUT && GINPUT_NEED_MOUSE */

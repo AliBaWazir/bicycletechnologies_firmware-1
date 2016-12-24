@@ -101,7 +101,7 @@
  
 #if defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx) || defined(STM32F439xx)\
  || defined(STM32F446xx) || defined(STM32F469xx) || defined(STM32F479xx)
-/* #define DATA_IN_ExtSDRAM */
+ #define DATA_IN_ExtSDRAM 
 #endif /* STM32F427xx || STM32F437xx || STM32F429xx || STM32F439xx || STM32F446xx || STM32F469xx ||\
           STM32F479xx */
 

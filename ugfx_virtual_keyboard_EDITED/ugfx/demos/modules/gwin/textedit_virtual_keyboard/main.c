@@ -70,16 +70,14 @@ static void guiCreate(void)
 	// Virtual keyboard
 	wi.g.show = TRUE;
 	wi.g.x = 0;
-	wi.g.y = gdispGetHeight()/2;
+	wi.g.y = (gdispGetHeight()/2);
 	wi.g.width = gdispGetWidth();
 	wi.g.height = gdispGetHeight()/2;
 	ghKeyboard = gwinKeyboardCreate(0, &wi);
 }
 
-int main(void) {
-	GEventKeyboard* pk;
-	unsigned i;
-
+int main(void)
+{
 	gfxInit();
 
 	gdispClear(Silver);

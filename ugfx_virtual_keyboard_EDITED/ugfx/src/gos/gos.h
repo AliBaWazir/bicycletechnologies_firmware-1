@@ -178,7 +178,7 @@
 	/**
 	 * @brief	Use gfxAlloc and gfxFree to implement malloc() and free()
 	 *
-	 * @notes	Sometimes your application will include functions that
+	 * @note	Sometimes your application will include functions that
 	 * 			want to internally use malloc() and free(). As the default
 	 * 			implementations of these in your C library are almost
 	 * 			invariably incorrect for an embedded platform, this option
@@ -494,9 +494,11 @@
 #elif GFX_USE_OS_CMSIS
  	#include "gos_cmsis.h"
 #elif GFX_USE_OS_KEIL
- 	#include "gos_keil.h"
+    #include "gos_keil.h"
 #elif GFX_USE_OS_NIOS
- 	#include "gos_nios.h"
+    #include "gos_nios.h"
+#elif GFX_USE_OS_QT
+    #include "gos_qt.h"
 #else
 	#error "Your operating system is not supported yet"
 #endif

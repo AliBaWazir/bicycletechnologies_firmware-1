@@ -6,6 +6,9 @@
 #include "gfx.h"
 #include "gui.h"
 #include "trace.h"
+#include "tm_stm32_gps.h"
+#include "tm_stm32_delay.h"
+#include "gps.h"
 
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
@@ -15,12 +18,6 @@ uint32_t HAL_GetTick(void) {
 }
 
 #endif
-
-/* RTC structure */
-TM_RTC_t RTCD;
- 
-/* RTC Alarm structure */
-TM_RTC_AlarmTime_t RTCA;
 
 /*******************************************************************************
 * FUNCTION:
@@ -102,8 +99,8 @@ void SystemClock_Config( void )
   HAL_RCCEx_GetPeriphCLKConfig( &PeriphClkInitStruct );
 
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-  PeriphClkInitStruct.PLLSAI.PLLSAIN = 417;
-  PeriphClkInitStruct.PLLSAI.PLLSAIR = 5;
+  PeriphClkInitStruct.PLLSAI.PLLSAIN = 384;
+  PeriphClkInitStruct.PLLSAI.PLLSAIR = 7;
   PeriphClkInitStruct.PLLSAIDivR     = RCC_PLLSAIDIVR_2;
   HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
@@ -137,9 +134,15 @@ void Thread_1 (void const *arg)
 }		// function prototype for Thread_1
 osThreadDef (Thread_1, osPriorityNormal, 1, 0);            // define Thread_1
 
+void Thread_2 (void const *arg)
+{
+	runGPS();
+}
+osThreadDef (Thread_2, osPriorityNormal, 1, 0);            // define Thread_2
+
 int main (void)
-{	
-    int i = 0;
+{			
+  int i = 0;
 	// Cached enabled in stm32f4xx_hal_conf.h
     // CPU_CACHE_Enable();			// Enable the CPU Cache
     
@@ -150,6 +153,13 @@ int main (void)
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
+
+#ifdef DEBUG
+	/* Initialize USART3 for debug */
+	/* TX = PB10 */
+	TM_USART_Init(USART3, TM_USART_PinsPack_1, 115200);
+	TM_USART_Puts(USART3, "UART PC Output\n");
+#endif
 	
 	/* Init RTC */
 	if (TM_RTC_Init(TM_RTC_ClockSource_External)) {
@@ -170,14 +180,19 @@ int main (void)
   if (traceMutex != NULL)  {
     // Mutex object created
   }   
-  osThreadId id;
-  
-  id = osThreadCreate (osThread (Thread_1), NULL);         // create the thread
+  //osThreadId guiThread;
+  //osThreadId gpsThread;
+  //guiThread = osThreadCreate (osThread (Thread_1), NULL);
+	//gpsThread = osThreadCreate (osThread (Thread_2), NULL);
 	
-	while(1) {
-		osDelay(1000);
-		TM_RTC_GetDateTime(&RTCD, TM_RTC_Format_BIN);
-		TRACE("Time is: %d:%d:%d \n",RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
-	}
+	guiEventLoop();
+	
+//	while(1){
+//		i++;
+//		if(i > 100){
+//			i = 0;
+//		}
+//	}
+
 }
 

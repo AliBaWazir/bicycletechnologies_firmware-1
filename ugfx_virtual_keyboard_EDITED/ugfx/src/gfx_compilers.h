@@ -332,6 +332,7 @@
 		#define GFX_COMPILER_VERSION_PATCH			((__CC65__)%0x10)
 	#elif GFX_COMPILER == GFX_COMPILER_CLANG
 		#define GFX_COMPILER_NAME					"CLang (LLVM)"
+		#define GFX_COMPILER_TESTED					TRUE
 		#define GFX_COMPILER_VERSION_MAJOR			(__clang_major__)
 		#define GFX_COMPILER_VERSION_MINOR			(__clang_minor__)
 		#define GFX_COMPILER_VERSION_PATCH			(__clang_patchlevel__)
@@ -391,8 +392,16 @@
 		#define GFX_COMPILER_VERSION_PATCH			((__DMC__)%0x10)
 	#elif GFX_COMPILER == GFX_COMPILER_EDG
 		#define GFX_COMPILER_NAME					"EDG C++"
+		#define GFX_COMPILER_TESTED					TRUE
 		#define GFX_COMPILER_VERSION_MAJOR			((__EDG_VERSION__)/100)
 		#define GFX_COMPILER_VERSION_MINOR			((__EDG_VERSION__)%100)
+		#pragma diag_remark = Pe301
+		#pragma diag_remark = Pe083
+		#pragma diag_remark = Pe767
+		#pragma diag_remark = Pe188
+		#pragma diag_remark = Pe186
+		#pragma diag_remark = Pe068
+		#pragma diag_remark = Pa050
 	#elif GFX_COMPILER == GFX_COMPILER_EKOPATH
 		#define GFX_COMPILER_NAME					"EKOPath"
 		#define GFX_COMPILER_VERSION_MAJOR			(__PATHCC__)
@@ -430,8 +439,16 @@
 		#endif
 	#elif GFX_COMPILER == GFX_COMPILER_IAR
 		#define GFX_COMPILER_NAME					"IAR C++"
+		#define GFX_COMPILER_TESTED					TRUE
 		#define GFX_COMPILER_VERSION_MAJOR			((__VER__)/100)
 		#define GFX_COMPILER_VERSION_MINOR			((__VER__)%100)
+		#pragma diag_remark = Pe301
+		#pragma diag_remark = Pe083
+		#pragma diag_remark = Pe767
+		#pragma diag_remark = Pe188
+		#pragma diag_remark = Pe186
+		#pragma diag_remark = Pe068
+		#pragma diag_remark = Pa050
 	#elif GFX_COMPILER == GFX_COMPILER_IBMXL
 		#define GFX_COMPILER_NAME					"IBM XL C/C++"
 		#ifdef __xlC__
@@ -638,6 +655,7 @@
 		#define GFX_COMPILER_VERSION_PATCH			((SDCC)%1000)
 	#elif GFX_COMPILER == GFX_COMPILER_TINYC
 		#define GFX_COMPILER_NAME					"Tiny C"
+		#define GFX_COMPILER_TESTED					TRUE
 	#elif GFX_COMPILER == GFX_COMPILER_TURBOC
 		#define GFX_COMPILER_NAME					"Borland Turbo C/C++"
 		#if __TURBOC__ < 0x295 || __TURBOC__ >= 0x400

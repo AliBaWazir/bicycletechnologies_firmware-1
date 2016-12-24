@@ -377,6 +377,10 @@ void     BSP_LCD_DisplayOn(void);
 
 /* @brief DMA2D handle variable */
 extern DMA2D_HandleTypeDef hdma2d_eval;
+extern LTDC_HandleTypeDef  hltdc_eval;
+extern DSI_HandleTypeDef hdsi_eval;
+extern uint32_t lcd_x_size;
+extern uint32_t lcd_y_size;
 
 /**
   * @}

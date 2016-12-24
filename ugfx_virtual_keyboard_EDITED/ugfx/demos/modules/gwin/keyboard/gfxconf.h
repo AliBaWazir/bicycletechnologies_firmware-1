@@ -30,9 +30,7 @@
 #define GDISP_NEED_CLIP                              TRUE
 //#define GDISP_NEED_SCROLL                            TRUE
 #define GDISP_NEED_TEXT                              TRUE
-    #define GDISP_NEED_ANTIALIAS                     TRUE
-    #define GDISP_INCLUDE_FONT_DEJAVUSANS24_AA       TRUE
-    #define GDISP_INCLUDE_FONT_UI2                   FALSE
+    #define GDISP_INCLUDE_FONT_UI2                   TRUE
 
 //#define GDISP_NEED_CONTROL                           TRUE
 //#define GDISP_DEFAULT_ORIENTATION                    GDISP_ROTATE_LANDSCAPE

@@ -1,0 +1,92 @@
+* [33mb5233f0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mworkingOnGPS[m[33m, [m[1;31morigin/workingOnGPS[m[33m)[m map displayed, slow and needs more optimization and correct file handling
+* [33m77a663c[m screen back up and running
+* [33m25e27e5[m ugfx 2.6 completely included
+* [33m7f00e03[m added source for ugfx2.6
+* [33m885a773[m Started to port ugfx2.6
+* [33me3d2fc2[m created a string formating function to do things dynamically and cleanly
+* [33m94a947a[m Started Adding Tile Calculations
+* [33m8d4d5c5[m Deleting Trace File when Updating the Clock
+* [33md99038a[m gps data pass to gui
+* [33mf59becb[m made GPS on it's own
+* [33mc4f8e22[m GPS Works and RTC is updating
+* [33m02cdc5b[m GPS Working, But RTC time not updating correctly
+* [33m4cb50e7[m GPS initials
+*   [33maf7cc90[m[33m ([m[1;32mmaster[m[33m)[m Merge pull request #1 from JonathanGoldnauVogt/ble
+[32m|[m[33m\[m  
+[32m|[m * [33m8e021c3[m converted speed cacluated from cadencse sensor to km/h. Moved the SPI wait function call to main power_manage function
+[32m|[m * [33mbccde46[m removing ignoredfiles again
+[32m|[m * [33m4179d2b[m updated gitignore yet again to properly ignore uvguix files
+[32m|[m * [33m9eedd9f[m SPI working on my end, gotta try the sensor again
+[32m|[m * [33mfa30847[m removed ignored files
+[32m|[m *   [33m44c79a4[m merge?
+[32m|[m [34m|[m[35m\[m  
+[32m|[m [34m|[m * [33m4b08f0b[m Managed to have SPIS code work in parallel with the CSCS code
+[32m|[m * [35m|[m [33m9f743b3[m unknown small changes
+[32m|[m [35m|[m[35m/[m  
+[32m|[m * [33md63268a[m modified F4 project to work with weird softdevice behaviour
+[32m|[m * [33m7514352[m SPI working but timeout issue
+[32m|[m * [33m5d92fd4[m Performed the initial integration of SPI code. Put the code in a separate file named spis_app. The spis_app is initialized from the main
+[32m|[m *   [33m6bf8362[m Merge branch 'master' of https://github.com/JonathanGoldnauVogt/bicycletechnologies_firmware into ble
+[32m|[m [36m|[m[32m\[m  
+[32m|[m [36m|[m[32m/[m  
+[32m|[m[32m/[m[36m|[m   
+* [36m|[m   [33m95978ec[m Merge branch 'maytham/SDCard'
+[1;32m|[m[1;33m\[m [36m\[m  
+[1;32m|[m * [36m|[m [33m7e87dd0[m Implemneted dynaming tracing to SD Card, also RTC
+[1;32m|[m * [36m|[m [33m28fc46a[m created a function to write to file (thread safe)
+[1;32m|[m * [36m|[m [33mbd8a5ef[m basic multithreads
+[1;32m|[m * [36m|[m [33m26a2bdb[m Can Now Write Into SD Card!!!
+[1;32m|[m * [36m|[m [33m7fd5dbc[m started the sdcard work
+* [1;33m|[m [36m|[m [33m27e0f7a[m SPI working, sending some vars
+[1;33m|[m[1;33m/[m [36m/[m  
+* [36m|[m [33m2ee9dda[m Have all windows working
+* [36m|[m [33me9710cc[m menu is now working correctly but there is a bug making things disappear
+* [36m|[m [33m1f11c90[m have the gear and teeth settings pages done
+* [36m|[m [33m89dbb7c[m separated the gears page into different pages
+* [36m|[m [33mf9ad279[m started working on gear settings
+* [36m|[m [33m8ab7c86[m bluetooth screen layout
+* [36m|[m [33m2f4be93[m started woring on the bluetooth page
+* [36m|[m [33ma5273d0[m made a int and char array speed
+[1;33m|[m * [33mda2595c[m Enhanced the CSCS app by handling the uint16_t roll off case in event time reported from sensor. Also, added an if-statement check to avoid getting lower wheel/crank revolutions
+[1;33m|[m * [33m4199aca[m Now, the instantaneous speed is calculated in m/s, the cadence is calculated in rpm, the travel distance is calculated in m
+[1;33m|[m * [33md372586[m[33m ([m[1;31morigin/ble[m[33m)[m Modified the target of project to nRF51422 to get the the code loaded to the nRF module. Changed the speed units to m/s instead of km/h
+[1;33m|[m * [33m180f833[m Added a function to cscs_app to decode data for wheel and crank revolution, travel distance, speed and travel cadence. These values are printed whenever data is received from sensor
+[1;33m|[m * [33m6dd4bb5[m Created a file for CSCS app to separate CSCS code from HR code. Put the modified code from RSCS in new files named ble_scs_c_developed
+[1;33m|[m * [33m1070660[m MAnaged to have the cycling speed and cadence sensor data received and interpreted by the nRF module. Followd the xample of running speed and cadence client example code
+[1;33m|[m * [33m0226a53[m Added the nRF51822 necessary file for our project from SDK v12. Changed the running speed and cadence example code to cycling speed and cadense project. Managed to pair with the sensor and get instantious data. Renaming data structures and functions is not done
+[1;33m|[m * [33mb423883[m added a static function to determine the physical desired gear combination based on current wheel rpm and cadence per minute set point
+[1;33m|[m * [33m3b6994d[m added a code for gear selection algorithm prototype
+[1;33m|[m * [33mf6bb3f1[m Added the example code for the running and cadence speed central device
+[1;33m|[m[1;33m/[m  
+* [33md0316b6[m removed unneeded files
+* [33m7a2057e[m gitignore
+* [33m30361b4[m stated dividing the data container
+*   [33m552115e[m New baseline clean gui
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [33md28f7b1[m Clean gui c file use as baseline
+[1;34m|[m * [33m02ae25a[m started cleaning the containers and labeling
+[1;34m|[m * [33m6a795f2[m playing with colours and styles
+[1;34m|[m * [33m7090365[m added a list on the second window
+[1;34m|[m * [33m3e1dd9b[m 2 buttons with containers and console
+* [1;35m|[m [33m5c68f16[m Revert "Pixmaps working, need to increase size by moving to extram"
+* [1;35m|[m [33md314443[m Revert "added gitignore"
+* [1;35m|[m [33ma4a0670[m Revert "David fixed bug with SDRam being used as frame buffer while we were trying to use it as  heap"
+* [1;35m|[m [33m58fbe81[m Revert "full page pixmaps"
+* [1;35m|[m [33m96a4285[m[33m ([m[1;31morigin/JonAndDavidExtras[m[33m, [m[1;32mJonAndDavidExtras[m[33m)[m full page pixmaps
+* [1;35m|[m [33m05e5360[m David fixed bug with SDRam being used as frame buffer while we were trying to use it as  heap
+* [1;35m|[m [33ma4a2e43[m added gitignore
+* [1;35m|[m [33mf8c5ae5[m Pixmaps working, need to increase size by moving to extram
+[1;35m|[m[1;35m/[m  
+* [33m9073469[m added
+* [33m833a58e[m Text on left, moving boxes for maptiles on right
+* [33md195fdf[m Moving boxes on screen
+* [33m02b37e7[m keil stuff
+* [33m8a3c96c[m Displaying image without caching (out of memory)
+* [33md2e70a8[m added map tile
+* [33m712fc12[m Added nrf folder
+* [33m0918b59[m David's uGFX port
+* [33maaeb81d[m Added hall effect requirement
+* [33m3172fe5[m Added motor controller specs v0.1
+* [33mec06e08[m Revert "test.c"
+* [33mc43e662[m test.c
+* [33md8c01cf[m Initial commit

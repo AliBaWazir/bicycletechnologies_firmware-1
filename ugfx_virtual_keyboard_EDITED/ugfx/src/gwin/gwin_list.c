@@ -31,27 +31,6 @@
 #define qix2li		((ListItem *)qix)
 #define ple			((GEventGWinList *)pe)
 
-// Flags for the GListObject
-#define GLIST_FLG_MULTISELECT		(GWIN_FIRST_CONTROL_FLAG << 0)
-#define GLIST_FLG_HASIMAGES			(GWIN_FIRST_CONTROL_FLAG << 1)
-#define GLIST_FLG_SCROLLALWAYS		(GWIN_FIRST_CONTROL_FLAG << 2)
-#define GLIST_FLG_SCROLLSMOOTH      (GWIN_FIRST_CONTROL_FLAG << 3)
-#define GLIST_FLG_ENABLERENDER      (GWIN_FIRST_CONTROL_FLAG << 4)
-
-// Flags on a ListItem.
-#define GLIST_FLG_SELECTED			0x0001
-
-typedef struct ListItem {
-	gfxQueueASyncItem	q_item;		// This must be the first member in the struct
-
-	uint16_t			flags;
-	uint16_t			param;		// A parameter the user can specify himself
-	const char*			text;
-	#if GWIN_NEED_LIST_IMAGES
-		gdispImage*		pimg;
-	#endif
-} ListItem;
-
 static void sendListEvent(GWidgetObject *gw, int item) {
 	GSourceListener*	psl;
 	GEvent*				pe;
@@ -204,6 +183,9 @@ static void sendListEvent(GWidgetObject *gw, int item) {
 		const gfxQueueASyncItem	*	qi;
 		const gfxQueueASyncItem	*	qix;
 		int							i;
+		
+		coord_t		iheight;
+		iheight = gdispGetFontMetric(gw->g.font, fontHeight) + LST_VERT_PAD;
 
 		switch (role) {
 			// select down
@@ -214,6 +196,12 @@ static void sendListEvent(GWidgetObject *gw, int item) {
 						if (qix) {
 							qi2li->flags &=~ GLIST_FLG_SELECTED;
 							qix2li->flags |= GLIST_FLG_SELECTED;
+
+							//if we need to scroll down
+							if (((i+2)*iheight - gw2obj->top) > gw->g.height){
+								gw2obj->top += iheight;
+							}
+
 							_gwinUpdate(&gw->g);
 						}
 						break;
@@ -231,6 +219,14 @@ static void sendListEvent(GWidgetObject *gw, int item) {
 						if (qix) {
 							qi2li->flags &=~ GLIST_FLG_SELECTED;
 							qix2li->flags |= GLIST_FLG_SELECTED;
+
+							//if we need to scroll up
+							if (((i-1)*iheight) < gw2obj->top){
+								gw2obj->top -= iheight;
+								if (gw2obj->top < 0)
+									gw2obj->top = 0;
+							}
+
 							_gwinUpdate(&gw->g);
 						}
 						break;
@@ -506,6 +502,7 @@ void gwinListItemDelete(GHandle gh, int item) {
 		if (i == item) {
 			gfxQueueASyncRemove(&gh2obj->list_head, (gfxQueueASyncItem*)qi);
 			gfxFree((void *)qi);
+			gh2obj->cnt--;
 			if (gh2obj->top >= item && gh2obj->top)
 				gh2obj->top--;
 			_gwinUpdate(gh);
