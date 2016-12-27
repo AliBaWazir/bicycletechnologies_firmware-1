@@ -9,6 +9,8 @@
 #include "tm_stm32_gps.h"
 #include "tm_stm32_delay.h"
 #include "gps.h"
+#include "spi.h"
+#include "tm_stm32_spi.h"
 
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
@@ -153,7 +155,7 @@ int main (void)
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
-
+	
 #ifdef DEBUG
 	/* Initialize USART3 for debug */
 	/* TX = PB10 */
@@ -169,7 +171,7 @@ int main (void)
 			/* RTC was now initialized */
 			/* If you need to set new time, now is the time to do it */
 	}
-		
+	
 	geventListenerInit(&glistener);
 	gwinAttachListener(&glistener);
 
@@ -180,19 +182,23 @@ int main (void)
   if (traceMutex != NULL)  {
     // Mutex object created
   }   
-  //osThreadId guiThread;
+	
+	nrfSetup();
+	/* Init SPI */
+	TM_SPI_Init(SPI2, TM_SPI_PinsPack_Custom);
+	
+  osThreadId guiThread;
   //osThreadId gpsThread;
-  //guiThread = osThreadCreate (osThread (Thread_1), NULL);
+  guiThread = osThreadCreate (osThread (Thread_1), NULL);
 	//gpsThread = osThreadCreate (osThread (Thread_2), NULL);
 	
-	guiEventLoop();
+	//guiEventLoop();
 	
-//	while(1){
-//		i++;
-//		if(i > 100){
-//			i = 0;
-//		}
-//	}
+	while(1){
+		TRACE("SPI LOOP\n");
+		nrfGetData();
+		Delayms(50);
+	}
 
 }
 

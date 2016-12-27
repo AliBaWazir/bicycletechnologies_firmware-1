@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAP_TILE_TEST_CANAL
+//#define MAP_TILE_TEST_CANAL
 //#define MAP_TILE_TEST_MAYTHAM
 //#define MAP_TILE_TEST_JON
 
@@ -1508,7 +1508,7 @@ void guiEventLoop(void)
 			if(!gpsData.Validity){
 				if(RTCD.Seconds != previousSeconds){
 					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
-					TRACE("GPS Data is Invalid\n");
+					//TRACE("GPS Data is Invalid\n");
 					gwinSetText(labels[3], gpsOutput, TRUE);
 					previousSeconds = RTCD.Seconds;
 				}
@@ -1528,7 +1528,7 @@ void guiEventLoop(void)
 					
 					//formatString(gpsOutput, sizeof(gpsOutput), "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
 					//formatString(gpsOutput, sizeof(gpsOutput), "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
-					TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+					//TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
 					if((tilex != oldtilex) && (tiley != oldtiley)){
 						drawTile(tilex, tiley, tilexOffset, tileyOffset);
 						oldtilex=tilex;
