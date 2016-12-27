@@ -7,7 +7,7 @@
 #include "app_config.h"
 #endif
 
-#define USE_SHIFTY_CONFIG 1  //set to 0 other target hardware is used
+#define USE_SHIFTY_CONFIG 1  //set to 0 if the target hardware is not the shifty custom board
 #ifdef USE_SHIFTY_CONFIG
 #include "../arm5_no_packs/shifty_config.h"
 #endif
