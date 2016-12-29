@@ -43,14 +43,12 @@
 /* TWI instance ID. */
 #define TWI_INSTANCE_ID     0
 
-/* Common addresses definition for Gear Controller */
-#define GEAR_CONTROLLER_I2C_ADDR            (0x90U >> 1)
+/* Common addresses definition I2C slaves*/
+#define GEAR_CONTROLLER_I2C_ADDR  (0x90U >> 1)
+#define BNO055_I2C_ADDR            0x28
+#define SOC_I2C_ADDR               0xAA 
 
-#define GEAR_CONTROLLER_REG_GEAR_STATUS      0x00U
-
-/* Pin Assignments */
-#define GEAR_CONTROLLER_I2C_SCL_PIN          27
-#define GEAR_CONTROLLER_I2C_SDA_PIN          28 /*TODO: get the correct pin numbers*/
+#define GEAR_CONTROLLER_REG_GEARSTATUS      0x00U
 
 
 /**********************************************************************************************
@@ -75,18 +73,60 @@ static uint8_t m_gear_status;
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
-/**
- * @brief Function for reading data from gear sttus register.
- */
-static void read_gear_status()
-{
-    m_xfer_done = false;
 
-    /* Read 1 byte from the specified address*/
-    ret_code_t err_code = nrf_drv_twi_rx(&m_twi, GEAR_CONTROLLER_I2C_ADDR, &m_gear_status, sizeof(m_gear_status));
+/**
+ * @brief Function for I2C read.
+ */
+static void i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest_array){
+	
+	ret_code_t err_code;
+	
+	m_xfer_done = false;
+	//writing to pointer byte
+	err_code = nrf_drv_twi_tx(&m_twi, (i2c_address & 0xFE), &reg_addr, 1, false);
+	APP_ERROR_CHECK(err_code);
+    while (m_xfer_done == false);
+	
+	//reading
+	m_xfer_done = false;
+    err_code = nrf_drv_twi_rx(&m_twi, (i2c_address | 0x01), dest_array, sizeof(dest_array));
     APP_ERROR_CHECK(err_code);
 }
 
+
+/**
+ * @brief Function for I2C read.
+ */
+static void i2cApp_i2c_write(uint8_t i2c_address, uint8_t reg_addr, uint8_t* source_array){
+	
+	ret_code_t err_code;
+	
+	m_xfer_done = false;
+	//writing to pointer byte
+	err_code = nrf_drv_twi_tx(&m_twi, i2c_address, &reg_addr, 1, false);
+	APP_ERROR_CHECK(err_code);
+    while (m_xfer_done == false);
+	
+	//writing data
+	m_xfer_done = false;
+	err_code = nrf_drv_twi_tx(&m_twi, i2c_address, source_array, sizeof(source_array), false);
+	APP_ERROR_CHECK(err_code);
+    while (m_xfer_done == false);
+}
+
+
+/**
+ * @brief Function for reading data from gear sttus register.
+ */
+/*static void read_gear_status()
+{
+    m_xfer_done = false;
+
+     Read 1 byte from the specified address
+    ret_code_t err_code = nrf_drv_twi_rx(&m_twi, GEAR_CONTROLLER_I2C_ADDR, &m_gear_status, sizeof(m_gear_status));
+    APP_ERROR_CHECK(err_code);
+}
+*/
 
 /**
  * @brief Function for handling data from gear controller.
@@ -101,15 +141,15 @@ __STATIC_INLINE void data_handler(uint8_t gear_status)
 	crank_gear = gear_status & 0x0F;
 	wheel_gear = (gear_status >> 4);
 	
-	NRF_LOG_INFO("current crank_gear status: %d\r\n", crank_gear);
-	NRF_LOG_INFO("current wheel_gear status: %d\r\n", wheel_gear);
+	NRF_LOG_INFO("current crank_gear status: 0x%x\r\n", crank_gear);
+	NRF_LOG_INFO("current wheel_gear status: 0x%x\r\n", wheel_gear);
 }
 
 
 /**
  * @brief TWI events handler.
  */
-void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
+static void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
 {
     switch (p_event->type)
     {
@@ -134,8 +174,8 @@ static void twi_init (void)
     ret_code_t err_code;
 
     const nrf_drv_twi_config_t twi_lm75b_config = {
-       .scl                = GEAR_CONTROLLER_I2C_SCL_PIN,
-       .sda                = GEAR_CONTROLLER_I2C_SDA_PIN,
+       .scl                = NRF_SCL_PIN,
+       .sda                = NRF_SDA_PIN,
        .frequency          = NRF_TWI_FREQ_100K,
        .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
        .clear_bus_init     = false
@@ -158,7 +198,7 @@ void i2cApp_wait(){
 		__WFE();
     }while (m_xfer_done == false);
 
-    read_gear_status();
+    //read_gear_status();
 	
 }
 /**
@@ -172,6 +212,9 @@ bool i2cApp_init(void){
 	twi_init();
 	
 	if (I2C_IN_SIMULATION_MODE){
+		//read id register of BNO055. For testing purpose only
+		i2cApp_i2c_read(BNO055_I2C_ADDR, 0x00, &m_gear_status);
+		
 		ret = i2cSimDriver_init();
 	}
 		
