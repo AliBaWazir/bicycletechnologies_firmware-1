@@ -150,7 +150,7 @@ static void _ltdc_layer_init(LTDC_Layer_TypeDef* pLayReg, const ltdcLayerConfig*
 static void _ltdc_init(void) {
 	// Set up the display scanning
 	uint32_t hacc, vacc;
-
+	/*
 	// Reset the LTDC peripheral
 	RCC->APB2RSTR |= RCC_APB2RSTR_LTDCRST;
 	RCC->APB2RSTR = 0;
@@ -167,8 +167,8 @@ static void _ltdc_init(void) {
 	#endif
 
 	// Enable the peripheral
-	RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;
-
+	RCC->APB2ENR |= RCC_APB2ENR_LTDCEN;*/
+	
 	// Turn off the controller and its interrupts
 	LTDC->GCR = 0;
 	LTDC->IER = 0;

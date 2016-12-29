@@ -14,36 +14,18 @@
 #include "stm32469i_discovery_lcd.h"
 
 #define VSYNC           12
-#define VBP             12
-#define VFP             12
+#define VBP             1
+#define VFP             1
 #define VACT            480
 #define HSYNC           120
-#define HBP             120
-#define HFP             120
-
-#if !defined(USE_BPP) || USE_BPP==16
-#define HACT            200      /* Note: 16bpp: Screen divided in 4 areas of 200 pixels to avoid DSI tearing */
+#define HBP             1
+#define HFP             1
+#define HACT            800      /* Note: 16bpp: Screen divided in 4 areas of 200 pixels to avoid DSI tearing */
 #define DSI_COLOR_CODING	DSI_RGB565
 #define OTM_COLOR_FORMAT 	OTM8009A_FORMAT_RBG565
-#define WINDOW_X1 				200
-#define BLENDING_FACTOR1 	LTDC_BLENDING_FACTOR1_CA
-#define BLENDING_FACTOR2 	LTDC_BLENDING_FACTOR2_CA
-#define IMAGE_WIDTH				200
 
-#elif USE_BPP==24
-#define HACT            400      /* Note: 24bpp: Screen divided in 2 areas of 400 pixels to avoid DSI tearing */
-#define DSI_COLOR_CODING	DSI_RGB888
-#define OTM_COLOR_FORMAT 	OTM8009A_FORMAT_RGB888
-#define WINDOW_X1 				400
-#define BLENDING_FACTOR1 	LTDC_BLENDING_FACTOR1_PAxCA
-#define BLENDING_FACTOR2 	LTDC_BLENDING_FACTOR2_PAxCA
-#define IMAGE_WIDTH				400
-
-#else
-#error Unknown USE_BPP
-#endif
-
-#define PIXEL_FORMAT LTDC_PIXELFORMAT
+#define __DSI_MASK_TE()       (GPIOJ->AFR[0] &= (0xFFFFF0FFU))   /* Mask DSI TearingEffect Pin*/
+#define __DSI_UNMASK_TE()     (GPIOJ->AFR[0] |= ((uint32_t)(GPIO_AF13_DSI) << 8)) /* UnMask DSI TearingEffect Pin*/
 
 // 16 bpp screen map: 4 areas of 200 pixels
 uint8_t pCols[4][4] =
@@ -59,8 +41,14 @@ uint8_t pColLeft[]    = {0x00, 0x00, 0x01, 0x8F}; /*   0 -> 399 */
 uint8_t pColRight[]   = {0x01, 0x90, 0x03, 0x1F}; /* 400 -> 799 */
 
 uint8_t pPage[]       = {0x00, 0x00, 0x01, 0xDF}; /*   0 -> 479 */
-uint8_t pScanCol[]    = {0x02, 0x15};             /* Scan @ 533 */
+//uint8_t pScanCol[]    = {0x02, 0x15};             /* Scan @ 533 */
 
+#ifdef USE_DOUBLE_BUFFERING
+  static uint8_t pScanCol[] = {0x01, 0xB0};             /* Scan @ 432 */
+#else
+  static uint8_t pScanCol[] = {0x02, 0x40};             /* Scan @ 576 */
+#endif
+	
 static DSI_CmdCfgTypeDef CmdCfg;
 static DSI_LPCmdTypeDef LPCmd;
 static DSI_PLLInitTypeDef dsiPllInit;
@@ -78,12 +66,12 @@ static const ltdcConfig driverCfg = {
 		(LLDCOLOR_TYPE *)(LCD_FB_START_ADDRESS),	// Frame buffer address
 		HACT, VACT,							// Width, Height (pixels)
 		HACT * LTDC_PIXELBYTES,				// Line pitch (bytes)
-		PIXEL_FORMAT,					// Pixel format
+		LTDC_PIXELFORMAT,					// Pixel format
 		0, 0,								// Start pixel position (x, y)
 		HACT, VACT,							// Size of virtual layer (cx, cy)
 		LTDC_COLOR_FUCHSIA,					// Default color (ARGB8888)
 		DSI_COLOR_CODING,							// Color key (RGB888)
-		(BLENDING_FACTOR1)|(BLENDING_FACTOR2),				// Blending factors
+		LTDC_BLEND_FIX1_FIX2,				// Blending factors
 		0,									// Palette (RGB888, can be NULL)
 		0,									// Palette length
 		0xFF,								// Constant alpha factor
@@ -113,12 +101,12 @@ static GFXINLINE void init_board(GDisplay* g) {
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 #ifdef USE_DOUBLE_BUFFERING
     /* Double buffering use 384/7/2 = 27.4MHz */
-    PeriphClkInitStruct.PLLSAI.PLLSAIN = 384;
+    PeriphClkInitStruct.PLLSAI.PLLSAIN = 364;
     PeriphClkInitStruct.PLLSAI.PLLSAIR = 7;
 #else
     /* Single buffering use 375/3/2 = 62.5MHz */
-    PeriphClkInitStruct.PLLSAI.PLLSAIN = 375;
-    PeriphClkInitStruct.PLLSAI.PLLSAIR = 3;
+    PeriphClkInitStruct.PLLSAI.PLLSAIN = 417;
+    PeriphClkInitStruct.PLLSAI.PLLSAIR = 5;
 #endif
     PeriphClkInitStruct.PLLSAIDivR = RCC_PLLSAIDIVR_2;
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
@@ -128,9 +116,15 @@ static GFXINLINE void init_board(GDisplay* g) {
 
     HAL_DSI_DeInit(&(hdsi_eval));
 
-    dsiPllInit.PLLNDIV  = 100;
-    dsiPllInit.PLLIDF   = DSI_PLL_IN_DIV5;
-    dsiPllInit.PLLODF  = DSI_PLL_OUT_DIV1;
+		#if defined(USE_STM32469I_DISCO_REVA)
+			dsiPllInit.PLLNDIV  = 100;
+			dsiPllInit.PLLIDF   = DSI_PLL_IN_DIV5;
+		#else
+			dsiPllInit.PLLNDIV  = 125;
+			dsiPllInit.PLLIDF   = DSI_PLL_IN_DIV2;
+		#endif  /* USE_STM32469I_DISCO_REVA */
+
+		dsiPllInit.PLLODF  = DSI_PLL_OUT_DIV1;
 
     hdsi_eval.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
     hdsi_eval.Init.TXEscapeCkdiv = 0x4;
@@ -178,7 +172,7 @@ static GFXINLINE void post_init_board(GDisplay* g)
     */
     OTM8009A_Init(OTM_COLOR_FORMAT, LCD_ORIENTATION_LANDSCAPE);
 
-    LPCmd.LPGenShortWriteNoP    = DSI_LP_GSW0P_DISABLE;
+    /*LPCmd.LPGenShortWriteNoP    = DSI_LP_GSW0P_DISABLE;
     LPCmd.LPGenShortWriteOneP   = DSI_LP_GSW1P_DISABLE;
     LPCmd.LPGenShortWriteTwoP   = DSI_LP_GSW2P_DISABLE;
     LPCmd.LPGenShortReadNoP     = DSI_LP_GSR0P_DISABLE;
@@ -189,7 +183,7 @@ static GFXINLINE void post_init_board(GDisplay* g)
     LPCmd.LPDcsShortWriteOneP   = DSI_LP_DSW1P_DISABLE;
     LPCmd.LPDcsShortReadNoP     = DSI_LP_DSR0P_DISABLE;
     LPCmd.LPDcsLongWrite        = DSI_LP_DLW_DISABLE;
-    HAL_DSI_ConfigCommand(&hdsi_eval, &LPCmd);
+    HAL_DSI_ConfigCommand(&hdsi_eval, &LPCmd);*/
 
     HAL_DSI_ConfigFlowControl(&hdsi_eval, DSI_FLOW_CONTROL_BTA);
 
@@ -211,42 +205,6 @@ static GFXINLINE void post_init_board(GDisplay* g)
 
     /* Refresh the display */
     HAL_DSI_Refresh(&hdsi_eval);
-		
-		uint16_t LayerIndex = 0;
-		uint32_t Address = LCD_FB_START_ADDRESS;
-		
-		LCD_LayerCfgTypeDef  Layercfg;
-
-    /* Layer Init */
-    Layercfg.WindowX0 = 0;
-    Layercfg.WindowY0 = 0;
-    Layercfg.WindowY1 = BSP_LCD_GetYSize();
-    Layercfg.FBStartAdress = Address;
-    Layercfg.Alpha = 255;
-    Layercfg.Alpha0 = 0;
-    Layercfg.Backcolor.Blue = 0;
-    Layercfg.Backcolor.Green = 0;
-    Layercfg.Backcolor.Red = 0;
-    Layercfg.ImageHeight = BSP_LCD_GetYSize();
-    Layercfg.WindowX1 = WINDOW_X1; //Note: Div4 due to screen being divided into 4 areas.
-    Layercfg.PixelFormat = PIXEL_FORMAT;
-    Layercfg.BlendingFactor1 = BLENDING_FACTOR1;
-    Layercfg.BlendingFactor2 = BLENDING_FACTOR2;
-    Layercfg.ImageWidth = IMAGE_WIDTH; //Note: Div4 due to screen being divided into 4 areas.
-
-		HAL_LTDC_ConfigLayer(&hltdc_eval, &Layercfg, LayerIndex);
-		
-		BSP_LCD_SelectLayer(0);
-
-#if !defined(USE_BPP) || USE_BPP==16
-    HAL_DSI_LongWrite(&hdsi_eval, 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pCols[0]);
-#elif USE_BPP==24
-    HAL_DSI_LongWrite(&hdsi_eval, 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColLeft);
-#else
-#error Unknown USE_BPP
-#endif
-
-    HAL_DSI_LongWrite(&hdsi_eval, 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
 
     /* Update pitch : the draw is done on the whole physical X Size */
     HAL_LTDC_SetPitch(&hltdc_eval, BSP_LCD_GetXSize(), 0);
