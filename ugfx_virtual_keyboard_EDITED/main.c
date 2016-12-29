@@ -95,14 +95,14 @@ void SystemClock_Config( void )
   /* PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 417 MHz */
   /* PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 417 MHz / 5 = 83.4 MHz */
   /* LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_2 = 83.4 / 2 = 41.7 MHz */
-  RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct = {0};
+  /*RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct = {0};
   HAL_RCCEx_GetPeriphCLKConfig( &PeriphClkInitStruct );
 
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
   PeriphClkInitStruct.PLLSAI.PLLSAIN = 384;
   PeriphClkInitStruct.PLLSAI.PLLSAIR = 7;
   PeriphClkInitStruct.PLLSAIDivR     = RCC_PLLSAIDIVR_2;
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);*/
 }
 #include "stm32469i_discovery_lcd.h"
 
@@ -154,7 +154,7 @@ int main (void)
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
-
+	
 #ifdef DEBUG
 	/* Initialize USART3 for debug */
 	/* TX = PB10 */
