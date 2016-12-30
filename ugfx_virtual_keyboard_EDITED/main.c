@@ -196,6 +196,9 @@ int main (void)
 	
 	while(1){
 		TRACE("SPI LOOP\n");
+#ifdef DEBUG
+			TM_USART_Puts(USART3, "SPI LOOP\n");
+#endif
 		nrfGetData();
 		Delayms(50);
 	}
