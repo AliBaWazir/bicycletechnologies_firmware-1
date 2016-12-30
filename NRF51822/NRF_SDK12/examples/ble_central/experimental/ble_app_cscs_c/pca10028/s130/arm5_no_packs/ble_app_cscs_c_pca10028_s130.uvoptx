@@ -148,25 +148,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>102</LineNumber>
+          <LineNumber>85</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>139652</Address>
+          <Address>115834</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\..\..\..\..\..\components\libraries\log\src\nrf_log_backend_serial.c</Filename>
+          <Filename>..\..\..\..\..\..\..\components\libraries\util\app_error.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\nrf51822_xxac\../../../../../../../components/libraries/log/src/nrf_log_backend_serial.c\102</Expression>
+          <Expression>\\nrf51822_xxac\../../../../../../../components/libraries/util/app_error.c\85</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
-          <SubType>256</SubType>
-          <ItemText>distance_km_sim_array</ItemText>
+          <SubType>264</SubType>
+          <ItemText>0x000006D1</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
@@ -214,7 +214,7 @@
         <AscS3>0</AscS3>
         <aSer3>0</aSer3>
         <eProf>0</eProf>
-        <aLa>0</aLa>
+        <aLa>1</aLa>
         <aPa1>0</aPa1>
         <AscS4>0</AscS4>
         <aSer4>0</aSer4>
