@@ -32,7 +32,13 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define SPI_INSTANCE 1 /**< SPIS instance index. */
+#define SPI_DRIVER_SIM_MODE 1 /****************************************************
+							   *This flag is set to 1 only if SPI slave interaction
+							   *is in simulation mode.
+							   ***************************************************/
+
+#define SPI_INSTANCE        1 /**< SPIS instance index. */
+
 
 /*************************************************
  *SPI GETTER command definitions
@@ -46,6 +52,7 @@
 #define SPI_GET_DISTANCE               0x03
 #define SPI_GET_HR                     0x04
 #define SPI_GET_CADENCE_SETPOINT       0x05
+#define SPI_GET_BATTERY_LEVEL          0x06
 
 //Group 1: Bike configuration
 #define SPI_GET_WHEEL_DIAMETER         0x10
@@ -89,21 +96,9 @@
 #define INDEX_ARG_GEAR_TYPE        INDEX_ARG_BASE
 #define INDEX_ARG_GEAR_COUNT       (INDEX_ARG_BASE+1) //if value of this arg is 1, it is cranck gear, 2 for wheel
 #define INDEX_ARG_GEAR_INDEX       (INDEX_ARG_BASE+1) //index starts from 0 for fisrt gear
-#define INDEX_ARG_TEETH_COUNT      (INDEX_ARG_BASE+2) //teeth count in a gear defined by INDEX_ARG_GEAR_TYPE and INDEX_ARG_GEAR_INDEX
+#define INDEX_ARG_TEETH_COUNT      (INDEX_ARG_BASE+2) //teeth count in a gear defined by INDEX_ARG_GEAR_TYPE and INDEX_ARG_GEAR_INDEX.
 
 
-/*************************************************
- *SPI data availability FLAGS
- *************************************************/
-
-
-
-
-
-#define SPI_DRIVER_SIM_MODE 1 /****************************************************
-							   *This flag is set to 1 only if SPI slave interaction
-							   *is in simulation mode.
-							   ***************************************************/
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -147,7 +142,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
         memset(m_tx_buf, 0x00, sizeof(m_tx_buf)); // clear the tx for visual clarity
         
         spis_xfer_done = true;
-        NRF_LOG_INFO(" Transfer completed. Received: %s\r\n",(uint32_t)m_rx_buf);
+        NRF_LOG_INFO("spisApp_event_handler: transfer completed. Received: %s\r\n",(uint32_t)m_rx_buf);
 
 		switch (command){
 			
@@ -192,54 +187,55 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					m_tx_buf[0] = hrsApp_get_current_hr_bpm();
 				}
 			break;//SPI_GET_HR
-	
-			//not used
-			//case SPI_GET_BATTERY:
-				/*TODO: figure out which device's battery*/
-				//m_tx_buf[0] = 0xBA;
-			//break;
 			
 			case SPI_GET_CADENCE_SETPOINT:
 				m_tx_buf[0] = algorithmApp_get_cadence_setpoint();
 			break;//SPI_GET_CADENCE_SETPOINT
+			
+			case SPI_GET_BATTERY_LEVEL:
+				/*TODO: call i2c app to retirieve batttery level from SO*/
+			break;//SPI_GET_BATTERY_LEVEL
+						
+			case SPI_GET_WHEEL_DIAMETER:
+				m_tx_buf[0] = algorithmApp_get_wheel_diameter_cm();
+			break;//SPI_GET_WHEEL_DIAMETER
 				
+			case SPI_GET_GEAR_COUNT:
+				m_tx_buf[0] = algorithmApp_get_gears_count_crank();
+				m_tx_buf[1] = algorithmApp_get_gears_count_wheel();
+			break;//SPI_GET_GEAR_COUNT
+			
+			case SPI_GET_TEETH_COUNT_ON_GEAR:
+				m_tx_buf[0] = algorithmApp_get_teeth_count(m_rx_buf[INDEX_ARG_GEAR_TYPE], m_rx_buf[INDEX_ARG_GEAR_INDEX]);
+			break;//SPI_GET_TEETH_COUNT_ON_GEAR
+			
+			
+			
 			/**************************** SETTERS ********************************/
 			case SPI_SET_CADENCE_SETPOINT:
-				if (SPI_DRIVER_SIM_MODE){
-					spisSimDriver_set_cadence_setpoint(m_tx_buf[INDEX_ARG_SETPOINT]);
-				} else {
-					algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
-				}
-			break;
+				algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
+			break;//SPI_SET_CADENCE_SETPOINT
+				
+			case SPI_SET_GEAR_LEVEL_LOCKED:
+				algorithmApp_set_gear_level_locked ();
+			break;//SPI_SET_GEAR_LEVEL_LOCKED
 				
 			case SPI_SET_WHEEL_DIAMETER:
-				if (SPI_DRIVER_SIM_MODE){
-					spisSimDriver_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
-				} else {
-					algorithmApp_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
-				}
-			break;
+				algorithmApp_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
+			break;//SPI_SET_WHEEL_DIAMETER
 				
 			case SPI_SET_GEAR_COUNT:
-				if (SPI_DRIVER_SIM_MODE){
-					spisSimDriver_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
-				} else {
-					algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
-				}
-			break;
+				algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
+			break;//SPI_SET_GEAR_COUNT
 				
 			case SPI_SET_TEETH_COUNT_ON_GEAR:
-				if (SPI_DRIVER_SIM_MODE){
-					spisSimDriver_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
-				} else {
-					algorithmApp_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
-				}
-			break;
+				algorithmApp_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
+			break;//SPI_SET_GEAR_COUNT
 				
 			default:
-				NRF_LOG_ERROR("command in rx buffer is unknown. command= 0x%x\r\n",command);
+				NRF_LOG_ERROR("spisApp_event_handler: command in rx buffer is unknown. command= 0x%x\r\n",command);
 			break;
-		}     
+		}
 
     }     
 }
@@ -273,12 +269,12 @@ static void spisApp_config(void){
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
 
-void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag_index, bool data_available){
+void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool data_available){
 	
 	if (data_available){
-		dtat_availability_flags|= flag_index;
+		dtat_availability_flags|= (flag);
 	} else{
-		dtat_availability_flags&= ~flag_index;
+		dtat_availability_flags&= ~(flag);
 	}
 }
 
