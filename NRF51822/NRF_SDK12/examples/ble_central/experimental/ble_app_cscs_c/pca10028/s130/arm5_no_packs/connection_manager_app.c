@@ -46,7 +46,7 @@
 
 #define BETWEEN_CONNECTIONS_DELAY_MS   5000        //sequent connections will be performed with a delay between them to allow handling connections
 
-#define CONN_MANAGER_APP_STANDALONE_MODE      1    /*This boolean is set to true only if connection_manager_app
+#define CONN_MANAGER_APP_STANDALONE_MODE      0    /*This boolean is set to true only if connection_manager_app
 													*is in standalone mode. That means no interaction with SPI will be made
 													**/
 													
