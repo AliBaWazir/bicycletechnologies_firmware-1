@@ -71,9 +71,9 @@ void runTestCase(uint8_t* target){
         memset(testGarbage,0x00,sizeof(testGarbage));
 				TRACE("Test Garbage: %d,%d,%d,%d\n", testGarbage[0], testGarbage[1], testGarbage[2], testGarbage[3]);
         nrfTransmitSingle(target, &testGarbage[0]);// This transfer gives the NRF the instruction
-        //nrfTransmitSingle(&testGarbage[0], &spi_Data.speed.value);// This transfer allows the NRF to clock the data to us
-				//TRACE("Target: %d, Test Garbage: %d,%d,%d,%d, Value: %d\n", *target, testGarbage[0], testGarbage[1], testGarbage[2], testGarbage[3], spi_Data.speed.value);
-				TRACE("Target: %d, Test Garbage: %d,%d,%d,%d\n", *target, testGarbage[0], testGarbage[1], testGarbage[2], testGarbage[3]);
+        nrfTransmitSingle(&testGarbage[0], &spi_Data.speed.value);// This transfer allows the NRF to clock the data to us
+				TRACE("Target: %d, Test Garbage: %d,%d,%d,%d, Value: %d\n", *target, testGarbage[0], testGarbage[1], testGarbage[2], testGarbage[3], spi_Data.speed.value);
+				//TRACE("Target: %d, Test Garbage: %d,%d,%d,%d\n", *target, testGarbage[0], testGarbage[1], testGarbage[2], testGarbage[3]);
     }
 }
 
