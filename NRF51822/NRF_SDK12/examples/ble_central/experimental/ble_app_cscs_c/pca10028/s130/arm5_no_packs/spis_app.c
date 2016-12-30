@@ -211,6 +211,10 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			
 			
 			
+			case SPI_GET_CADENCE_SETPOINT:
+				m_tx_buf[0] = algorithmApp_get_cadence_setpoint();
+			break;//SPI_GET_CADENCE_SETPOINT
+				
 			/**************************** SETTERS ********************************/
 			case SPI_SET_CADENCE_SETPOINT:
 				algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
