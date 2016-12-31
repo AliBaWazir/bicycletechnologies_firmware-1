@@ -5,17 +5,6 @@
 #include "tm_stm32_rtc.h"
 #include "tm_stm32_gps.h"
 
-#define DEBUG
-
-typedef struct {
-  uint8_t msg_ID;
-	uint8_t speed;
-} message_t;
-
-extern osPoolId mpool;
-extern osMessageQId  spiQueue;
-extern osMessageQId  guiQueue;
-
 extern GFILE *myfile;
 
 extern osMutexId traceMutex;

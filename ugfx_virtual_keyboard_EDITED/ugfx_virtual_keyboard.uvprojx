@@ -502,6 +502,11 @@
               <FileType>1</FileType>
               <FilePath>.\spi.c</FilePath>
             </File>
+            <File>
+              <FileName>msg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\msg.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -11,6 +11,7 @@
 #include "gps.h"
 #include "spi.h"
 #include "tm_stm32_spi.h"
+#include "msg.h"
 
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
@@ -130,11 +131,11 @@ void DSI_IRQHandler()
 }
 #endif
 
-void guiThread (void const *arg)
+void spiThread (void const *arg)
 {
-	guiEventLoop();
-}		// function prototype for guiThread
-osThreadDef (guiThread, osPriorityNormal, 1, 0);            // define guiThread
+	runSPI();
+}		// function prototype for spiThread
+osThreadDef (spiThread, osPriorityNormal, 1, 0);            // define spiThread
 
 void gpsThread (void const *arg)
 {
@@ -144,9 +145,6 @@ osThreadDef (gpsThread, osPriorityNormal, 1, 0);            // define gpsThread
 
 osPoolDef(mpool, 16, message_t);
 osPoolId mpool;
-
-osMessageQDef(spiQueue, 16, message_t);
-osMessageQId  spiQueue;
 
 int main (void)
 {			
@@ -161,6 +159,11 @@ int main (void)
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
+	
+	geventListenerInit(&glistener);
+	gwinAttachListener(&glistener);
+
+	guiCreate();
 	
 #ifdef DEBUG
 	/* Initialize USART3 for debug */
@@ -177,55 +180,20 @@ int main (void)
 			/* RTC was now initialized */
 			/* If you need to set new time, now is the time to do it */
 	}
-	
-	geventListenerInit(&glistener);
-	gwinAttachListener(&glistener);
-
-	guiCreate();
 
 	osMutexDef (MutexIsr);
 	traceMutex = osMutexCreate  (osMutex (MutexIsr));
   if (traceMutex != NULL)  {
     // Mutex object created
-  }   
-	
-	nrfSetup();
+  }
 	
 	mpool = osPoolCreate(osPool(mpool));
-  spiQueue = osMessageCreate(osMessageQ(spiQueue), NULL);
-	
-  osThreadId guiThreadID;
-  //osThreadId gpsThreadID;
-  guiThreadID = osThreadCreate (osThread (guiThread), NULL);
+  
+	osThreadId spiThreadID;
+	//osThreadId gpsThreadID;
+	spiThreadID = osThreadCreate (osThread (spiThread), NULL);
 	//gpsThreadID = osThreadCreate (osThread (gpsThread), NULL);
 	
-	//guiEventLoop();
-	
-	char temp[10];
-	message_t *messageReceived;
-	message_t *messageSent;
-	uint8_t speedKey = 0x01;
-	uint8_t speedValue;
-	while(1){
-		osEvent evt = osMessageGet(spiQueue, osWaitForever);
-		if (evt.status == osEventMessage) {
-			messageReceived = (message_t*)evt.value.p;
-			TRACE("msg_ID: %d\n", messageReceived->msg_ID);
-#ifdef DEBUG
-			formatString(temp, sizeof(temp), "msg_ID: %d\n", messageReceived->msg_ID);
-			TM_USART_Puts(USART3, temp);
-#endif
-			nrfRequest(&speedKey, 1);
-			osPoolFree(mpool, messageReceived);
-		}
-		nrfReceive(&speedValue, 1);
-		Delayms(1000);
-		
-		messageSent = (message_t*)osPoolAlloc(mpool);
-		messageSent->msg_ID = 12;
-		messageSent->speed = speedValue;
-		osMessagePut(guiQueue, (uint32_t)messageSent, 0);
-	}
-
+	guiEventLoop();
 }
 

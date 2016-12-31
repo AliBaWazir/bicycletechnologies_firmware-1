@@ -11,6 +11,7 @@
 #include "gps.h"
 #include <stdio.h>
 #include <string.h>
+#include "msg.h"
 
 //#define MAP_TILE_TEST_CANAL
 //#define MAP_TILE_TEST_MAYTHAM
@@ -81,8 +82,12 @@ int currentGearTeethWindow;
 int currentTeethTeethWindow;
 int oldMenuSelectedItem;
 
-int speed;
-char speedout[10];
+int speedOutput;
+int cadenceOutput;
+int distanceOutput;
+int heartrateOutput;
+int batteryOutput;
+char dataOutput[10];
 
 static gdispImage myImage[9];
 static gdispImage marker;
@@ -210,7 +215,7 @@ static void createMap(void)
   mapWindow = gwinGWindowCreate(GDISP,NULL, &windowInitStruct);*/
 	
 	
-	// Create label widget: labels[1]
+	// Create label widget: labels[5]
 	wi.g.show = TRUE;
 	wi.g.x = 20;
 	wi.g.y = 20;
@@ -221,10 +226,10 @@ static void createMap(void)
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
-	labels[3] = gwinLabelCreate(0, &wi);
-	gwinLabelSetBorder(labels[3], TRUE);
-	gwinSetFont(labels[3], gdispOpenFont("Georgia24"));
-	//gwinSetText(labels[3], gearsStatus, TRUE);
+	labels[5] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[5], TRUE);
+	gwinSetFont(labels[5], gdispOpenFont("Georgia24"));
+	//gwinSetText(labels[5], gearsStatus, TRUE);
 }
 
 static void createData(void)
@@ -233,8 +238,8 @@ static void createData(void)
 	GWidgetInit wi; 
 	gwinWidgetClearInit(&wi);
 		
-	speed = 0;
-	formatString(speedout, sizeof(speedout), "%d km/h", speed);
+	speedOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d km/h", speedOutput);
 	// Create label widget: labels[0]
 	wi.g.show = TRUE;
 	wi.g.x = 0;
@@ -242,7 +247,7 @@ static void createData(void)
 	wi.g.width = 305;
 	wi.g.height = 113;
 	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = speedout;
+	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
@@ -251,14 +256,16 @@ static void createData(void)
 	gwinSetFont(labels[0], gdispOpenFont("Georgia60"));
 	gwinRedraw(labels[0]);
 
+	cadenceOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d RPM", cadenceOutput);
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
 	wi.g.x = 0;
-	wi.g.y = 114;
+	wi.g.y = 113;
 	wi.g.width = 305;
-	wi.g.height = 71;
+	wi.g.height = 100;
 	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = "69 RPM";
+	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
@@ -267,14 +274,16 @@ static void createData(void)
 	gwinSetFont(labels[1], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[1]);
 	
+	distanceOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d km", distanceOutput);
 	// Create label widget: labels[2]
 	wi.g.show = TRUE;
 	wi.g.x = 0;
-	wi.g.y = 366;
-	wi.g.width = 117;
-	wi.g.height = 114;
+	wi.g.y = 213;
+	wi.g.width = 305;
+	wi.g.height = 82;
 	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = "100%";
+	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
@@ -282,6 +291,42 @@ static void createData(void)
 	gwinLabelSetBorder(labels[2], TRUE);
 	gwinSetFont(labels[2], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[2]);
+	
+	heartrateOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d BPM", heartrateOutput);
+	// Create label widget: labels[3]
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 295;
+	wi.g.width = 305;
+	wi.g.height = 71;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = dataOutput;
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	labels[3] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[3], TRUE);
+	gwinSetFont(labels[3], gdispOpenFont("Georgia40"));
+	gwinRedraw(labels[3]);
+	
+	batteryOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
+	// Create label widget: labels[4]
+	wi.g.show = TRUE;
+	wi.g.x = 0;
+	wi.g.y = 366;
+	wi.g.width = 117;
+	wi.g.height = 114;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = dataOutput;
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &midnight;
+	labels[4] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[4], TRUE);
+	gwinSetFont(labels[4], gdispOpenFont("Georgia40"));
+	gwinRedraw(labels[4]);
 	
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
@@ -1214,7 +1259,7 @@ static void createClockSettings(void)
 static void destroyMap(void)
 {
 	TRACE("destroyMap\n");
-	gwinDestroy(labels[3]);
+	gwinDestroy(labels[5]);
 }
 
 static void destroyData(void)
@@ -1223,6 +1268,8 @@ static void destroyData(void)
 	gwinDestroy(labels[0]);
 	gwinDestroy(labels[1]);
 	gwinDestroy(labels[2]);
+	gwinDestroy(labels[3]);
+	gwinDestroy(labels[4]);
 	gwinDestroy(buttons[0]);
 }
 
@@ -1448,7 +1495,7 @@ void guiEventLoop(void)
 			formatString(temp, sizeof(temp), "msg_ID: %d, speed: %d\n", messageReceived->msg_ID, messageReceived->speed);
 			TM_USART_Puts(USART3, temp);
 #endif
-			speed = messageReceived->speed;
+			speedOutput = messageReceived->speed;
 			osPoolFree(mpool, messageReceived);
 		}
 		
@@ -1462,11 +1509,41 @@ void guiEventLoop(void)
 		
 		if(gwinGetVisible(containers[DATA_CONTAINER])){
 			if(RTCD.Seconds != previousSeconds){
-				formatString(speedout, sizeof(speedout), "%d km/h", speed);
-				gwinSetText(labels[0], speedout, TRUE);
+				formatString(dataOutput, sizeof(dataOutput), "%d km/h", speedOutput);
+				gwinSetText(labels[0], dataOutput, TRUE);
+				
+				formatString(dataOutput, sizeof(dataOutput), "%d RPM", cadenceOutput);
+				gwinSetText(labels[1], dataOutput, TRUE);
+				
+				formatString(dataOutput, sizeof(dataOutput), "%d km", distanceOutput);
+				gwinSetText(labels[2], dataOutput, TRUE);
+				
+				formatString(dataOutput, sizeof(dataOutput), "%d BPM", heartrateOutput);
+				gwinSetText(labels[3], dataOutput, TRUE);
+				
+				formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
+				gwinSetText(labels[4], dataOutput, TRUE);
+				
 				messageSent = (message_t*)osPoolAlloc(mpool);
-				messageSent->msg_ID = 26;
+				messageSent->msg_ID = GET_SPEED_MSG;
 				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_CADENCE_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_DISTANCE_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_HEARTRATE_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_BATTERY_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
 				previousSeconds = RTCD.Seconds;
 			}
 		}
@@ -1525,7 +1602,7 @@ void guiEventLoop(void)
 				if(RTCD.Seconds != previousSeconds){
 					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
 					//TRACE("GPS Data is Invalid\n");
-					gwinSetText(labels[3], gpsOutput, TRUE);
+					gwinSetText(labels[5], gpsOutput, TRUE);
 					previousSeconds = RTCD.Seconds;
 				}
 			}else{
