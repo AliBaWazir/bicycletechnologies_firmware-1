@@ -154,36 +154,36 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			
 			case SPI_GET_SPEED:
 				if (SPI_DRIVER_SIM_MODE){
+					//m_tx_buf[0] = 0xFA;
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_SPEED);
 				} else {
-					//m_tx_buf[0] = 0xFA;
 					m_tx_buf[0]= cscsApp_get_current_speed_kmph();
 				}
 			break;
 			
 			case SPI_GET_CADENCE:
 				if (SPI_DRIVER_SIM_MODE){
+					//m_tx_buf[0] = 0xCA;
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_CADENCE);
 				} else {
-					//m_tx_buf[0] = 0xCA;
 					m_tx_buf[0]= cscsApp_get_current_cadence_rpm();
 				}
 			break;
 				
 			case SPI_GET_DISTANCE:
 				if (SPI_DRIVER_SIM_MODE){
+					//m_tx_buf[0] = 0xDE;
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_DISTANCE);
 				} else {
-					//m_tx_buf[0] = 0xDE;
 					m_tx_buf[0]= cscsApp_get_current_distance_km();
 				}
 			break;
 			
 			case SPI_GET_HR:
 				if (SPI_DRIVER_SIM_MODE){
+					//m_tx_buf[0] = 0xEA;
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_HR);
 				} else {
-					//m_tx_buf[0] = 0xEA;
 					m_tx_buf[0] = hrsApp_get_current_hr_bpm();
 				}
 			break;//SPI_GET_HR
