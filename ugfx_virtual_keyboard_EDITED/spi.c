@@ -127,15 +127,16 @@ bool nrfRequest(uint8_t *buffOut, uint32_t len){
 	TM_USART_Puts(USART3, "nrfRequest Done\n");
 #endif
 }
+
 bool nrfReceive(uint8_t *buffIn, uint32_t len){
 #ifdef DEBUG
 	TM_USART_Puts(USART3, "nrfReceive Start\n");
 #endif
 	TRACE("nrfReceive Start\n");
-	
+	uint8_t buffOut;
 	while(1){
 		TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
-		TM_SPI_ReadMulti(SPI2, buffIn, 0, len);
+		TM_SPI_SendMulti(SPI2, &buffOut, buffIn, len);
 		if(*buffIn == 0xDF){
 			TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 			Delayms(50);
