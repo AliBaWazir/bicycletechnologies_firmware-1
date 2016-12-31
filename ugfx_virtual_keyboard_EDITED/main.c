@@ -216,11 +216,11 @@ int main (void)
 			TM_USART_Puts(USART3, temp);
 #endif
 			nrfRequest(&speedKey, 1);
+			Delayms(50);
 			osPoolFree(mpool, messageReceived);
 		}
-		
-		Delayms(1000);
 		nrfReceive(&speedValue, 1);
+		Delayms(950);
 		
 		messageSent = (message_t*)osPoolAlloc(mpool);
 		messageSent->msg_ID = 12;

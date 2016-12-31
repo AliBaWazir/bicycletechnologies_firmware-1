@@ -109,8 +109,18 @@ bool nrfRequest(uint8_t *buffOut, uint32_t len){
 	TM_USART_Puts(USART3, spiOutput);
 #endif
 	TRACE("nrfRequest: %d\n", *buffOut);
-	TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
-	TM_SPI_WriteMulti(SPI2, buffOut, len);
+	uint8_t buffIn;
+	while(1){
+		TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
+		TM_SPI_SendMulti(SPI2, buffOut, &buffIn,len);
+		if(buffIn == 0xDF){
+			TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
+			Delayms(50);
+		}else{
+			break;
+		}
+	}
+	
 	TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 	TRACE("nrfRequest Done\n");
 #ifdef DEBUG
@@ -122,8 +132,18 @@ bool nrfReceive(uint8_t *buffIn, uint32_t len){
 	TM_USART_Puts(USART3, "nrfReceive Start\n");
 #endif
 	TRACE("nrfReceive Start\n");
-	TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
-	TM_SPI_ReadMulti(SPI2, buffIn, NULL, len);
+	
+	while(1){
+		TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
+		TM_SPI_ReadMulti(SPI2, buffIn, 0, len);
+		if(*buffIn == 0xDF){
+			TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
+			Delayms(50);
+		}else{
+			break;
+		}
+	}
+	
 	TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 	TRACE("nrfReceive: %d\n", *buffIn);
 #ifdef DEBUG
