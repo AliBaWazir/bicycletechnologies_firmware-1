@@ -129,19 +129,20 @@ void algorithmApp_set_wheel_diameter (uint8_t new_wheel_diameter){
 	NRF_LOG_INFO("algorithmApp_set_wheel_diameter: wheel_diameter is changed to= %d .\r\n",new_wheel_diameter);
 }
 
-void algorithmApp_set_gear_count (uint8_t gear_type, uint8_t new_gear_count){
+bool algorithmApp_set_gear_count(uint8_t crank_gears_count, uint8_t wheel_gears_count){
 	
-	if (gear_type == CRANK_IDENTIFIER){
-		user_defined_properties.crank_gears_count = new_gear_count;
-	} else if (gear_type == WHEEL_IDENTIFIER){
-		user_defined_properties.wheel_gears_count = new_gear_count;
-	} else {
-		NRF_LOG_ERROR("algorithmApp_set_gear_count: called with invalid gear_type= %d\r\n",gear_type);
+	if ((crank_gears_count > MAX_GEARS_COUNT) || (wheel_gears_count > MAX_GEARS_COUNT)){
+		NRF_LOG_WARNING("algorithmApp_set_gear_count: crank_gears_count= %d or wheel_gears_count= %d is greater than MAX_GEARS_COUNT.\r\n",crank_gears_count, wheel_gears_count);
+		return false;
+	} else{
+		user_defined_properties.crank_gears_count= crank_gears_count;
+		user_defined_properties.wheel_gears_count= wheel_gears_count;
 	}
 	
 	//fire update event to encode updated data in ROM
 	algorithmApp_fire_event(USER_DEFINED_PROPERTIES_UPDATE);
-	NRF_LOG_INFO("gear_count is changed to= %d for gear type= %d\r\n",new_gear_count, gear_type);
+	NRF_LOG_INFO("gear_count is changed to crank_gears_count= %d, wheel_gears_count= %d\r\n",crank_gears_count, wheel_gears_count);
+	return true;
 }
 
 void algorithmApp_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_t new_teeth_count){

@@ -90,13 +90,14 @@
 /*************************************************
  *SPI argument indeces
  *************************************************/
-#define INDEX_ARG_BASE             1                  // second bit rx[1] denotes the first argument
-#define INDEX_ARG_SETPOINT         INDEX_ARG_BASE     // index of argument setpoint used with SPI_SET_CADENCE_SETPOINT
-#define INDEX_ARG_WHEEL_DIAMETER   INDEX_ARG_BASE
-#define INDEX_ARG_GEAR_TYPE        INDEX_ARG_BASE
-#define INDEX_ARG_GEAR_COUNT       (INDEX_ARG_BASE+1) //if value of this arg is 1, it is cranck gear, 2 for wheel
-#define INDEX_ARG_GEAR_INDEX       (INDEX_ARG_BASE+1) //index starts from 0 for fisrt gear
-#define INDEX_ARG_TEETH_COUNT      (INDEX_ARG_BASE+2) //teeth count in a gear defined by INDEX_ARG_GEAR_TYPE and INDEX_ARG_GEAR_INDEX.
+#define INDEX_ARG_BASE                1                  // second bit rx[1] denotes the first argument
+#define INDEX_ARG_SETPOINT            INDEX_ARG_BASE     // index of argument setpoint used with SPI_SET_CADENCE_SETPOINT
+#define INDEX_ARG_WHEEL_DIAMETER      INDEX_ARG_BASE
+#define INDEX_ARG_GEAR_TYPE           INDEX_ARG_BASE     // 0xCA for crank, 0xEE for wheel
+#define INDEX_ARG_CRANK_GEARS_COUNT  (INDEX_ARG_BASE)
+#define INDEX_ARG_WHEEL_GEARS_COUNT  (INDEX_ARG_BASE+1) 
+#define INDEX_ARG_GEAR_INDEX         (INDEX_ARG_BASE+1) //index starts from 0 for fisrt gear
+#define INDEX_ARG_TEETH_COUNT        (INDEX_ARG_BASE+2) //teeth count in a gear defined by INDEX_ARG_GEAR_TYPE and INDEX_ARG_GEAR_INDEX.
 
 
 
@@ -230,7 +231,9 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			break;//SPI_SET_WHEEL_DIAMETER
 				
 			case SPI_SET_GEAR_COUNT:
-				algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_COUNT]);
+				if (!algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_CRANK_GEARS_COUNT], m_tx_buf[INDEX_ARG_WHEEL_GEARS_COUNT])){
+					NRF_LOG_ERROR("spisApp_event_handler: algorithmApp_set_gear_count failed \r\n");
+				}
 			break;//SPI_SET_GEAR_COUNT
 				
 			case SPI_SET_TEETH_COUNT_ON_GEAR:
