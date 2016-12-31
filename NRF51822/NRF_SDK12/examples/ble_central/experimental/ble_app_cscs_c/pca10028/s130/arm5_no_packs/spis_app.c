@@ -210,7 +210,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			break;//SPI_GET_TEETH_COUNT_ON_GEAR
 			
 			
-			
+				
 			/**************************** SETTERS ********************************/
 			case SPI_SET_CADENCE_SETPOINT:
 				algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
