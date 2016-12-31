@@ -130,17 +130,23 @@ void DSI_IRQHandler()
 }
 #endif
 
-void Thread_1 (void const *arg)
+void guiThread (void const *arg)
 {
 	guiEventLoop();
-}		// function prototype for Thread_1
-osThreadDef (Thread_1, osPriorityNormal, 1, 0);            // define Thread_1
+}		// function prototype for guiThread
+osThreadDef (guiThread, osPriorityNormal, 1, 0);            // define guiThread
 
-void Thread_2 (void const *arg)
+void gpsThread (void const *arg)
 {
 	runGPS();
 }
-osThreadDef (Thread_2, osPriorityNormal, 1, 0);            // define Thread_2
+osThreadDef (gpsThread, osPriorityNormal, 1, 0);            // define gpsThread
+
+osPoolDef(mpool, 16, message_t);
+osPoolId mpool;
+
+osMessageQDef(spiQueue, 16, message_t);
+osMessageQId  spiQueue;
 
 int main (void)
 {			
@@ -184,23 +190,42 @@ int main (void)
   }   
 	
 	nrfSetup();
-	/* Init SPI */
-	TM_SPI_Init(SPI2, TM_SPI_PinsPack_Custom);
 	
-  osThreadId guiThread;
-  //osThreadId gpsThread;
-  guiThread = osThreadCreate (osThread (Thread_1), NULL);
-	//gpsThread = osThreadCreate (osThread (Thread_2), NULL);
+	mpool = osPoolCreate(osPool(mpool));
+  spiQueue = osMessageCreate(osMessageQ(spiQueue), NULL);
+	
+  osThreadId guiThreadID;
+  //osThreadId gpsThreadID;
+  guiThreadID = osThreadCreate (osThread (guiThread), NULL);
+	//gpsThreadID = osThreadCreate (osThread (gpsThread), NULL);
 	
 	//guiEventLoop();
 	
+	char temp[10];
+	message_t *messageReceived;
+	message_t *messageSent;
+	uint8_t speedKey = 0x01;
+	uint8_t speedValue;
 	while(1){
-		TRACE("SPI LOOP\n");
+		osEvent evt = osMessageGet(spiQueue, osWaitForever);
+		if (evt.status == osEventMessage) {
+			messageReceived = (message_t*)evt.value.p;
+			TRACE("msg_ID: %d\n", messageReceived->msg_ID);
 #ifdef DEBUG
-			TM_USART_Puts(USART3, "SPI LOOP\n");
+			formatString(temp, sizeof(temp), "msg_ID: %d\n", messageReceived->msg_ID);
+			TM_USART_Puts(USART3, temp);
 #endif
-		nrfGetData();
-		Delayms(50);
+			nrfRequest(&speedKey, 1);
+			osPoolFree(mpool, messageReceived);
+		}
+		
+		Delayms(1000);
+		nrfReceive(&speedValue, 1);
+		
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = 12;
+		messageSent->speed = speedValue;
+		osMessagePut(guiQueue, (uint32_t)messageSent, 0);
 	}
 
 }

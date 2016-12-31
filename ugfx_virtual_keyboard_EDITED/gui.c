@@ -92,6 +92,8 @@ static gdispImage marker;
 //static GDisplay* pixmap;
 //static pixel_t* surface;
 
+osMessageQDef(guiQueue, 16, message_t);
+osMessageQId  guiQueue;
 
 	int oldtilex=0;
 	int oldtiley=0;
@@ -1427,12 +1429,29 @@ void guiEventLoop(void)
 	int tilexOffset;
 	int tileyOffset;
 	
+	guiQueue = osMessageCreate(osMessageQ(guiQueue), NULL);
+	
 //	int oldtilex=0;
 //	int oldtiley=0;
 	int oldtilexOffset=0;
 	int oldtileyOffset=0;
 	
+	char temp[20];
+	message_t *messageReceived;
+	message_t *messageSent;
 	while (1) {		
+		osEvent evt = osMessageGet(guiQueue, 0);
+		if (evt.status == osEventMessage) {
+			messageReceived = (message_t*)evt.value.p;
+			TRACE("msg_ID: %d, speed: %d\n", messageReceived->msg_ID, messageReceived->speed);
+#ifdef DEBUG
+			formatString(temp, sizeof(temp), "msg_ID: %d, speed: %d\n", messageReceived->msg_ID, messageReceived->speed);
+			TM_USART_Puts(USART3, temp);
+#endif
+			speed = messageReceived->speed;
+			osPoolFree(mpool, messageReceived);
+		}
+		
 		getRTC(&RTCD, TM_RTC_Format_BIN);
 		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
 		uint32_t fileSavedTime = TM_RTC_GetUnixTimeStamp(&fileTime);
@@ -1442,16 +1461,13 @@ void guiEventLoop(void)
 		}
 		
 		if(gwinGetVisible(containers[DATA_CONTAINER])){
-			if(count == 50){
-				count = 0;
-				speed++;
-				if(speed == 200){
-					speed = 0;
-				}
+			if(RTCD.Seconds != previousSeconds){
 				formatString(speedout, sizeof(speedout), "%d km/h", speed);
 				gwinSetText(labels[0], speedout, TRUE);
-			}else{
-				count++;
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = 26;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				previousSeconds = RTCD.Seconds;
 			}
 		}
 		

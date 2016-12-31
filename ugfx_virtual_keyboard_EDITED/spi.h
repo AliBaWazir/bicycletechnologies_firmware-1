@@ -36,8 +36,11 @@ struct SPI_data{
 void nrfSetup(void);
 bool nrfGetData(void);
 void runTestCase(uint8_t* target);
-bool nrfTransmitSingle(uint8_t* in, uint8_t* out);
-bool nrfTransmit(uint8_t *buffIn, uint8_t *buffOut, uint32_t len);
-bool nrfTransmit2(uint8_t *buffIn, uint8_t *buffOut, uint32_t len);
+bool nrfTransmitSingle(uint8_t* out, uint8_t* in);
+bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len);
+bool nrfTransmit2(uint8_t *buffOut, uint8_t *buffIn, uint32_t len);
+
+bool nrfRequest(uint8_t *buffOut, uint32_t len);
+bool nrfReceive(uint8_t *buffIn, uint32_t len);
 
 #endif /* _SPI_H_ */
