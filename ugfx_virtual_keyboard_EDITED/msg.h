@@ -11,7 +11,7 @@
 
 typedef struct {
   uint8_t msg_ID;
-	uint8_t speed;
+	uint8_t value;
 } message_t;
 
 extern osPoolId mpool;

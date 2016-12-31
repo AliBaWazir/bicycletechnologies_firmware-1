@@ -65,7 +65,7 @@ void sendResponseMSG(uint8_t msg_ID, uint8_t value){
 	message_t *messageSent;
 	messageSent = (message_t*)osPoolAlloc(mpool);
 	messageSent->msg_ID = msg_ID;
-	messageSent->speed = value;
+	messageSent->value = value;
 	osMessagePut(guiQueue, (uint32_t)messageSent, 0);
 }
 
@@ -77,11 +77,11 @@ void nrfSetup(){
 
 	//Initialize Vars
 	spi_Data.avail.key = 0xDA;
-	spi_Data.speed.key = 0x01;
-	spi_Data.cadence.key = 0x02;
-	spi_Data.distance.key = 0x03;
-	spi_Data.heartRate.key = 0x04;
-	spi_Data.batt.key = 0x05;
+	spi_Data.speed.key = GET_SPEED_MSG;
+	spi_Data.cadence.key = GET_CADENCE_MSG;
+	spi_Data.distance.key = GET_DISTANCE_MSG;
+	spi_Data.heartRate.key = GET_HEARTRATE_MSG;
+	spi_Data.batt.key = GET_BATTERY_MSG;
 	
 	uint32_t time;
 	TM_RTC_t RTCD;

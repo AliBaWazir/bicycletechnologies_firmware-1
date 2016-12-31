@@ -61,7 +61,7 @@ void openTraceFile(void)
 	}
 	myfile = gfileOpen(filename, "w");
 	
-	myGPSData.Validity = 0;
+	myGPSData.Validity = false;
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {
 		// handle failure code

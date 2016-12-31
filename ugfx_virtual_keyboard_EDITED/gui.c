@@ -1490,12 +1490,17 @@ void guiEventLoop(void)
 		osEvent evt = osMessageGet(guiQueue, 0);
 		if (evt.status == osEventMessage) {
 			messageReceived = (message_t*)evt.value.p;
-			TRACE("msg_ID: %d, speed: %d\n", messageReceived->msg_ID, messageReceived->speed);
-#ifdef DEBUG
-			formatString(temp, sizeof(temp), "msg_ID: %d, speed: %d\n", messageReceived->msg_ID, messageReceived->speed);
-			TM_USART_Puts(USART3, temp);
-#endif
-			speedOutput = messageReceived->speed;
+			if(messageReceived->msg_ID == GET_SPEED_MSG){
+				speedOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_CADENCE_MSG){
+				cadenceOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_DISTANCE_MSG){
+				distanceOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
+				heartrateOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
+				batteryOutput = messageReceived->value;
+			}
 			osPoolFree(mpool, messageReceived);
 		}
 		

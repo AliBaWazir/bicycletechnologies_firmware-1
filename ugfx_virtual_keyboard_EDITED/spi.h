@@ -11,31 +11,31 @@ struct SPI_data{
 		uint32_t age;
 		uint8_t key;
 	}avail;
-    struct Speed{
-        uint8_t value;
-        uint32_t age;
-        uint8_t key;
-    }speed;
-    struct Cadence{
-        uint8_t value;
-        uint32_t age;
-        uint8_t key;
-    }cadence;
-		struct Distance{
-        uint8_t value;
-        uint32_t age;
-        uint8_t key;
-    }distance;
-    struct HeartRate{
-        uint8_t value;
-        uint32_t age;
-        uint8_t key;
-    }heartRate;
-    struct Batt{
-        uint8_t value;
-        uint32_t age;
-        uint8_t key;
-    }batt;
+	struct Speed{
+			uint8_t value;
+			uint32_t age;
+			uint8_t key;
+	}speed;
+	struct Cadence{
+			uint8_t value;
+			uint32_t age;
+			uint8_t key;
+	}cadence;
+	struct Distance{
+			uint8_t value;
+			uint32_t age;
+			uint8_t key;
+	}distance;
+	struct HeartRate{
+			uint8_t value;
+			uint32_t age;
+			uint8_t key;
+	}heartRate;
+	struct Batt{
+			uint8_t value;
+			uint32_t age;
+			uint8_t key;
+	}batt;
 };
 
 /*
