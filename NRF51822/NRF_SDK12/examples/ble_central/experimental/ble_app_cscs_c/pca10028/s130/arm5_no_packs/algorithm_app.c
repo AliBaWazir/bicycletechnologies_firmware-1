@@ -162,6 +162,7 @@ void algorithmApp_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_
 }
 
 bool algorithmApp_init(void){
+	
 	bool ret_code  = true;
 	
 	memset (&user_defined_properties, 0, sizeof(user_defined_properties_t));

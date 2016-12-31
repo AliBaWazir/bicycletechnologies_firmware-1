@@ -818,6 +818,11 @@ int main(void)
 		NRF_LOG_ERROR("Failed to initialize connManagerApp\r\n");
  	}
 	
+	if (!algorithmApp_init()){
+		NRF_LOG_ERROR("Failed to initialize algorithmApp\r\n");
+ 	}
+	
+	
 	    
     //Turn on fast charging: 500 mA
 	turn_on_fast_charging();
