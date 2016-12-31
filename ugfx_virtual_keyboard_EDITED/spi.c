@@ -104,16 +104,30 @@ bool nrfTransmit2(uint8_t *buffOut, uint8_t *buffIn, uint32_t len) {
 }
 
 bool nrfRequest(uint8_t *buffOut, uint32_t len){
+#ifdef DEBUG
+	formatString(spiOutput, sizeof(spiOutput), "nrfRequest: %d\n", *buffOut);
+	TM_USART_Puts(USART3, spiOutput);
+#endif
 	TRACE("nrfRequest: %d\n", *buffOut);
 	TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
 	TM_SPI_WriteMulti(SPI2, buffOut, len);
 	TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 	TRACE("nrfRequest Done\n");
+#ifdef DEBUG
+	TM_USART_Puts(USART3, "nrfRequest Done\n");
+#endif
 }
 bool nrfReceive(uint8_t *buffIn, uint32_t len){
+#ifdef DEBUG
+	TM_USART_Puts(USART3, "nrfReceive Start\n");
+#endif
 	TRACE("nrfReceive Start\n");
 	TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
 	TM_SPI_ReadMulti(SPI2, buffIn, NULL, len);
 	TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 	TRACE("nrfReceive: %d\n", *buffIn);
+#ifdef DEBUG
+	formatString(spiOutput, sizeof(spiOutput), "nrfReceive: %d\n", *buffIn);
+	TM_USART_Puts(USART3, spiOutput);
+#endif
 }

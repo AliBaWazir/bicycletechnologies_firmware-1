@@ -5,7 +5,7 @@
 #include "tm_stm32_rtc.h"
 #include "tm_stm32_gps.h"
 
-//#define DEBUG
+#define DEBUG
 
 typedef struct {
   uint8_t msg_ID;
