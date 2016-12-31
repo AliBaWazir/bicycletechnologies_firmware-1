@@ -59,6 +59,9 @@
 /**********************************************************************************************
 * STATIC VARIABLES
 ***********************************************************************************************/
+//data availability flags in simulation mode
+static uint32_t dtat_availability_flags = 0; //by default all falgs are off
+
 //data to be set by slave
 static uint8_t speed_kmph_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t cadence_rpm_sim_array [SIM_DATA_ARRAY_SIZE];
@@ -253,6 +256,34 @@ uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 	}
 	
 	return current_data;
+}
+
+bool spisSimDriver_get_data_availability_flags(uint8_t* dest_buffer){
+	
+	if (dest_buffer == NULL){
+		
+		NRF_LOG_ERROR("spisSimDriver_get_dtat_availability_flags: called with NULL dest_buffer\r\n");
+		return false;
+		
+	} else{
+		
+		dtat_availability_flags |= 0xDB; //0b11011011;
+		dtat_availability_flags = (dtat_availability_flags<<8);
+		
+		dtat_availability_flags |= 0xCC; //0b11001100
+		dtat_availability_flags = (dtat_availability_flags<<8);
+		
+		dtat_availability_flags |= 0xAA; //0b10101010
+		dtat_availability_flags = (dtat_availability_flags<<8);
+		
+		dtat_availability_flags |= 0x01; //0b00000001 //only speed is present
+		
+	}
+	
+	memcpy(dest_buffer, &dtat_availability_flags, sizeof(dtat_availability_flags));
+	
+	return true;
+	
 }
 
 /*Initialize SPIS simulation driver*/
