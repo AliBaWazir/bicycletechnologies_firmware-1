@@ -133,7 +133,7 @@ bool nrfReceive(uint8_t *buffIn, uint32_t len){
 	TM_USART_Puts(USART3, "nrfReceive Start\n");
 #endif
 	TRACE("nrfReceive Start\n");
-	uint8_t buffOut;
+	uint8_t buffOut = 0xFF;
 	while(1){
 		TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
 		TM_SPI_SendMulti(SPI2, &buffOut, buffIn, len);
