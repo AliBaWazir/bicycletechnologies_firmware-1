@@ -43,6 +43,7 @@
 #include "../hrs_app.h"
 #include "../spis_app.h"
 #include "../connection_manager_app.h"
+#include "../algorithm_app.h"
 
 
 #define NRF_LOG_MODULE_NAME "SHIFTY-MAIN"
