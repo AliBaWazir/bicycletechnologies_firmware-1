@@ -69,6 +69,8 @@ typedef struct {
 ClockChangesStruct clockChangesStruct;
 TM_RTC_t RTCD;
 
+int gearFrontCurrent[MAXIMUM_FRONT_GEARS+1];
+int gearBackCurrent[MAXIMUM_BACK_GEARS+1];
 int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
 int gearBackSettings[MAXIMUM_BACK_GEARS+1];
 char gearBuffer[5];
@@ -84,6 +86,7 @@ int oldMenuSelectedItem;
 
 int speedOutput;
 int cadenceOutput;
+int cadenceSetPointOutput;
 int distanceOutput;
 int heartrateOutput;
 int batteryOutput;
@@ -114,6 +117,8 @@ void button5Call();
 void button6Call();
 void button7Call();
 void handleMenuSwitches();
+
+void showCurrentGears();
 	
 static void createmainContainer(void)
 {
@@ -977,7 +982,7 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = containers[STATUS_CONTAINER];
-	formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontCurrent[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -987,27 +992,6 @@ static void createGearsStatus(void)
 	gwinSetFont(labels[4], gdispOpenFont("Georgia24"));
 	gwinSetText(labels[4], gearsStatus, TRUE);
 	
-	// Create label widget: gearsCurrentFrontGearLabel
-	wi.g.show = TRUE;
-	wi.g.x = 15;
-	wi.g.y = 335;
-	wi.g.width = 50;
-	wi.g.height = 50;
-	wi.g.parent = containers[STATUS_CONTAINER];
-	wi.customDraw = gwinLabelDrawJustifiedCenter;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	
-	for(int i = 1; i <= gearFrontSettings[0]; i++){
-		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[i]);
-		wi.text = gearBuffer;
-		gearsCurrentFrontGearLabel[i] = gwinLabelCreate(0, &wi);
-		gwinLabelSetBorder(gearsCurrentFrontGearLabel[i], TRUE);
-		gwinSetFont(gearsCurrentFrontGearLabel[i], gdispOpenFont("Georgia24"));
-		gwinSetText(gearsCurrentFrontGearLabel[i], gearBuffer, TRUE);
-		wi.g.x += 50;
-	}
-	
 	// Create label widget: labels[5]
 	wi.g.show = TRUE;
 	wi.g.x = 15;
@@ -1015,7 +999,7 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = containers[STATUS_CONTAINER];
-	formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackCurrent[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
@@ -1025,26 +1009,7 @@ static void createGearsStatus(void)
 	gwinSetFont(labels[5], gdispOpenFont("Georgia24"));
 	gwinSetText(labels[5], gearsStatus, TRUE);
 	
-	// Create label widget: labels[4]
-	wi.g.show = TRUE;
-	wi.g.x = 15;
-	wi.g.y = 425;
-	wi.g.width = 50;
-	wi.g.height = 50;
-	wi.g.parent = containers[STATUS_CONTAINER];
-	wi.customDraw = gwinLabelDrawJustifiedCenter;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	
-	for(int i = 1; i <= gearBackSettings[0]; i++){
-		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[i]);
-		wi.text = gearBuffer;
-		gearsCurrentBackGearLabel[i] = gwinLabelCreate(0, &wi);
-		gwinLabelSetBorder(gearsCurrentBackGearLabel[i], TRUE);
-		gwinSetFont(gearsCurrentBackGearLabel[i], gdispOpenFont("Georgia24"));
-		gwinSetText(gearsCurrentBackGearLabel[i], gearBuffer, TRUE);
-		wi.g.x += 50;
-	}
+	showCurrentGears();
 }
 
 static void createClockSettings(void)
@@ -1339,10 +1304,10 @@ static void destroyGearsStatus(void)
 	gwinDestroy(labels[1]);
 	gwinDestroy(labels[2]);
 	
-	for(int i = 1; i<= gearFrontSettings[0]; i++){
+	for(int i = 1; i<= gearFrontCurrent[0]; i++){
 		gwinDestroy(gearsCurrentFrontGearLabel[i]);
 	}
-	for(int i = 1; i<= gearBackSettings[0]; i++){
+	for(int i = 1; i<= gearBackCurrent[0]; i++){
 		gwinDestroy(gearsCurrentBackGearLabel[i]);
 	}
 	gwinDestroy(labels[3]);
@@ -1416,6 +1381,60 @@ void updateClockSelection(){
 	gwinSetStyle(clockChangesValue[previousClockSelection], &belize);
 	gwinSetStyle(clockChangesKey[clockChangeSelectedItem], &black);
 	gwinSetStyle(clockChangesValue[clockChangeSelectedItem], &black);
+}
+
+void showCurrentGears(){
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+		
+	// Create label widget: gearsCurrentFrontGearLabel
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 335;
+	wi.g.width = 50;
+	wi.g.height = 50;
+	wi.g.parent = containers[STATUS_CONTAINER];
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	
+	for(int i = 1; i <= gearFrontCurrent[0]; i++){
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontCurrent[i]);
+		wi.text = gearBuffer;
+		gearsCurrentFrontGearLabel[i] = gwinLabelCreate(0, &wi);
+		gwinLabelSetBorder(gearsCurrentFrontGearLabel[i], TRUE);
+		gwinSetFont(gearsCurrentFrontGearLabel[i], gdispOpenFont("Georgia24"));
+		gwinSetText(gearsCurrentFrontGearLabel[i], gearBuffer, TRUE);
+		wi.g.x += 50;
+	}
+	
+	// Create label widget
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 425;
+	wi.g.width = 50;
+	wi.g.height = 50;
+	wi.g.parent = containers[STATUS_CONTAINER];
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	
+	for(int i = 1; i <= gearBackCurrent[0]; i++){
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackCurrent[i]);
+		wi.text = gearBuffer;
+		gearsCurrentBackGearLabel[i] = gwinLabelCreate(0, &wi);
+		gwinLabelSetBorder(gearsCurrentBackGearLabel[i], TRUE);
+		gwinSetFont(gearsCurrentBackGearLabel[i], gdispOpenFont("Georgia24"));
+		gwinSetText(gearsCurrentBackGearLabel[i], gearBuffer, TRUE);
+		wi.g.x += 50;
+	}
+	
+	if(gwinGetVisible(containers[STATUS_CONTAINER])){
+		formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontCurrent[0]);
+		gwinSetText(labels[4], gearsStatus, TRUE);
+		formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackCurrent[0]);
+		gwinSetText(labels[5], gearsStatus, TRUE);
+	}
 }
 
 void guiShowPage(unsigned pageIndex)
@@ -1498,8 +1517,22 @@ void guiEventLoop(void)
 				distanceOutput = messageReceived->value;
 			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
 				heartrateOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
+				cadenceSetPointOutput = messageReceived->value;
 			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
 				batteryOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_GEAR_COUNT_MSG){
+				// Update Current Front Gears
+				gearFrontCurrent[0] = messageReceived->frontGears[0];
+				for(int count = 1; count <= gearFrontCurrent[0]; count++){
+					gearFrontCurrent[count] = messageReceived->frontGears[count];
+				}
+				// Update Current Back Gears
+				gearBackCurrent[0] = messageReceived->backGears[0];
+				for(int count = 1; count <= gearBackCurrent[0]; count++){
+					gearBackCurrent[count] = messageReceived->backGears[count];
+				}
+				showCurrentGears();
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -1729,6 +1762,16 @@ void button1Call(){
 		gwinSetText(labels[3], gearBuffer, TRUE);
 	}else if(gwinGetVisible(containers[STATUS_CONTAINER])){
 		// SUBMIT
+		message_t *messageSent;
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = SET_GEAR_COUNT_MSG;
+		for(int count = 0; count <= gearFrontSettings[0]; count++){
+			messageSent->frontGears[count] = gearFrontSettings[count];
+		}
+		for(int count = 0; count <= gearBackSettings[0]; count++){
+			messageSent->backGears[count] = gearBackSettings[count];
+		}
+		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 		TRACE("Submit Gears\n");
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Submit
@@ -1763,6 +1806,10 @@ void button2Call(){
 		gwinSetText(labels[3], gearBuffer, TRUE);
 	}else if(gwinGetVisible(containers[STATUS_CONTAINER])){
 		// READ
+		message_t *messageSent;
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = GET_GEAR_COUNT_MSG;
+		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 		TRACE("Read Gears\n");
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Selection Up

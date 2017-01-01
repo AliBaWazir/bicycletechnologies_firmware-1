@@ -3,39 +3,43 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "gui.h"
 
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
 	struct Availability{
 		uint8_t value[4];
 		uint32_t age;
-		uint8_t key;
 	}avail;
 	struct Speed{
 			uint8_t value;
 			uint32_t age;
-			uint8_t key;
 	}speed;
 	struct Cadence{
 			uint8_t value;
 			uint32_t age;
-			uint8_t key;
 	}cadence;
 	struct Distance{
 			uint8_t value;
 			uint32_t age;
-			uint8_t key;
 	}distance;
 	struct HeartRate{
 			uint8_t value;
 			uint32_t age;
-			uint8_t key;
 	}heartRate;
+	struct CadenceSetPoint{
+			uint8_t value;
+			uint32_t age;
+	}cadenceSetPoint;
 	struct Batt{
 			uint8_t value;
 			uint32_t age;
-			uint8_t key;
 	}batt;
+	struct Gears{
+			uint8_t frontGears[MAXIMUM_FRONT_GEARS+1];
+			uint8_t backGears[MAXIMUM_BACK_GEARS+1];
+			uint32_t age;
+	}gears;
 };
 
 /*

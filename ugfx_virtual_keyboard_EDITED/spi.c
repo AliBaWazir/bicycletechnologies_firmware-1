@@ -16,16 +16,21 @@ void nrfGetSpeed();
 void nrfGetCadence();
 void nrfGetDistance();
 void nrfGetHeartRate();
+void nrfGetCadenceSetPoint();
 void nrfGetBattery();
+void nrfGetGearSettings();
+void nrfSetGearSettings();
 
 uint8_t getSpeed();
 uint8_t getCadence();
 uint8_t getDistance();
 uint8_t getHeartRate();
+uint8_t getCadenceSetPoint();
 uint8_t getBattery();
 
 void sendResponseMSG(uint8_t msg_ID, uint8_t value);
-	
+void sendGearSettingsMSG();
+
 osMessageQDef(spiQueue, 16, message_t);
 osMessageQId  spiQueue;
 
@@ -52,9 +57,33 @@ void runSPI(){
 			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
 				TRACE("SPI: GET_HEARTRATE_MSG\n");
 				sendResponseMSG(GET_HEARTRATE_MSG, getHeartRate());
+			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
+				TRACE("SPI: GET_CADENCE_SETPOINT_MSG\n");
+				sendResponseMSG(GET_CADENCE_SETPOINT_MSG, getCadenceSetPoint());
 			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
 				TRACE("SPI: GET_BATTERY_MSG\n");
-				//sendResponseMSG(GET_BATTERY_MSG, getBattery());
+				sendResponseMSG(GET_BATTERY_MSG, getBattery());
+			}else if(messageReceived->msg_ID == GET_GEAR_COUNT_MSG){
+				TRACE("SPI: GET_GEAR_COUNT_MSG\n");
+				//nrfGetGearSettings();
+				/*spi_Data.gears.frontGears[0] = 4;
+				spi_Data.gears.backGears[0] = 9;
+				for(int x = 1; x <= 4; x++){
+					spi_Data.gears.frontGears[x] = x;
+				}
+				for(int x = 1; x <= 9; x++){
+					spi_Data.gears.backGears[x] = x;
+				}*/
+				sendGearSettingsMSG();
+			}else if(messageReceived->msg_ID == SET_GEAR_COUNT_MSG){
+				TRACE("SPI: SET_GEAR_COUNT_MSG\n");
+				for(int count = 0; count <= messageReceived->frontGears[0]; count++){
+					spi_Data.gears.frontGears[count] = messageReceived->frontGears[count];
+				}
+				for(int count = 0; count <= messageReceived->backGears[0]; count++){
+					spi_Data.gears.backGears[count] = messageReceived->backGears[count];
+				}
+				//nrfSetGearSettings();
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -69,20 +98,25 @@ void sendResponseMSG(uint8_t msg_ID, uint8_t value){
 	osMessagePut(guiQueue, (uint32_t)messageSent, 0);
 }
 
+void sendGearSettingsMSG(){
+	message_t *messageSent;
+	messageSent = (message_t*)osPoolAlloc(mpool);
+	messageSent->msg_ID = GET_GEAR_COUNT_MSG;
+	for(int count = 0; count <= spi_Data.gears.frontGears[0]; count++){
+		messageSent->frontGears[count] = spi_Data.gears.frontGears[count];
+	}
+	for(int count = 0; count <= spi_Data.gears.backGears[0]; count++){
+		messageSent->backGears[count] = spi_Data.gears.backGears[count];
+	}
+	osMessagePut(guiQueue, (uint32_t)messageSent, 0);
+}
+
 void nrfSetup(){
 	// Init Chip Select Pin
 	TM_GPIO_Init(GPIOH, GPIO_PIN_6, TM_GPIO_Mode_OUT, TM_GPIO_OType_PP, TM_GPIO_PuPd_NOPULL, TM_GPIO_Speed_Low);
 	//Set high (active low)
 	TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 
-	//Initialize Vars
-	spi_Data.avail.key = 0xDA;
-	spi_Data.speed.key = GET_SPEED_MSG;
-	spi_Data.cadence.key = GET_CADENCE_MSG;
-	spi_Data.distance.key = GET_DISTANCE_MSG;
-	spi_Data.heartRate.key = GET_HEARTRATE_MSG;
-	spi_Data.batt.key = GET_BATTERY_MSG;
-	
 	uint32_t time;
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
@@ -92,6 +126,7 @@ void nrfSetup(){
 	spi_Data.cadence.age = time;
 	spi_Data.distance.age = time;
 	spi_Data.heartRate.age = time;
+	spi_Data.cadenceSetPoint.age = time;
 	spi_Data.batt.age = time;
 	
 	/* Init SPI */
@@ -152,7 +187,8 @@ bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len){
 }
 	
 void nrfGetAvailability(){
-	nrfRequest(&spi_Data.avail.key, 1);
+	uint8_t key = GET_AVAILABILITY_MSG;
+	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.avail.value[0], 4);
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
@@ -160,7 +196,8 @@ void nrfGetAvailability(){
 }
 
 void nrfGetSpeed(){
-	nrfRequest(&spi_Data.speed.key, 1);
+	uint8_t key = GET_SPEED_MSG;
+	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.speed.value, 1);
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
@@ -168,7 +205,8 @@ void nrfGetSpeed(){
 }
 
 void nrfGetCadence(){
-	nrfRequest(&spi_Data.cadence.key, 1);
+	uint8_t key = GET_CADENCE_MSG;
+	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.cadence.value, 1);
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
@@ -176,7 +214,8 @@ void nrfGetCadence(){
 }
 
 void nrfGetDistance(){
-	nrfRequest(&spi_Data.distance.key, 1);
+	uint8_t key = GET_DISTANCE_MSG;
+	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.distance.value, 1);
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
@@ -184,20 +223,95 @@ void nrfGetDistance(){
 }
 
 void nrfGetHeartRate(){
-	nrfRequest(&spi_Data.heartRate.key, 1);
+	uint8_t key = GET_HEARTRATE_MSG;
+	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.heartRate.value, 1);
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
 	spi_Data.heartRate.age = TM_RTC_GetUnixTimeStamp(&RTCD);
 }
 
+void nrfGetCadenceSetPoint(){
+	uint8_t key = GET_CADENCE_SETPOINT_MSG;
+	nrfRequest(&key, 1);
+	nrfReceive(&spi_Data.cadenceSetPoint.value, 1);
+	TM_RTC_t RTCD;
+	getRTC(&RTCD, TM_RTC_Format_BIN);
+	spi_Data.batt.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+}
+
 void nrfGetBattery(){
-	nrfRequest(&spi_Data.batt.key, 1);
+	uint8_t key = GET_BATTERY_MSG;
+	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.batt.value, 1);
 	TM_RTC_t RTCD;
 	getRTC(&RTCD, TM_RTC_Format_BIN);
 	spi_Data.batt.age = TM_RTC_GetUnixTimeStamp(&RTCD);
 }
+
+
+void nrfGetGearSettings(){
+	uint8_t key = GET_GEAR_COUNT_MSG;
+	uint8_t temp[2];
+	nrfRequest(&key, 1);
+	nrfReceive(&temp[0], 2);
+	if((temp[0] > MAXIMUM_FRONT_GEARS) || (temp[1] > MAXIMUM_BACK_GEARS)){
+		return;
+	}
+	spi_Data.gears.frontGears[0] = temp[0];
+	spi_Data.gears.backGears[0] = temp[1];
+	
+	uint8_t command[3];
+	command[0] = GET_TEETH_COUNT_MSG;
+	// Front Gears
+	command[1] = 0xCA;
+	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
+		command[2] = count-1;
+		nrfRequest(&command[0], 3);
+		nrfReceive(&temp[0], 1);
+		spi_Data.gears.frontGears[count] = temp[0];
+	}
+	
+	// Back Gears
+	command[1] = 0xEE;
+	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
+		command[2] = count-1;
+		nrfRequest(&command[0], 3);
+		nrfReceive(&temp[0], 1);
+		spi_Data.gears.backGears[count] = temp[0];
+	}
+	
+	TM_RTC_t RTCD;
+	getRTC(&RTCD, TM_RTC_Format_BIN);
+	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+}
+
+void nrfSetGearSettings(){
+	uint8_t command[4];
+	command[0] = SET_GEAR_COUNT_MSG;
+	command[1] = spi_Data.gears.frontGears[0];
+	command[2] = spi_Data.gears.backGears[0];
+	nrfRequest(&command[0], 3);
+	
+	command[0] = SET_TEETH_COUNT_MSG;
+	command[1] = 0xCA;
+	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
+		command[2] = count-1;
+		command[3] = spi_Data.gears.frontGears[count];
+		nrfRequest(&command[0], 4);
+	}
+	command[1] = 0xEE;
+	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
+		command[2] = count-1;
+		command[3] = spi_Data.gears.backGears[count];
+		nrfRequest(&command[0], 4);
+	}
+	TM_RTC_t RTCD;
+	getRTC(&RTCD, TM_RTC_Format_BIN);
+	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+}
+
+
 
 uint8_t getSpeed(){
 	TM_RTC_t RTCD;
@@ -233,6 +347,15 @@ uint8_t getHeartRate(){
 		nrfGetSpeed();
 	}
 	return spi_Data.heartRate.value;
+}
+
+uint8_t getCadenceSetPoint(){
+	TM_RTC_t RTCD;
+	getRTC(&RTCD, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.cadenceSetPoint.age){
+		nrfGetCadenceSetPoint();
+	}
+	return spi_Data.batt.value;
 }
 
 uint8_t getBattery(){
