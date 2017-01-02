@@ -507,6 +507,11 @@
               <FileType>5</FileType>
               <FilePath>.\msg.h</FilePath>
             </File>
+            <File>
+              <FileName>tm_stm32_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\tm_stm32_exti.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

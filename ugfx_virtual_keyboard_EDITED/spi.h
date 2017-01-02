@@ -5,6 +5,20 @@
 #include <stdint.h>
 #include "gui.h"
 
+#define FLAG_SPEED			0x01
+#define FLAG_CADENCE 		0x02
+#define FLAG_DISTANCE		0x04
+#define FLAG_HEARTRATE	0x08
+#define FLAG_BATTERY		0x10
+
+#define FLAG_DEV_COUNT		0x01
+#define	FLAG_PAIRED_DEV		0x02
+#define FLAG_CONN_DEV			0x04
+#define FLAG_CSC_DEV_NAME	0x08
+#define FLAG_HR_DEV_NAME	0x10
+#define FLAG_PHO_DEV_NAME	0x20
+
+
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
 	struct Availability{

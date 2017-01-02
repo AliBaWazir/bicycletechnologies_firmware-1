@@ -4,8 +4,12 @@
 #include "tm_stm32_delay.h"
 #include "msg.h"
 
+#include "tm_stm32_exti.h"
+
 struct SPI_data spi_Data;
 char spiOutput[70];
+
+TM_RTC_t RTCD_SPI;
 
 bool nrfRequest(uint8_t *buffOut, uint32_t len);
 bool nrfReceive(uint8_t *buffIn, uint32_t len);
@@ -45,7 +49,10 @@ void runSPI(){
 		osEvent evt = osMessageGet(spiQueue, osWaitForever);
 		if (evt.status == osEventMessage) {
 			messageReceived = (message_t*)evt.value.p;
-			if(messageReceived->msg_ID == GET_SPEED_MSG){
+			if(messageReceived->msg_ID == GET_AVAILABILITY_MSG){
+				TRACE("SPI: GET_AVAILABILITY_MSG\n");
+				nrfGetAvailability();
+			}else if(messageReceived->msg_ID == GET_SPEED_MSG){
 				TRACE("SPI: GET_SPEED_MSG\n");
 				sendResponseMSG(GET_SPEED_MSG, getSpeed());
 			}else if(messageReceived->msg_ID == GET_CADENCE_MSG){
@@ -118,9 +125,8 @@ void nrfSetup(){
 	TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 
 	uint32_t time;
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	time = TM_RTC_GetUnixTimeStamp(&RTCD);
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	time = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 	spi_Data.avail.age = time;
 	spi_Data.speed.age = time;
 	spi_Data.cadence.age = time;
@@ -131,6 +137,22 @@ void nrfSetup(){
 	
 	/* Init SPI */
 	TM_SPI_Init(SPI2, TM_SPI_PinsPack_Custom);
+	
+	// Enabling Interrupts from NRF
+	if (TM_EXTI_Attach(GPIOA, GPIO_Pin_7, TM_EXTI_Trigger_Rising) == TM_EXTI_Result_Ok) {
+		TRACE("NRF Interrupts Are Enabled\n");
+	}
+}
+
+void TM_EXTI_Handler(uint16_t GPIO_Pin) {
+	/* Handle external line 7 interrupts */
+	if (GPIO_Pin == GPIO_Pin_7) {
+		TRACE("SPI INTERRUPT\n");
+		message_t *messageSent;
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = GET_AVAILABILITY_MSG;
+		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+	}
 }
 
 /* Custom SPI initialization */
@@ -190,63 +212,66 @@ void nrfGetAvailability(){
 	uint8_t key = GET_AVAILABILITY_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.avail.value[0], 4);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.avail.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.avail.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	if((spi_Data.avail.value[0] & FLAG_SPEED) != 0){
+		nrfGetSpeed();
+	}
+	if((spi_Data.avail.value[0] & FLAG_CADENCE) != 0){
+		nrfGetCadence();
+	}
+	if((spi_Data.avail.value[0] & FLAG_DISTANCE) != 0){
+		nrfGetDistance();
+	}
+	if((spi_Data.avail.value[0] & FLAG_HEARTRATE) != 0){
+		nrfGetHeartRate();
+	}
+	if((spi_Data.avail.value[0] & FLAG_BATTERY) != 0){
+		nrfGetBattery();
+	}
 }
 
 void nrfGetSpeed(){
 	uint8_t key = GET_SPEED_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.speed.value, 1);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.speed.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	spi_Data.speed.age = spi_Data.avail.age;
 }
 
 void nrfGetCadence(){
 	uint8_t key = GET_CADENCE_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.cadence.value, 1);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.cadence.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	spi_Data.cadence.age = spi_Data.avail.age;
 }
 
 void nrfGetDistance(){
 	uint8_t key = GET_DISTANCE_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.distance.value, 1);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.distance.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	spi_Data.distance.age = spi_Data.avail.age;
 }
 
 void nrfGetHeartRate(){
 	uint8_t key = GET_HEARTRATE_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.heartRate.value, 1);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.heartRate.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	spi_Data.heartRate.age = spi_Data.avail.age;
 }
 
 void nrfGetCadenceSetPoint(){
 	uint8_t key = GET_CADENCE_SETPOINT_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.cadenceSetPoint.value, 1);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.batt.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.batt.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
 
 void nrfGetBattery(){
 	uint8_t key = GET_BATTERY_MSG;
 	nrfRequest(&key, 1);
 	nrfReceive(&spi_Data.batt.value, 1);
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.batt.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	spi_Data.batt.age = spi_Data.avail.age;
 }
 
 
@@ -280,10 +305,8 @@ void nrfGetGearSettings(){
 		nrfReceive(&temp[0], 1);
 		spi_Data.gears.backGears[count] = temp[0];
 	}
-	
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
 
 void nrfSetGearSettings(){
@@ -306,65 +329,69 @@ void nrfSetGearSettings(){
 		command[3] = spi_Data.gears.backGears[count];
 		nrfRequest(&command[0], 4);
 	}
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD);
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
 
 
 
 uint8_t getSpeed(){
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.speed.age){
-		nrfGetSpeed();
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&rtcd)- 120) < spi_Data.speed.age){
+		return spi_Data.speed.value;
+	}else{
+		return NULL;
 	}
-	return spi_Data.speed.value;
 }
 
 uint8_t getCadence(){
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.cadence.age){
-		nrfGetSpeed();
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&rtcd)- 120) < spi_Data.cadence.age){
+		return spi_Data.cadence.value;
+	}else{
+		return NULL;
 	}
-	return spi_Data.cadence.value;
 }
 
 uint8_t getDistance(){
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.distance.age){
-		nrfGetSpeed();
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&rtcd)- 120) < spi_Data.distance.age){
+		return spi_Data.distance.value;
+	}else{
+		return NULL;
 	}
-	return spi_Data.distance.value;
 }
 
 uint8_t getHeartRate(){
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.heartRate.age){
-		nrfGetSpeed();
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&rtcd)- 120) < spi_Data.heartRate.age){
+		return spi_Data.heartRate.value;
+	}else{
+		return NULL;
 	}
-	return spi_Data.heartRate.value;
 }
 
 uint8_t getCadenceSetPoint(){
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.cadenceSetPoint.age){
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&rtcd)- 120) > spi_Data.cadenceSetPoint.age){
 		nrfGetCadenceSetPoint();
 	}
 	return spi_Data.batt.value;
 }
 
 uint8_t getBattery(){
-	TM_RTC_t RTCD;
-	getRTC(&RTCD, TM_RTC_Format_BIN);
-	if((TM_RTC_GetUnixTimeStamp(&RTCD)- 120) > spi_Data.batt.age){
-		nrfGetSpeed();
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	if((TM_RTC_GetUnixTimeStamp(&rtcd)- 120) < spi_Data.batt.age){
+		return spi_Data.batt.value;
+	}else{
+		return NULL;
 	}
-	return spi_Data.batt.value;
 }
 
 /*
