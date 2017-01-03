@@ -60,57 +60,80 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
     {
         case FDS_EVT_WRITE:
         case FDS_EVT_UPDATE:
+			//check if this event concerns application FDS
             if ( (p_fds_evt->write.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
                 || (p_fds_evt->write.record_key == CADENCE_SET_POINT_REC_KEY)
 			    || (p_fds_evt->write.record_key == BIKE_CONFIG_DATA_REC_KEY))
             {
-
-                if (p_fds_evt->id == FDS_EVT_WRITE)
-                {
+				
+                if (p_fds_evt->id == FDS_EVT_WRITE){
+					if(p_fds_evt->result == FDS_SUCCESS){
+						NRF_LOG_DEBUG("applicationFdsApp_evt_handler: writing record with key= %d was successful \r\n",
+									   p_fds_evt->write.record_key);
+					} else{
+						NRF_LOG_ERROR("applicationFdsApp_evt_handler: writing record with key= %d failed with result= \r\n", 
+									   p_fds_evt->write.record_key,
+									   p_fds_evt->result);
+					}
+					
+                } else{
+					if(p_fds_evt->result == FDS_SUCCESS){
+						NRF_LOG_DEBUG("applicationFdsApp_evt_handler: updating record with key= %d was successful \r\n",
+									   p_fds_evt->write.record_key);
+					} else{
+						NRF_LOG_ERROR("applicationFdsApp_evt_handler: updating record with key= %d failed with result= \r\n", 
+									   p_fds_evt->write.record_key,
+									   p_fds_evt->result);
+					}
                 }
-                else
-                {
-\
-                }
+				
             }
-            break;
+        break;
 
         case FDS_EVT_DEL_RECORD:
-            if ( (p_fds_evt->write.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
-                || (p_fds_evt->write.record_key == CADENCE_SET_POINT_REC_KEY)
-			    || (p_fds_evt->write.record_key == BIKE_CONFIG_DATA_REC_KEY))
+            if ( (p_fds_evt->del.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
+                || (p_fds_evt->del.record_key == CADENCE_SET_POINT_REC_KEY)
+			    || (p_fds_evt->del.record_key == BIKE_CONFIG_DATA_REC_KEY))
             {
 
+				if(p_fds_evt->result == FDS_SUCCESS){
+					NRF_LOG_DEBUG("applicationFdsApp_evt_handler: deleting record with key= %d was successful \r\n",
+								   p_fds_evt->del.record_key);
+			    } else{
+				    NRF_LOG_ERROR("applicationFdsApp_evt_handler: deleting record with key= %d failed with result= \r\n", 
+								   p_fds_evt->del.record_key,
+								   p_fds_evt->result);
+			    }
+
             }
-            break;
+        break;
 
         case FDS_EVT_DEL_FILE:
+        {
+			if ((p_fds_evt->del.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
+                 && (p_fds_evt->del.record_key == FDS_RECORD_KEY_DIRTY))
             {
-                if ((p_fds_evt->write.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
-                    && (p_fds_evt->del.record_key == FDS_RECORD_KEY_DIRTY))
-                {
 
-                    if (p_fds_evt->result == FDS_SUCCESS)
-                    {
+				if (p_fds_evt->result == FDS_SUCCESS){
+					NRF_LOG_DEBUG("applicationFdsApp_evt_handler: deleting file with ID= %d was successful \r\n",
+								   p_fds_evt->del.file_id);
 
-                    }
-                    else
-                    {
-                    }
-
-
-
-
+                }else {
+					NRF_LOG_ERROR("applicationFdsApp_evt_handler: deleting file with ID= %d failed with result= \r\n", 
+					p_fds_evt->del.file_id,
+					p_fds_evt->result);
                 }
+
             }
-            break;
+        }
+        break;
 
         case FDS_EVT_GC:
 
-            break;
+        break;
 
         default:
-            break;
+			break;
     }
 
 	/*
