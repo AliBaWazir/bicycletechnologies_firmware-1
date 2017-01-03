@@ -34,7 +34,7 @@
 ***********************************************************************************************/
 #define USER_DEFINED_PROPERTIES_FILE_ID    0x1000
 #define CADENCE_SET_POINT_REC_KEY          0x1000
-#define BIKE_CONFIG_DATA_REC_KEY           0x2000
+#define BIKE_CONFIG_DATA_REC_KEY           0x1010
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -45,8 +45,8 @@
 * STATIC VARIABLES
 ***********************************************************************************************/
 static bool m_app_fds_initialized    = false;
-static bool m_app_fds_delete_queued  = false;
-static bool m_app_fds_delete_ongoing = false;
+//static bool m_app_fds_delete_queued  = false;
+//static bool m_app_fds_delete_ongoing = false;
 
 
 /**********************************************************************************************
@@ -175,11 +175,12 @@ static ret_code_t applicationFdsApp_data_find (uint16_t file_id,
 ***********************************************************************************************/
 
 /*This function returns false if no record is find in FDS for the specidied data_type */
-bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, uint8_t bytes_to_read, const void* dest_p){
+bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, const void* dest_p){
 	
 	bool       ret_code          = true;
 	bool       record_found      = false;
 	uint16_t   record_key        = 0;
+	uint8_t    bytes_to_read     = 0;
 	//uint8_t    words_to_read    = 0;
 	//uint8_t    remainder         = 0;
 	
@@ -202,10 +203,12 @@ bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, uint8_
 		case USER_DEFINED_CADENCE_SETPOINT:
 		case USER_DEFINED_BIKE_CONFIG_DATA:
 		{
-			if(data_type== USER_DEFINED_CADENCE_SETPOINT){
-				record_key= CADENCE_SET_POINT_REC_KEY;
+			if(data_type == USER_DEFINED_CADENCE_SETPOINT){
+				record_key = CADENCE_SET_POINT_REC_KEY;
+				bytes_to_read = sizeof(uint32_t);
 			} else{
 				record_key= BIKE_CONFIG_DATA_REC_KEY;
+				bytes_to_read = sizeof(user_defined_bike_config_data_t);
 			}
 			while (fds_record_find_by_key(record_key, &record_desc, &ftok) == FDS_SUCCESS){
 						
@@ -237,23 +240,17 @@ bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, uint8_
 }
 
 
-bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8_t bytes_to_write, uint8_t* source_p){
+bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8_t* source_p){
 	
 	bool       ret_code          = true;
 	ret_code_t ret               = FDS_SUCCESS;
-	uint8_t    words_to_write    = 0;
+	uint8_t    bytes_to_write    = 0; //number of bytes to write
+	uint8_t    words_to_write    = 0; //number of words to write in FDS. a word is 4 bytes
 	uint8_t    remainder         = 0;
 	
 	fds_record_t        record;
 	fds_record_desc_t   record_desc;
 	fds_record_chunk_t  record_chunk;
-		
-	remainder= bytes_to_write%sizeof(uint32_t);
-	if (remainder != 0){
-		words_to_write= bytes_to_write/sizeof(uint32_t)+1;
-	} else{
-		words_to_write= bytes_to_write/sizeof(uint32_t);
-	}
 	
 	if(source_p == NULL){
 		NRF_LOG_ERROR("applicationFdsApp_fds_store: source is NULL\r\n");
@@ -266,15 +263,24 @@ bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8
 		{
 			
 			// Set up data.
+			if(data_type == USER_DEFINED_CADENCE_SETPOINT){
+				record.key = CADENCE_SET_POINT_REC_KEY;
+				bytes_to_write = sizeof(uint32_t);
+			} else{
+				record.key = BIKE_CONFIG_DATA_REC_KEY;
+				bytes_to_write = sizeof(user_defined_bike_config_data_t);
+			}
+			//calculate how many words to write
+			remainder= bytes_to_write%sizeof(uint32_t);
+			if (remainder != 0){
+				words_to_write= bytes_to_write/sizeof(uint32_t)+1;
+			} else{
+				words_to_write= bytes_to_write/sizeof(uint32_t);
+			}
 			record_chunk.p_data         = source_p;
 			record_chunk.length_words   = words_to_write;
 			// Set up record.
 			record.file_id = USER_DEFINED_PROPERTIES_FILE_ID;
-			if(data_type == USER_DEFINED_CADENCE_SETPOINT){
-				record.key = CADENCE_SET_POINT_REC_KEY;
-			} else{
-				record.key = BIKE_CONFIG_DATA_REC_KEY;
-			}
 			record.data.p_chunks = &record_chunk;
 			record.data.num_chunks = 1;
 			
