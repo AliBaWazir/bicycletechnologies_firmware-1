@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/Arjun Birdi/Documents/F4-Board/Inc
+HeaderPath=C:/Users/Arjun Birdi/Documents/bicycletechnologies_firmware/STM32F0/F4-Board/Inc
 HeaderFiles=stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;
-SourcePath=C:/Users/Arjun Birdi/Documents/F4-Board/Src
+SourcePath=C:/Users/Arjun Birdi/Documents/bicycletechnologies_firmware/STM32F0/F4-Board/Src
 SourceFiles=stm32f4xx_it.h;stm32f4xx_hal_conf.h;main.h;stm32f4xx_it.c;stm32f4xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

@@ -99,7 +99,7 @@ int main(void)
 				Error_Handler();    
 			}
 		
-		if(HAL_I2C_Slave_Receive_IT(&hi2c1, &data, 1) != HAL_OK){}
+		while(HAL_I2C_Slave_Receive_IT(&hi2c1, &data, 1) != HAL_OK){}
 		
 		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){} 
 			
@@ -109,13 +109,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  	  switch (data){
+    switch (data){
         			case 0xF:
         				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
         				HAL_Delay(1000);
         			  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-        				HAL_Delay(200);
-								data = 0;
+        				HAL_Delay(1000);
         				break;
         
         			case 0xA:
@@ -125,11 +124,13 @@ int main(void)
         				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
         				HAL_Delay(125);
         			}
-								data = 0;
-        				HAL_Delay(200);
+        				HAL_Delay(1000);
         				break;
-        		}		
-	}
+        		}
+
+  }
+  /* USER CODE END 3 */
+
 }
 
 /** System Clock Configuration
@@ -199,7 +200,7 @@ static void MX_I2C1_Init(void)
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
   hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_ENABLE;
   hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
   if (HAL_I2C_Init(&hi2c1) != HAL_OK)
   {
@@ -249,18 +250,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 }
 
