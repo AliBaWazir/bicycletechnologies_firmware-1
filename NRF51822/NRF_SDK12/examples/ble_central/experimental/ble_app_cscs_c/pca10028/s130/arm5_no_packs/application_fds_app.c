@@ -47,8 +47,7 @@
 static bool m_app_fds_initialized    = false;
 //static bool m_app_fds_delete_queued  = false;
 //static bool m_app_fds_delete_ongoing = false;
-
-
+ 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -74,6 +73,27 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
 						NRF_LOG_ERROR("applicationFdsApp_evt_handler: writing record with key= %d failed with result= \r\n", 
 									   p_fds_evt->write.record_key,
 									   p_fds_evt->result);
+					}
+					
+					//read the written/updated data
+					switch(p_fds_evt->write.record_key){
+						case CADENCE_SET_POINT_REC_KEY:
+							//read back the written value
+							if(!applicationFdsApp_fds_read(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*) &cadence_setpoint_rpm)){
+								NRF_LOG_ERROR("applicationFdsApp_evt_handler: applicationFdsApp_fds_read() failed to read cadence_setpoint_rpm\r\n");
+							}
+						break;
+						
+						case BIKE_CONFIG_DATA_REC_KEY:
+							//read back the written value
+							if(!applicationFdsApp_fds_read(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*) &user_defined_bike_config_data)){
+								NRF_LOG_ERROR("applicationFdsApp_evt_handler: applicationFdsApp_fds_read() failed to read bike config\r\n");
+							}
+						break;
+						
+						default:
+							NRF_LOG_ERROR("applicationFdsApp_evt_handler: called with unrecognized record key= %d\r\n", p_fds_evt->write.record_key);
+						break;
 					}
 					
                 } else{

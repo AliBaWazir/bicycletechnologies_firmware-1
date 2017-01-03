@@ -45,6 +45,8 @@ typedef enum{
 	USER_DEFINED_BIKE_CONFIG_DATA
 } user_defined_properties_type_e;
 
+extern uint32_t cadence_setpoint_rpm;
+extern user_defined_bike_config_data_t  user_defined_bike_config_data;
 
 /* not needed
 typedef enum{
