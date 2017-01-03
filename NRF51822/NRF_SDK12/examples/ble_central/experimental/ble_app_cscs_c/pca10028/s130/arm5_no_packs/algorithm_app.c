@@ -40,8 +40,9 @@
 * TYPE DEFINITIONS
 ***********************************************************************************************/
 typedef enum{
-	BIKE_CONFIG_DATA_UPDATE,
-	CADENCE_SETPOINT_UPDATE
+	CADENCE_SETPOINT_UPDATE,
+	BIKE_CONFIG_DATA_UPDATE
+	
 } algorithmApp_event_e;
 
 /**********************************************************************************************
@@ -59,9 +60,22 @@ static bool  gear_level_locked = false;                     /*TODO: this boolean
 ***********************************************************************************************/
 static void algorithmApp_fire_event (algorithmApp_event_e event){
 	switch (event){
+		case CADENCE_SETPOINT_UPDATE:
+			//store the new cadence_setpoint_rpm value in flash storage
+			if(!applicationFdsApp_fds_store(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*)&cadence_setpoint_rpm)){
+				NRF_LOG_ERROR("algorithmApp_fire_event: applicationFdsApp_fds_store() failed to write cadence_setpoint_rpm\r\n");
+			} else{
+				//data will be read in the callback
+			}
+		break;
+		
 		case BIKE_CONFIG_DATA_UPDATE:
-			//update user defined properties stored in ROM
-			/*TODO: implement encoding function to encode user_defined_properties serially*/
+			//store the new user_defined_bike_config_data struct in flash storage
+			if(!applicationFdsApp_fds_store(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*)&user_defined_bike_config_data)){
+				NRF_LOG_ERROR("algorithmApp_fire_event: applicationFdsApp_fds_store() failed to write bike config\r\n");
+			} else{
+				//data will be read in the callback
+			}
 		break;
 		
 		default:
@@ -111,8 +125,8 @@ uint8_t algorithmApp_get_teeth_count(uint8_t gear_type, uint8_t gear_index){
 
 /************************* SETTERS ****************************/
 void algorithmApp_set_cadence_setpoint(uint8_t new_cadence_setpoint){
-	cadence_setpoint_rpm = new_cadence_setpoint;
 	
+	cadence_setpoint_rpm = new_cadence_setpoint;
 	//fire update event to encode updated data in ROM
 	algorithmApp_fire_event(CADENCE_SETPOINT_UPDATE);
 	
@@ -126,10 +140,11 @@ void algorithmApp_set_gear_level_locked(){
 }
 
 void algorithmApp_set_wheel_diameter (uint8_t new_wheel_diameter){
-	user_defined_bike_config_data.wheel_diameter_cm = new_wheel_diameter;
 	
+	user_defined_bike_config_data.wheel_diameter_cm = new_wheel_diameter;
 	//fire update event to encode updated data in ROM
 	algorithmApp_fire_event(BIKE_CONFIG_DATA_UPDATE);
+	
 	NRF_LOG_INFO("algorithmApp_set_wheel_diameter: wheel_diameter is changed to= %d .\r\n",new_wheel_diameter);
 }
 
@@ -146,6 +161,7 @@ bool algorithmApp_set_gear_count(uint8_t crank_gears_count, uint8_t wheel_gears_
 	//fire update event to encode updated data in ROM
 	algorithmApp_fire_event(BIKE_CONFIG_DATA_UPDATE);
 	NRF_LOG_INFO("gear_count is changed to crank_gears_count= %d, wheel_gears_count= %d\r\n",crank_gears_count, wheel_gears_count);
+	
 	return true;
 }
 
