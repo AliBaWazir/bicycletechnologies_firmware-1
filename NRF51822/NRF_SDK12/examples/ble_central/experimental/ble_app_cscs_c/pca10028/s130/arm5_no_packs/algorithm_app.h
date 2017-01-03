@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "drivers_commons.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

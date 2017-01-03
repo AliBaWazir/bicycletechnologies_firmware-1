@@ -33,14 +33,18 @@ typedef enum {
 * ROM STORED DATA
 ***********************************************************************************************/
 typedef struct{
-	uint8_t  cadence_setpoint_rpm;
-	uint8_t  wheel_diameter_cm;
-	uint8_t  crank_gears_count;
-	uint8_t  wheel_gears_count;
-	uint8_t  crank_gears_teeth_count [MAX_GEARS_COUNT];
-	uint8_t  wheel_gears_teeth_count [MAX_GEARS_COUNT];
-	
-} user_defined_properties_t;
+	uint32_t  wheel_diameter_cm;
+	uint32_t  crank_gears_count;
+	uint32_t  wheel_gears_count;
+	uint32_t  crank_gears_teeth_count [MAX_GEARS_COUNT];
+	uint32_t  wheel_gears_teeth_count [MAX_GEARS_COUNT];
+} user_defined_bike_config_data_t;
+
+typedef enum{
+	USER_DEFINED_CADENCE_SETPOINT,
+	USER_DEFINED_BIKE_CONFIG_DATA
+} user_defined_properties_type_e;
+
 
 /* not needed
 typedef enum{
