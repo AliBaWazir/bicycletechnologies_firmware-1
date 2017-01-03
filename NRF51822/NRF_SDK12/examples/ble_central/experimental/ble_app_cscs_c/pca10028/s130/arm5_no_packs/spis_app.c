@@ -121,7 +121,7 @@ static volatile bool spis_xfer_done = true; /**< Flag used to indicate that SPIS
 
 uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
 
-static uint32_t dtat_availability_flags = 0x00000000; 
+static uint32_t data_availability_flags = 0x00000000; 
 
 
 
@@ -153,7 +153,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					spisSimDriver_get_data_availability_flags(m_tx_buf);
 				} else {
 					//memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
-					memcpy(m_tx_buf, &dtat_availability_flags, sizeof(dtat_availability_flags));
+					memcpy(m_tx_buf, &data_availability_flags, sizeof(data_availability_flags));
 				}
 
 			break;
@@ -280,9 +280,9 @@ static void spisApp_config(void){
 void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool data_available){
 	
 	if (data_available){
-		dtat_availability_flags|= (flag);
+		data_availability_flags|= (flag);
 	} else{
-		dtat_availability_flags&= ~(flag);
+		data_availability_flags&= ~(flag);
 	}
 }
 
