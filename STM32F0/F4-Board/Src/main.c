@@ -40,7 +40,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
-
+uint8_t data;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -51,6 +51,7 @@ void SystemClock_Config(void);
 void Error_Handler(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_NVIC_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -80,28 +81,30 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
 
+  /* Initialize interrupts */
+  MX_NVIC_Init();
+
   /* USER CODE BEGIN 2 */
 		
 		//uint8_t data[2];
-		uint8_t data;
+		
+
 		
 		for(int i = 0; i < 5; i++){
-			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-			HAL_Delay(500);
-			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-			HAL_Delay(500);
-		}
-		HAL_Delay(1000);
-
-		if(HAL_I2C_Init(&hi2c1) != HAL_OK)
-			{
-				/* Initialization Error */
-				Error_Handler();    
-			}
+      			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+      			HAL_Delay(500);
+      			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+      			HAL_Delay(500);
+      		}
+      		HAL_Delay(1000);
+					
+	while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
+  {
+  }
 		
-		while(HAL_I2C_Slave_Receive_IT(&hi2c1, &data, 1) != HAL_OK){}
-		
-		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){} 
+	while(HAL_I2C_Slave_Receive_IT(&hi2c1, &data , 1) != HAL_OK){
+		Error_Handler();
+	}
 			
   /* USER CODE END 2 */
 
@@ -109,28 +112,41 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    switch (data){
-        			case 0xF:
-        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-        				HAL_Delay(1000);
-        			  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-        				HAL_Delay(1000);
-        				break;
-        
-        			case 0xA:
-        				for(int i = 0; i < 5; i++){
-        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-        				HAL_Delay(125);
-        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-        				HAL_Delay(125);
-        			}
-        				HAL_Delay(1000);
-        				break;
-        		}
-
+	 HAL_Delay(10000);
   }
   /* USER CODE END 3 */
 
+}
+
+void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
+{
+  switch (data){
+        			case 0xF:
+        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+								data = 0;
+								while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
+								{
+								}
+		
+								while(HAL_I2C_Slave_Receive_IT(hi2c1, &data , 1) != HAL_OK){
+									Error_Handler();
+								}
+        				break;
+        
+        			case 0xA:
+        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+        				data = 0;
+								
+								while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
+								{
+								}
+		
+								while(HAL_I2C_Slave_Receive_IT(hi2c1, &data , 1) != HAL_OK){
+									Error_Handler();
+								}
+							
+        				break;
+        		}
 }
 
 /** System Clock Configuration
@@ -187,6 +203,21 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+/** NVIC Configuration
+*/
+static void MX_NVIC_Init(void)
+{
+  /* RCC_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(RCC_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(RCC_IRQn);
+  /* I2C1_EV_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(I2C1_EV_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
+  /* I2C1_ER_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(I2C1_ER_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
 }
 
 /* I2C1 init function */

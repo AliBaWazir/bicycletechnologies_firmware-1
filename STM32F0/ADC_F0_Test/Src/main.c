@@ -105,9 +105,9 @@ int main(void)
 		
 		
 		while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data1, 1, 10) != HAL_OK){}
-		HAL_Delay(2000);			
+		HAL_Delay(500);			
 		while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data2, 1, 10) != HAL_OK){}
-		HAL_Delay(2000);
+		HAL_Delay(500);
 	
   }
   /* USER CODE END 3 */
