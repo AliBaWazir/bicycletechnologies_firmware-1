@@ -480,6 +480,11 @@
               <FileType>1</FileType>
               <FilePath>.\hrs_app.c</FilePath>
             </File>
+            <File>
+              <FileName>application_fds_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application_fds_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3301,6 +3306,11 @@
               <FileName>hrs_app.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\hrs_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>application_fds_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application_fds_app.c</FilePath>
             </File>
           </Files>
         </Group>
