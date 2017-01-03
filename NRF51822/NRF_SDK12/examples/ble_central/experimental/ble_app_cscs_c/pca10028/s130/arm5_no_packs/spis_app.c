@@ -308,17 +308,14 @@ bool spisApp_init(void)
 }
 void spisApp_spi_wait(){
     
-
+    if (spis_xfer_done){
+	//set buffers
+        memset(m_rx_buf, 0, m_length);
+        spis_xfer_done = false;
+        APP_ERROR_CHECK(nrf_drv_spis_buffers_set(&spis, m_tx_buf, m_length, m_rx_buf, m_length));
+    }
         
-        if (spis_xfer_done){
-		//set buffers
-            memset(m_rx_buf, 0, m_length);
-            spis_xfer_done = false;
-            APP_ERROR_CHECK(nrf_drv_spis_buffers_set(&spis, m_tx_buf, m_length, m_rx_buf, m_length));
-        }
-        
-        while (!spis_xfer_done)
-        {
-            __WFE();//wait for event (sleep)
-        }
+    while (!spis_xfer_done){
+        __WFE();//wait for event (sleep)
+    }
 }
