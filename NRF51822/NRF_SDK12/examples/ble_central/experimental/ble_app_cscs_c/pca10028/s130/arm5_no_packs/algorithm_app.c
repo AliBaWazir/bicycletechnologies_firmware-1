@@ -176,28 +176,73 @@ bool algorithmApp_init(void){
 		NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_init() failed\r\n");
 		ret_code= false;
 	} else{
+		
 		//read cadence setpoint from FDS
-		if(!applicationFdsApp_fds_read(USER_DEFINED_CADENCE_SETPOINT, sizeof(cadence_setpoint_rpm), (uint8_t*) &cadence_setpoint_rpm)){
+		if(!applicationFdsApp_fds_read(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*) &cadence_setpoint_rpm)){
 			
-			NRF_LOG_WARNING("algorithmApp_init: applicationFdsApp_fds_read() failed. Default value will be written\r\n");
+			NRF_LOG_WARNING("algorithmApp_init: applicationFdsApp_fds_read() failed. Default cadenceSetPoint value will be written\r\n");
+			
 			/*TODO: figure out a way to ask user to enter cadence setpoint for fisrt time use.*/
 			
-			//if cadence setpoint is not already set, set it to default value
+			//For now, if cadence setpoint is not already set, set it to default value
 			uint32_t cadence_setpoint_value = DEFAULT_CADENCE_SETPOINT_RPM;
-			if(!applicationFdsApp_fds_store(USER_DEFINED_CADENCE_SETPOINT, sizeof(cadence_setpoint_rpm), (uint8_t*)&cadence_setpoint_value)){
-				NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_write() failed\r\n");
+			if(!applicationFdsApp_fds_store(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*)&cadence_setpoint_value)){
+				NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_store() failed to write cadence_setpoint_rpm\r\n");
 				ret_code= false;
 			} else{
-				//read back the written value
-				if(!applicationFdsApp_fds_read(USER_DEFINED_CADENCE_SETPOINT, sizeof(cadence_setpoint_rpm), (uint8_t*) &cadence_setpoint_rpm)){
-					NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_read() failed\r\n");
+				//data will be read in the callback
+				/*read back the written value
+				if(!applicationFdsApp_fds_read(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*) &cadence_setpoint_rpm)){
+					NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_read() failed to read cadence_setpoint_rpm\r\n");
 					ret_code= false;
 				}
+				*/
 			}
 			
 		} else{
-			NRF_LOG_INFO("algorithmApp_init: cadence setpoint=%d is retrieved from flash sata storage\r\n", cadence_setpoint_rpm);
+			NRF_LOG_INFO("algorithmApp_init: cadence setpoint=%d is retrieved from flash data storage\r\n", cadence_setpoint_rpm);
 		}
+		
+		if(ret_code){
+
+			//read bike configration data from FDS
+			if(!applicationFdsApp_fds_read(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*) &user_defined_bike_config_data)){
+				NRF_LOG_WARNING("algorithmApp_init: applicationFdsApp_fds_read() failed. Bike default config will be written\r\n");
+				
+				/*TODO: figure out a way to ask user to enter bike configuration for fisrt time use.*/
+				
+				//For now, if cadence setpoint is not already set, set it to default value
+				user_defined_bike_config_data_t default_config;
+				memset (&default_config, 0, sizeof(user_defined_bike_config_data_t));
+				default_config.wheel_diameter_cm= 72;
+				default_config.crank_gears_count= 1;
+				default_config.crank_gears_teeth_count[0]= 32;
+				default_config.wheel_gears_count= 8;
+				default_config.wheel_gears_teeth_count[0]= 11;
+			    default_config.wheel_gears_teeth_count[1]= 13;
+				default_config.wheel_gears_teeth_count[2]= 15;
+				default_config.wheel_gears_teeth_count[3]= 18;
+				default_config.wheel_gears_teeth_count[4]= 22; 
+				default_config.wheel_gears_teeth_count[5]= 26; 
+				default_config.wheel_gears_teeth_count[6]= 30; 
+				default_config.wheel_gears_teeth_count[7]= 34;
+				if(!applicationFdsApp_fds_store(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*)&default_config)){
+					NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_store() failed to write bike config\r\n");
+					ret_code= false;
+				} else{
+					//data will be read in the callback
+					/*read back the written value
+					if(!applicationFdsApp_fds_read(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*) &user_defined_bike_config_data)){
+						NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_read() failed to read bike config\r\n");
+						ret_code= false;
+					}*/
+				}
+			} else{
+				NRF_LOG_INFO("algorithmApp_init: bike config struct is retrieved from flash data storage\r\n");
+			}
+			
+		}
+
 	}
 	
 	
