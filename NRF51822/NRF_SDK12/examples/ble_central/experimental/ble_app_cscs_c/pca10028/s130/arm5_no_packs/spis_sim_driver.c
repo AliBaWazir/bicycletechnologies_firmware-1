@@ -59,23 +59,15 @@
 /**********************************************************************************************
 * STATIC VARIABLES
 ***********************************************************************************************/
+//data availability flags in simulation mode
+static uint32_t sim_data_availability_flags = 0; //by default all falgs are off
+
 //data to be set by slave
 static uint8_t speed_kmph_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t cadence_rpm_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t distance_km_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t hr_bpm_sim_array [SIM_DATA_ARRAY_SIZE];
 
-static user_defined_properties_t user_defined_properties;  //will contain user defined data
-
-//data to be set by master
-/*TODO: implement APIs to set these values after receiving update requests from SPIS app*/
-/*
-static uint8_t cadence_set_point_rpm   = 0;
-static uint8_t crank_gear_count        = 0;
-static uint8_t wheel_gear_count        = 0;
-*/
-
-/*TODO: figure out how to do theeth count per gear*/
 
 //indexes for the current value of sim data
 static uint8_t speed_index      = 0;
@@ -220,42 +212,6 @@ static bool spisSimDriver_init_hr_array(){
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
-/*TODO: move these functions to fstorage file*/
-void spisSimDriver_set_cadence_setpoint(uint8_t new_cadence_setpoint){
-	user_defined_properties.cadence_setpoint = new_cadence_setpoint;
-	NRF_LOG_INFO("cadence_setpoint is changed to= %d .\r\n",new_cadence_setpoint);
-}
-
-void spisSimDriver_set_wheel_diameter (uint8_t new_wheel_diameter){
-	user_defined_properties.wheel_diameter = new_wheel_diameter;
-	NRF_LOG_INFO("wheel_diameter is changed to= %d .\r\n",new_wheel_diameter);
-}
-
-void spisSimDriver_set_gear_count (uint8_t gear_type, uint8_t new_gear_count){
-	
-	if (gear_type == CRANK_IDENTIFIER){
-		user_defined_properties.crank_gears_count = new_gear_count;
-	} else if (gear_type == WHEEL_IDENTIFIER){
-		user_defined_properties.wheel_gears_count = new_gear_count;
-	} else {
-		NRF_LOG_ERROR("spisSimDriver_set_gear_count called with invalid gear_type= %d\r\n",gear_type);
-	}
-	
-	NRF_LOG_INFO("gear_count is changed to= %d for gear type= %d\r\n",new_gear_count, gear_type);
-}
-
-void spisSimDriver_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_t new_teeth_count){
-	if (gear_type == CRANK_IDENTIFIER){
-		user_defined_properties.crank_gears_teeth_count[gear_index] = new_teeth_count;
-	} else if (gear_type == WHEEL_IDENTIFIER){
-		user_defined_properties.wheel_gears_teeth_count[gear_index] = new_teeth_count;
-	} else {
-		NRF_LOG_ERROR("algorithmApp_set_teeth_count called with invalid gear_type= %d\r\n",gear_type);
-	}
-	
-    NRF_LOG_INFO("teeth_count for gear type=%d in gear index[%d] is changed to count= %d.\r\n", gear_type, gear_index, new_teeth_count);
-}
-
 
 uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 	uint8_t current_data  = 0;
@@ -302,14 +258,38 @@ uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 	return current_data;
 }
 
+bool spisSimDriver_get_data_availability_flags(uint8_t* dest_buffer){
+	
+	if (dest_buffer == NULL){
+		
+		NRF_LOG_ERROR("spisSimDriver_get_data_availability_flags: called with NULL dest_buffer\r\n");
+		return false;
+		
+	} else{
+		
+		sim_data_availability_flags |= 0xDB; //0b11011011;
+		sim_data_availability_flags = (sim_data_availability_flags<<8);
+		
+		sim_data_availability_flags |= 0xCC; //0b11001100
+		sim_data_availability_flags = (sim_data_availability_flags<<8);
+		
+		sim_data_availability_flags |= 0xAA; //0b10101010
+		sim_data_availability_flags = (sim_data_availability_flags<<8);
+		
+		sim_data_availability_flags |= 0x01; //0b00000001 //only speed is present
+		
+	}
+	
+	memcpy(dest_buffer, &sim_data_availability_flags, sizeof(sim_data_availability_flags));
+	
+	return true;
+	
+}
+
 /*Initialize SPIS simulation driver*/
 bool spisSimDriver_init(void){
 	bool ret_code  = true;
-	
-	/*TODO: initialize this struct using data from ROM*/
-	//memset user defined data
-	memset(&user_defined_properties, 0, sizeof(user_defined_properties_t));
-	
+			
 	//initialze sim data arrays
 	ret_code = spisSimDriver_init_speed_array();
 	

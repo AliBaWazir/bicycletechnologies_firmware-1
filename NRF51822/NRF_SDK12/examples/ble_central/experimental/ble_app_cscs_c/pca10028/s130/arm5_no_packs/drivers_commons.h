@@ -11,10 +11,10 @@ extern "C" {
 #endif
 
 	
-#define CRANK_IDENTIFIER 1
-#define WHEEL_IDENTIFIER 2
+#define CRANK_IDENTIFIER 0xCA
+#define WHEEL_IDENTIFIER 0xEE
 	
-#define MAX_GEARS_COUNT  30    //defines max of number of gears in crank/wheel
+#define MAX_GEARS_COUNT  16    //defines max of number of gears in crank/wheel
 
 /**********************************************************************************************
 * CSCS
@@ -33,14 +33,28 @@ typedef enum {
 * ROM STORED DATA
 ***********************************************************************************************/
 typedef struct{
-	uint8_t  cadence_setpoint;
-	uint8_t  wheel_diameter;
-	uint8_t  crank_gears_count;
-	uint8_t  wheel_gears_count;
-	uint8_t  crank_gears_teeth_count [MAX_GEARS_COUNT];
-	uint8_t  wheel_gears_teeth_count [MAX_GEARS_COUNT];
-	
-} user_defined_properties_t;
+	uint32_t  wheel_diameter_cm;
+	uint32_t  crank_gears_count;
+	uint32_t  wheel_gears_count;
+	uint32_t  crank_gears_teeth_count [MAX_GEARS_COUNT];
+	uint32_t  wheel_gears_teeth_count [MAX_GEARS_COUNT];
+} user_defined_bike_config_data_t;
+
+typedef enum{
+	USER_DEFINED_CADENCE_SETPOINT,
+	USER_DEFINED_BIKE_CONFIG_DATA
+} user_defined_properties_type_e;
+
+extern uint32_t cadence_setpoint_rpm;
+extern user_defined_bike_config_data_t  user_defined_bike_config_data;
+
+/* not needed
+typedef enum{
+	GEAR_TYPE_CRANK,
+	GEAR_TYPE_WHEEL,
+	GEAR_TYPE_UNKNOWN
+} gear_type_e;
+*/
 
 #ifdef __cplusplus
 }

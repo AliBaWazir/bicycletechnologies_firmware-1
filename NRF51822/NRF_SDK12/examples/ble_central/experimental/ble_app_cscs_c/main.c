@@ -43,6 +43,7 @@
 #include "../hrs_app.h"
 #include "../spis_app.h"
 #include "../connection_manager_app.h"
+#include "../algorithm_app.h"
 
 
 #define NRF_LOG_MODULE_NAME "SHIFTY-MAIN"
@@ -755,24 +756,8 @@ static void buttons_leds_init(bool * p_erase_bonds)
     *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
 
-
-/** @brief Function for the Power manager.
- */
-static void power_manage(void)
-{
-    uint32_t err_code = sd_app_evt_wait();
-	/*TODO: figure out if this is redundant WFE*/
-	spisApp_spi_wait();
-
-    APP_ERROR_CHECK(err_code);
-}
-
-
-int main(void)
-{
-    
-    //Turn on fast charging: 500 mA
-    
+static void turn_on_fast_charging(){
+	    
     NRF_GPIO->PIN_CNF[26] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
                                             | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
                                             | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
@@ -780,9 +765,23 @@ int main(void)
                                             | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
     
     NRF_GPIO->OUTSET = (1UL << 26);
-    
-    
-    
+}
+
+/** @brief Function for the Power manager.
+ */
+static void power_manage(void)
+{
+	uint32_t err_code = NRF_SUCCESS;
+	
+	spisApp_spi_wait();
+
+	/*TODO: figure out if this is redundant WFE*/
+	err_code= sd_app_evt_wait();
+    APP_ERROR_CHECK(err_code);
+}
+
+int main(void)
+{
 	bool erase_bonds;
 	//uint32_t err_code = NRF_SUCCESS;
 
@@ -820,6 +819,14 @@ int main(void)
 		NRF_LOG_ERROR("Failed to initialize connManagerApp\r\n");
  	}
 	
+	if (!algorithmApp_init()){
+		NRF_LOG_ERROR("Failed to initialize algorithmApp\r\n");
+ 	}
+	
+	
+	    
+    //Turn on fast charging: 500 mA
+	turn_on_fast_charging();
 
     for (;;)
     {

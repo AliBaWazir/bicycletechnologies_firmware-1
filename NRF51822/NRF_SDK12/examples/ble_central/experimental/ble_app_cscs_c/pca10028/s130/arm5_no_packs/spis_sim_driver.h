@@ -9,6 +9,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+	
+bool spisSimDriver_get_data_availability_flags(uint8_t* dest_buffer);
 
 void spisSimDriver_set_cadence_setpoint (uint8_t new_cadence_setpoint);
 void spisSimDriver_set_wheel_diameter (uint8_t new_wheel_diameter);
