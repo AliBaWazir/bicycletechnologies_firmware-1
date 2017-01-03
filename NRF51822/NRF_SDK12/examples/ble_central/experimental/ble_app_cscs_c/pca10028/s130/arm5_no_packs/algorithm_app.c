@@ -45,14 +45,14 @@ typedef enum{
 } algorithmApp_event_e;
 
 /**********************************************************************************************
-* STATIC VARIABLES
+* STATIC AND GLOBAL VARIABLES
 ***********************************************************************************************/
-static user_defined_bike_config_data_t  user_defined_bike_config_data;  //will contain user defined bike configuration data
+uint32_t cadence_setpoint_rpm = 0;
+user_defined_bike_config_data_t  user_defined_bike_config_data;  //will contain user defined bike configuration data
 
 static bool  gear_level_locked = false;                     /*TODO: this boolean has to be checked before running the gear shifting algorithm
 															 *If set to true, lock gear level at the middle to maximize efficiency.  
 															 */
-static uint32_t  cadence_setpoint_rpm= 0;
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -191,12 +191,6 @@ bool algorithmApp_init(void){
 				ret_code= false;
 			} else{
 				//data will be read in the callback
-				/*read back the written value
-				if(!applicationFdsApp_fds_read(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*) &cadence_setpoint_rpm)){
-					NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_read() failed to read cadence_setpoint_rpm\r\n");
-					ret_code= false;
-				}
-				*/
 			}
 			
 		} else{
@@ -231,11 +225,6 @@ bool algorithmApp_init(void){
 					ret_code= false;
 				} else{
 					//data will be read in the callback
-					/*read back the written value
-					if(!applicationFdsApp_fds_read(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*) &user_defined_bike_config_data)){
-						NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_read() failed to read bike config\r\n");
-						ret_code= false;
-					}*/
 				}
 			} else{
 				NRF_LOG_INFO("algorithmApp_init: bike config struct is retrieved from flash data storage\r\n");
