@@ -18,7 +18,8 @@
 #define FLAG_HR_DEV_NAME	0x10
 #define FLAG_PHO_DEV_NAME	0x20
 
-
+#define DATA_VALID_TIME		1
+#define DATA_INVALID_TIME	2
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
 	struct Availability{
