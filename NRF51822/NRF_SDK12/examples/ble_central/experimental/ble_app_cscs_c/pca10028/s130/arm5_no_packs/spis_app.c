@@ -219,7 +219,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				
 			/**************************** SETTERS ********************************/
 			case SPI_SET_CADENCE_SETPOINT:
-				algorithmApp_set_cadence_setpoint (m_tx_buf[INDEX_ARG_SETPOINT]);
+				algorithmApp_set_cadence_setpoint (m_rx_buf[INDEX_ARG_SETPOINT]);
 			break;//SPI_SET_CADENCE_SETPOINT
 				
 			case SPI_SET_GEAR_LEVEL_LOCKED:
@@ -227,17 +227,17 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			break;//SPI_SET_GEAR_LEVEL_LOCKED
 				
 			case SPI_SET_WHEEL_DIAMETER:
-				algorithmApp_set_wheel_diameter(m_tx_buf[INDEX_ARG_WHEEL_DIAMETER]);
+				algorithmApp_set_wheel_diameter(m_rx_buf[INDEX_ARG_WHEEL_DIAMETER]);
 			break;//SPI_SET_WHEEL_DIAMETER
 				
 			case SPI_SET_GEAR_COUNT:
-				if (!algorithmApp_set_gear_count(m_tx_buf[INDEX_ARG_CRANK_GEARS_COUNT], m_tx_buf[INDEX_ARG_WHEEL_GEARS_COUNT])){
+				if (!algorithmApp_set_gear_count(m_rx_buf[INDEX_ARG_CRANK_GEARS_COUNT], m_rx_buf[INDEX_ARG_WHEEL_GEARS_COUNT])){
 					NRF_LOG_ERROR("spisApp_event_handler: algorithmApp_set_gear_count failed \r\n");
 				}
 			break;//SPI_SET_GEAR_COUNT
 				
 			case SPI_SET_TEETH_COUNT_ON_GEAR:
-				algorithmApp_set_teeth_count(m_tx_buf[INDEX_ARG_GEAR_TYPE], m_tx_buf[INDEX_ARG_GEAR_INDEX], m_tx_buf[INDEX_ARG_TEETH_COUNT]);
+				algorithmApp_set_teeth_count(m_rx_buf[INDEX_ARG_GEAR_TYPE], m_rx_buf[INDEX_ARG_GEAR_INDEX], m_rx_buf[INDEX_ARG_TEETH_COUNT]);
 			break;//SPI_SET_GEAR_COUNT
 				
 			default:
