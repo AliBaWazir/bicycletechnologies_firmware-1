@@ -44,6 +44,8 @@
 #include "../spis_app.h"
 #include "../connection_manager_app.h"
 #include "../algorithm_app.h"
+#include "../i2c_app.h"
+
 
 
 #define NRF_LOG_MODULE_NAME "SHIFTY-MAIN"
@@ -774,6 +776,9 @@ static void power_manage(void)
 	uint32_t err_code = NRF_SUCCESS;
 	
 	spisApp_spi_wait();
+	
+	/*TODO: figure out if this is redundant WFE*/
+	//i2cApp_wait();
 
 	/*TODO: figure out if this is redundant WFE*/
 	err_code= sd_app_evt_wait();
