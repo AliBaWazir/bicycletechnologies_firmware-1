@@ -4,7 +4,7 @@
   * Description        : Main program body
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2017 STMicroelectronics
+  * COPYRIGHT(c) 2016 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -40,9 +40,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
-uint8_t temp = 0;
-uint8_t data1 = 0xF;
-uint8_t data2 = 0xA;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -83,7 +81,12 @@ int main(void)
   MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
-	while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data1, 1, 10) != HAL_OK){}
+	
+	
+	uint8_t data1 = 0xF;
+	uint8_t data2 = 0xA;
+	
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,27 +104,11 @@ int main(void)
 		//HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout)
 		
 		
-		//HAL_Delay(5000);			
-		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){}		
-		
-		while(HAL_I2C_Master_Receive(&hi2c1, 24, &temp, 1, 10) != HAL_OK){}
-		
-		switch(temp){
-			case 0xF:
-				while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){}
-
-				while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data2, 1, 10) != HAL_OK){}
-				HAL_Delay(1000);
-					break;
-			
-			case 0xA:
-				while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){}
-
-				while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data1, 1, 10) != HAL_OK){}
-				HAL_Delay(1000);
-					break;
-		}
-			
+		while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data1, 1, 10) != HAL_OK){}
+		HAL_Delay(500);			
+		while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data2, 1, 10) != HAL_OK){}
+		HAL_Delay(500);
+	
   }
   /* USER CODE END 3 */
 
@@ -206,27 +193,13 @@ static void MX_I2C1_Init(void)
 
 }
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
+/** Pinout Configuration
 */
 static void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
-
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-
-  /*Configure GPIO pins : PA1 PA2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 

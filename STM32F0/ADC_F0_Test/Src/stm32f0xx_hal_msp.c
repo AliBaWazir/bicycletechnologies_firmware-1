@@ -5,7 +5,7 @@
   *                      and de-Initialization codes.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -85,6 +85,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 
     /* Peripheral clock enable */
     __HAL_RCC_I2C1_CLK_ENABLE();
+    /* Peripheral interrupt init */
+    HAL_NVIC_SetPriority(I2C1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(I2C1_IRQn);
   /* USER CODE BEGIN I2C1_MspInit 1 */
 
   /* USER CODE END I2C1_MspInit 1 */
@@ -108,6 +111,9 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
     PB7     ------> I2C1_SDA 
     */
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_6|GPIO_PIN_7);
+
+    /* Peripheral interrupt DeInit*/
+    HAL_NVIC_DisableIRQ(I2C1_IRQn);
 
   }
   /* USER CODE BEGIN I2C1_MspDeInit 1 */

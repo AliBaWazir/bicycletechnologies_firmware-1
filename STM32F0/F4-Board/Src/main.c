@@ -123,25 +123,22 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
   switch (data){
         			case 0xF:
         				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-								data = 0;
 								while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
 								{
 								}
 		
-								while(HAL_I2C_Slave_Receive_IT(hi2c1, &data , 1) != HAL_OK){
+								while(HAL_I2C_Slave_Transmit_IT(hi2c1, &data , 1) != HAL_OK){
 									Error_Handler();
 								}
-        				break;
+								break;
         
         			case 0xA:
         				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-        				data = 0;
-								
 								while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
 								{
 								}
 		
-								while(HAL_I2C_Slave_Receive_IT(hi2c1, &data , 1) != HAL_OK){
+								while(HAL_I2C_Slave_Transmit_IT(hi2c1, &data , 1) != HAL_OK){
 									Error_Handler();
 								}
 							
@@ -149,6 +146,18 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
         		}
 }
 
+void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c1)
+{
+	while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
+  {
+  }
+		
+	while(HAL_I2C_Slave_Receive_IT(hi2c1, &data , 1) != HAL_OK){
+		Error_Handler();
+	}
+}
+
+/** --------------------------------------------------------------------------**/
 /** System Clock Configuration
 */
 void SystemClock_Config(void)

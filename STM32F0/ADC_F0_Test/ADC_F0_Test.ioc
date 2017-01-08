@@ -20,6 +20,7 @@ Mcu.UserName=STM32F051K8Tx
 MxCube.Version=4.17.0
 MxDb.Version=DB.4.0.170
 NVIC.HardFault_IRQn=true\:0\:0\:false\:false\:true
+NVIC.I2C1_IRQn=true\:0\:0\:false\:false\:true
 NVIC.NonMaskableInt_IRQn=true\:0\:0\:false\:false\:true
 NVIC.PendSV_IRQn=true\:0\:0\:false\:false\:true
 NVIC.SVC_IRQn=true\:0\:0\:false\:false\:true
