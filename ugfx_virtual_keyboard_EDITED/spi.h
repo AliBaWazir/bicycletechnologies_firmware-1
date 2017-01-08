@@ -20,6 +20,15 @@
 
 #define DATA_VALID_TIME		1
 #define DATA_INVALID_TIME	2
+
+#define MAXIMUM_SPEED							0xEF
+#define MAXIMUM_CADENCE						0xEF
+#define MAXIMUM_DISTANCE					0xEF
+#define MAXIMUM_HEART_RATE				0xEF
+#define MAXIMUM_CADENCE_SET_POINT	0xEF
+#define MAXIMUM_BATTERY						0x64
+#define MAXIMUM_WHEEL_DIAMETER		0xEF
+
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
 	struct Availability{
@@ -50,6 +59,10 @@ struct SPI_data{
 			uint8_t value;
 			uint32_t age;
 	}batt;
+	struct WheelDiameter{
+			uint8_t value;
+			uint32_t age;
+	}wheelDiameter;
 	struct Gears{
 			uint8_t frontGears[MAXIMUM_FRONT_GEARS+1];
 			uint8_t backGears[MAXIMUM_BACK_GEARS+1];

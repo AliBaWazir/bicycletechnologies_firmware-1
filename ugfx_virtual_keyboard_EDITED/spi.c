@@ -11,19 +11,23 @@ char spiOutput[70];
 
 TM_RTC_t RTCD_SPI;
 
-bool nrfRequest(uint8_t *buffOut, uint32_t len);
+bool nrfSend(uint8_t *buffOut, uint32_t len);
 bool nrfReceive(uint8_t *buffIn, uint32_t len);
 bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len);
 
 void nrfGetAvailability();
-void nrfGetSpeed();
-void nrfGetCadence();
-void nrfGetDistance();
-void nrfGetHeartRate();
-void nrfGetCadenceSetPoint();
-void nrfGetBattery();
+bool nrfGetSpeed();
+bool nrfGetCadence();
+bool nrfGetDistance();
+bool nrfGetHeartRate();
+bool nrfGetCadenceSetPoint();
+bool nrfGetBattery();
+bool nrfGetWheelDiameter();
 void nrfGetGearSettings();
+
 void nrfSetGearSettings();
+void nrfSetWheelDiameter();
+void nrfSetCadenceSetPoint();
 
 uint8_t getSpeed();
 uint8_t getCadence();
@@ -50,29 +54,35 @@ void runSPI(){
 		if (evt.status == osEventMessage) {
 			messageReceived = (message_t*)evt.value.p;
 			if(messageReceived->msg_ID == GET_AVAILABILITY_MSG){
-				TRACE("SPI: GET_AVAILABILITY_MSG\n");
+				TRACE("SPI:,GET_AVAILABILITY_MSG\n");
 				nrfGetAvailability();
 			}else if(messageReceived->msg_ID == GET_SPEED_MSG){
-				TRACE("SPI: GET_SPEED_MSG\n");
+				TRACE("SPI:,GET_SPEED_MSG\n");
 				sendResponseMSG(GET_SPEED_MSG, getSpeed());
 			}else if(messageReceived->msg_ID == GET_CADENCE_MSG){
-				TRACE("SPI: GET_CADENCE_MSG\n");
+				TRACE("SPI:,GET_CADENCE_MSG\n");
 				sendResponseMSG(GET_CADENCE_MSG, getCadence());
 			}else if(messageReceived->msg_ID == GET_DISTANCE_MSG){
-				TRACE("SPI: GET_DISTANCE_MSG\n");
+				TRACE("SPI:,GET_DISTANCE_MSG\n");
 				sendResponseMSG(GET_DISTANCE_MSG, getDistance());
 			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
-				TRACE("SPI: GET_HEARTRATE_MSG\n");
+				TRACE("SPI:,GET_HEARTRATE_MSG\n");
 				sendResponseMSG(GET_HEARTRATE_MSG, getHeartRate());
 			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
-				TRACE("SPI: GET_CADENCE_SETPOINT_MSG\n");
+				TRACE("SPI:,GET_CADENCE_SETPOINT_MSG\n");
 				sendResponseMSG(GET_CADENCE_SETPOINT_MSG, getCadenceSetPoint());
 			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
-				TRACE("SPI: GET_BATTERY_MSG\n");
+				TRACE("SPI:,GET_BATTERY_MSG\n");
 				sendResponseMSG(GET_BATTERY_MSG, getBattery());
 			}else if(messageReceived->msg_ID == GET_GEAR_COUNT_MSG){
-				TRACE("SPI: GET_GEAR_COUNT_MSG\n");
-				//nrfGetGearSettings();
+				TRACE("SPI:,GET_GEAR_COUNT_MSG\n");
+				for(int count = 0; count <= MAXIMUM_FRONT_GEARS; count++){
+					spi_Data.gears.frontGears[count] = 0;
+				}
+				for(int count = 0; count <= MAXIMUM_BACK_GEARS; count++){
+					spi_Data.gears.backGears[count] = 0;
+				}
+				nrfGetGearSettings();
 				/*spi_Data.gears.frontGears[0] = 4;
 				spi_Data.gears.backGears[0] = 9;
 				for(int x = 1; x <= 4; x++){
@@ -83,14 +93,14 @@ void runSPI(){
 				}*/
 				sendGearSettingsMSG();
 			}else if(messageReceived->msg_ID == SET_GEAR_COUNT_MSG){
-				TRACE("SPI: SET_GEAR_COUNT_MSG\n");
+				TRACE("SPI:,SET_GEAR_COUNT_MSG\n");
 				for(int count = 0; count <= messageReceived->frontGears[0]; count++){
 					spi_Data.gears.frontGears[count] = messageReceived->frontGears[count];
 				}
 				for(int count = 0; count <= messageReceived->backGears[0]; count++){
 					spi_Data.gears.backGears[count] = messageReceived->backGears[count];
 				}
-				//nrfSetGearSettings();
+				nrfSetGearSettings();
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -147,7 +157,7 @@ void nrfSetup(){
 void TM_EXTI_Handler(uint16_t GPIO_Pin) {
 	/* Handle external line 7 interrupts */
 	if (GPIO_Pin == GPIO_Pin_7) {
-		TRACE("SPI INTERRUPT\n");
+		TRACE("SPI:,INTERRUPTED\n");
 		message_t *messageSent;
 		messageSent = (message_t*)osPoolAlloc(mpool);
 		messageSent->msg_ID = GET_AVAILABILITY_MSG;
@@ -161,42 +171,21 @@ void TM_SPI_InitCustomPinsCallback(SPI_TypeDef* SPIx, uint16_t AlternateFunction
 	TM_GPIO_InitAlternate(GPIOD, GPIO_PIN_3, TM_GPIO_OType_PP, TM_GPIO_PuPd_NOPULL, TM_GPIO_Speed_High, AlternateFunction);
 }
 
-bool nrfRequest(uint8_t *buffOut, uint32_t len){
-#ifdef DEBUG
-	formatString(spiOutput, sizeof(spiOutput), "nrfRequest: %d\n", *buffOut);
-	TM_USART_Puts(USART3, spiOutput);
-#endif
-	TRACE("nrfRequest: %d\n", *buffOut);
-	uint8_t buffIn;
-	
+bool nrfSend(uint8_t *buffOut, uint32_t len){
+	uint8_t buffIn = 0xFF;
 	nrfTransmit(buffOut, &buffIn, len);
-	
-	TRACE("nrfRequest Done\n");
-#ifdef DEBUG
-	TM_USART_Puts(USART3, "nrfRequest Done\n");
-#endif
 }
 
 bool nrfReceive(uint8_t *buffIn, uint32_t len){
-#ifdef DEBUG
-	TM_USART_Puts(USART3, "nrfReceive Start\n");
-#endif
-	TRACE("nrfReceive Start\n");
 	uint8_t buffOut = 0xFF;
-	
 	nrfTransmit(&buffOut, buffIn, len);
-	
-	TRACE("nrfReceive: %d\n", *buffIn);
-#ifdef DEBUG
-	formatString(spiOutput, sizeof(spiOutput), "nrfReceive: %d\n", *buffIn);
-	TM_USART_Puts(USART3, spiOutput);
-#endif
 }
 
 bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len){
 	while(1){
 		TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
 		TM_SPI_SendMulti(SPI2, buffOut, buffIn, len);
+		TRACE("SPI:,buffOut = %d [%02hhX],buffIn = %d [%02hhX]\n", *buffOut, *buffOut, *buffIn, *buffIn);
 		if(*buffIn == 0xDF){
 			TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 			Delayms(50);
@@ -208,88 +197,147 @@ bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len){
 	return true;
 }
 	
+/*
+* ======================== GETTERS ========================
+*/
+
 void nrfGetAvailability(){
 	uint8_t key = GET_AVAILABILITY_MSG;
-	nrfRequest(&key, 1);
+	nrfSend(&key, 1);
 	nrfReceive(&spi_Data.avail.value[0], 4);
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.avail.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 	if((spi_Data.avail.value[0] & FLAG_SPEED) != 0){
+		TRACE("SPI:,Speed Data is available\n");
 		nrfGetSpeed();
 	}
 	if((spi_Data.avail.value[0] & FLAG_CADENCE) != 0){
+		TRACE("SPI:,Cadence Data is available\n");
 		nrfGetCadence();
 	}
 	if((spi_Data.avail.value[0] & FLAG_DISTANCE) != 0){
+		TRACE("SPI:,Distance Data is available\n");
 		nrfGetDistance();
 	}
 	if((spi_Data.avail.value[0] & FLAG_HEARTRATE) != 0){
+		TRACE("SPI:,Heart Rate Data is available\n");
 		nrfGetHeartRate();
 	}
 	if((spi_Data.avail.value[0] & FLAG_BATTERY) != 0){
+		TRACE("SPI:,Battery Data is available\n");
 		nrfGetBattery();
 	}
 }
 
-void nrfGetSpeed(){
+bool nrfGetSpeed(){
 	uint8_t key = GET_SPEED_MSG;
-	nrfRequest(&key, 1);
-	nrfReceive(&spi_Data.speed.value, 1);
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_SPEED)){
+		return false;
+	}
+	spi_Data.speed.value = value;
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.speed.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
 }
 
-void nrfGetCadence(){
+bool nrfGetCadence(){
 	uint8_t key = GET_CADENCE_MSG;
-	nrfRequest(&key, 1);
-	nrfReceive(&spi_Data.cadence.value, 1);
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_CADENCE)){
+		return false;
+	}
+	spi_Data.cadence.value = value;
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.cadence.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
 }
 
-void nrfGetDistance(){
+bool nrfGetDistance(){
 	uint8_t key = GET_DISTANCE_MSG;
-	nrfRequest(&key, 1);
-	nrfReceive(&spi_Data.distance.value, 1);
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_DISTANCE)){
+		return false;
+	}
+	spi_Data.distance.value = value;
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.distance.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
 }
 
-void nrfGetHeartRate(){
+bool nrfGetHeartRate(){
 	uint8_t key = GET_HEARTRATE_MSG;
-	nrfRequest(&key, 1);
-	nrfReceive(&spi_Data.heartRate.value, 1);
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_HEART_RATE)){
+		return false;
+	}
+	spi_Data.heartRate.value = value;
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.heartRate.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
 }
 
-void nrfGetCadenceSetPoint(){
+bool nrfGetCadenceSetPoint(){
 	uint8_t key = GET_CADENCE_SETPOINT_MSG;
-	nrfRequest(&key, 1);
-	nrfReceive(&spi_Data.cadenceSetPoint.value, 1);
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_CADENCE_SET_POINT)){
+		return false;
+	}
+	spi_Data.cadenceSetPoint.value = value;
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.cadenceSetPoint.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
 }
 
-void nrfGetBattery(){
+bool nrfGetBattery(){
 	uint8_t key = GET_BATTERY_MSG;
-	nrfRequest(&key, 1);
-	nrfReceive(&spi_Data.batt.value, 1);
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_BATTERY)){
+		return false;
+	}
+	spi_Data.batt.value = value;
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.batt.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
 }
 
+bool nrfGetWheelDiameter(){
+	uint8_t key = GET_WHEEL_DIAMETER_MSG;
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_WHEEL_DIAMETER)){
+		return false;
+	}
+	spi_Data.wheelDiameter.value = value;
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.wheelDiameter.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
+}
 
 void nrfGetGearSettings(){
 	uint8_t key = GET_GEAR_COUNT_MSG;
 	uint8_t temp[2];
-	nrfRequest(&key, 1);
+	nrfSend(&key, 1);
 	nrfReceive(&temp[0], 2);
 	if((temp[0] > MAXIMUM_FRONT_GEARS) || (temp[1] > MAXIMUM_BACK_GEARS)){
 		return;
 	}
 	spi_Data.gears.frontGears[0] = temp[0];
 	spi_Data.gears.backGears[0] = temp[1];
+	TRACE("SPI:,Gear Count Received, Front = %d, Back = %d\n", temp[0], temp[1]);
 	
 	uint8_t command[3];
 	command[0] = GET_TEETH_COUNT_MSG;
@@ -297,58 +345,81 @@ void nrfGetGearSettings(){
 	command[1] = 0xCA;
 	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
 		command[2] = count-1;
-		nrfRequest(&command[0], 3);
+		nrfSend(&command[0], 3);
 		nrfReceive(&temp[0], 1);
 		spi_Data.gears.frontGears[count] = temp[0];
+		TRACE("SPI:,Front Gear = %d,Teeth Count = %d\n", count, temp[0]);
 	}
 	
 	// Back Gears
 	command[1] = 0xEE;
 	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
 		command[2] = count-1;
-		nrfRequest(&command[0], 3);
+		nrfSend(&command[0], 3);
 		nrfReceive(&temp[0], 1);
 		spi_Data.gears.backGears[count] = temp[0];
+		TRACE("SPI:,Back Gear = %d,Teeth Count = %d\n", count, temp[0]);
 	}
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
+
+
+/*
+* ======================== SETTERS ========================
+*/
 
 void nrfSetGearSettings(){
 	uint8_t command[4];
 	command[0] = SET_GEAR_COUNT_MSG;
 	command[1] = spi_Data.gears.frontGears[0];
 	command[2] = spi_Data.gears.backGears[0];
-	nrfRequest(&command[0], 3);
+	nrfSend(&command[0], 3);
 	
 	command[0] = SET_TEETH_COUNT_MSG;
 	command[1] = 0xCA;
 	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
 		command[2] = count-1;
 		command[3] = spi_Data.gears.frontGears[count];
-		nrfRequest(&command[0], 4);
+		nrfSend(&command[0], 4);
 	}
 	command[1] = 0xEE;
 	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
 		command[2] = count-1;
 		command[3] = spi_Data.gears.backGears[count];
-		nrfRequest(&command[0], 4);
+		nrfSend(&command[0], 4);
 	}
 	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
 	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
 
+void nrfSetWheelDiameter(){
+	uint8_t command[2];
+	command[0] = SET_WHEEL_DIAMETER_MSG;
+	command[1] = spi_Data.wheelDiameter.value;
+	nrfSend(&command[0], 2);
+}
 
+void nrfSetCadenceSetPoint(){
+	uint8_t command[2];
+	command[0] = SET_CADENCE_SETPOINT_MSG;
+	command[1] = spi_Data.cadenceSetPoint.value;
+	nrfSend(&command[0], 2);
+}
+
+/*
+* ======================== OTHERS ========================
+*/
 
 uint8_t getSpeed(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.speed.age;
-	if(timeDiff > DATA_INVALID_TIME){
-		return NULL;
-	}else if((timeDiff <= DATA_INVALID_TIME) && (timeDiff > DATA_VALID_TIME)){
-		nrfGetSpeed();
+  if((!nrfGetSpeed()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID SPEED: Returning INVALID_DATA\n");
+		return INVALID_DATA;
 	}
+	TRACE("SPI:,VALID SPEED: %d\n", spi_Data.speed.value);
 	return spi_Data.speed.value;
 }
 
@@ -356,11 +427,11 @@ uint8_t getCadence(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.cadence.age;
-	if(timeDiff > DATA_INVALID_TIME){
-		return NULL;
-	}else if((timeDiff <= DATA_INVALID_TIME) && (timeDiff > DATA_VALID_TIME)){
-		nrfGetCadence();
+	if((!nrfGetCadence()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID CADENCE: Returning INVALID_DATA\n");
+		return INVALID_DATA;
 	}
+	TRACE("SPI:,VALID CADENCE: %d\n", spi_Data.cadence.value);
 	return spi_Data.cadence.value;
 }
 
@@ -368,11 +439,11 @@ uint8_t getDistance(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.distance.age;
-	if(timeDiff > DATA_INVALID_TIME){
-		return NULL;
-	}else if((timeDiff <= DATA_INVALID_TIME) && (timeDiff > DATA_VALID_TIME)){
-		nrfGetDistance();
+	if((!nrfGetDistance()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID DISTANCE: Returning INVALID_DATA\n");
+		return INVALID_DATA;
 	}
+	TRACE("SPI:,VALID DISTANCE: %d\n", spi_Data.distance.value);
 	return spi_Data.distance.value;
 }
 
@@ -380,11 +451,11 @@ uint8_t getHeartRate(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.heartRate.age;
-	if(timeDiff > DATA_INVALID_TIME){
-		return NULL;
-	}else if((timeDiff <= DATA_INVALID_TIME) && (timeDiff > DATA_VALID_TIME)){
-		nrfGetHeartRate();
+	if((!nrfGetHeartRate()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID HEART RATE: Returning INVALID_DATA\n");
+		return INVALID_DATA;
 	}
+	TRACE("SPI:,VALID HEART RATE: %d\n", spi_Data.heartRate.value);
 	return spi_Data.heartRate.value;
 }
 
@@ -392,11 +463,11 @@ uint8_t getCadenceSetPoint(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.cadenceSetPoint.age;
-	if(timeDiff > DATA_INVALID_TIME){
-		return NULL;
-	}else if((timeDiff <= DATA_INVALID_TIME) && (timeDiff > DATA_VALID_TIME)){
-		nrfGetCadenceSetPoint();
+	if((!nrfGetCadenceSetPoint()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID CADENCE SET POINT: Returning INVALID_DATA\n");
+		return INVALID_DATA;
 	}
+	TRACE("SPI:,VALID CADENCE SET POINT: %d\n", spi_Data.cadenceSetPoint.value);
 	return spi_Data.cadenceSetPoint.value;
 }
 
@@ -404,12 +475,24 @@ uint8_t getBattery(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.batt.age;
-	if(timeDiff > DATA_INVALID_TIME){
-		return NULL;
-	}else if((timeDiff <= DATA_INVALID_TIME) && (timeDiff > DATA_VALID_TIME)){
-		nrfGetBattery();
+	if((!nrfGetBattery()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID BATTERY: Returning INVALID_DATA\n");
+		return INVALID_DATA;
 	}
+	TRACE("SPI:,VALID BATTERY: %d\n", spi_Data.batt.value);
 	return spi_Data.batt.value;
+}
+
+uint8_t getWheelDiameter(){
+	TM_RTC_t rtcd;
+	getRTC(&rtcd, TM_RTC_Format_BIN);
+	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.wheelDiameter.age;
+	if((!nrfGetWheelDiameter()) && (timeDiff > DATA_INVALID_TIME)){
+		TRACE("SPI:,INVALID WHEEL DIAMETER: Returning INVALID_DATA\n");
+		return INVALID_DATA;
+	}
+	TRACE("SPI:,VALID WHEEL DIAMETER: %d\n", spi_Data.wheelDiameter.value);
+	return spi_Data.wheelDiameter.value;
 }
 
 /*

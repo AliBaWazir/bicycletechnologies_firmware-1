@@ -84,12 +84,12 @@ int currentGearTeethWindow;
 int currentTeethTeethWindow;
 int oldMenuSelectedItem;
 
-int speedOutput;
-int cadenceOutput;
-int cadenceSetPointOutput;
-int distanceOutput;
-int heartrateOutput;
-int batteryOutput;
+uint8_t speedOutput;
+uint8_t cadenceOutput;
+uint8_t cadenceSetPointOutput;
+uint8_t distanceOutput;
+uint8_t heartrateOutput;
+uint8_t batteryOutput;
 char dataOutput[10];
 
 static gdispImage myImage[9];
@@ -1020,12 +1020,14 @@ static void createClockSettings(void)
 
 	clockChangeSelectedItem = 0;
 	previousClockSelection = 0;
-	clockChangesStruct.Year = 16;
-	clockChangesStruct.Month = 10;
-	clockChangesStruct.Day = 7;
-	clockChangesStruct.Hours = 12;
-	clockChangesStruct.Minutes = 15;
-	
+	getRTC(&RTCD, TM_RTC_Format_BIN);
+	clockChangesStruct.Year = RTCD.Year;
+	clockChangesStruct.Month = RTCD.Month;
+	clockChangesStruct.Day = RTCD.Day;
+	clockChangesStruct.Hours = RTCD.Hours;
+	clockChangesStruct.Minutes = RTCD.Minutes;
+	RTCD.Seconds = 0;
+		
 	// Create label widget: labels[0]
 	wi.g.show = TRUE;
 	wi.g.x = 15;
@@ -1537,31 +1539,51 @@ void guiEventLoop(void)
 			osPoolFree(mpool, messageReceived);
 		}
 		
+		// MUST STAY THIS IS THE MAIN THING FOR THIS
 		getRTC(&RTCD, TM_RTC_Format_BIN);
-		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
-		uint32_t fileSavedTime = TM_RTC_GetUnixTimeStamp(&fileTime);
-		if((rtcTime - fileSavedTime) > 300){
-			closeTraceFile();
-			openTraceFile();
-		}
+//		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
+//		if((rtcTime - fileSavedTime) > FILE_MAXIMUM_TIME){
+//			closeTraceFile();
+//			openTraceFile();
+//		}
 		
 		if(gwinGetVisible(containers[DATA_CONTAINER])){
 			if(RTCD.Seconds != previousSeconds){
-				formatString(dataOutput, sizeof(dataOutput), "%d km/h", speedOutput);
-				gwinSetText(labels[0], dataOutput, TRUE);
+				if(speedOutput == INVALID_DATA){
+					gwinSetText(labels[0], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d km/h", speedOutput);
+					gwinSetText(labels[0], dataOutput, TRUE);
+				}
 				
-				formatString(dataOutput, sizeof(dataOutput), "%d RPM", cadenceOutput);
-				gwinSetText(labels[1], dataOutput, TRUE);
+				if(cadenceOutput == INVALID_DATA){
+					gwinSetText(labels[1], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d RPM", cadenceOutput);
+					gwinSetText(labels[1], dataOutput, TRUE);
+				}
 				
-				formatString(dataOutput, sizeof(dataOutput), "%d km", distanceOutput);
-				gwinSetText(labels[2], dataOutput, TRUE);
+				if(distanceOutput == INVALID_DATA){
+					gwinSetText(labels[2], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d km", distanceOutput);
+					gwinSetText(labels[2], dataOutput, TRUE);
+				}
 				
-				formatString(dataOutput, sizeof(dataOutput), "%d BPM", heartrateOutput);
-				gwinSetText(labels[3], dataOutput, TRUE);
+				if(heartrateOutput == INVALID_DATA){
+					gwinSetText(labels[3], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d BPM", heartrateOutput);
+					gwinSetText(labels[3], dataOutput, TRUE);
+				}
 				
-				formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
-				gwinSetText(labels[4], dataOutput, TRUE);
-				
+				if(batteryOutput == INVALID_DATA){
+					gwinSetText(labels[4], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
+					gwinSetText(labels[4], dataOutput, TRUE);
+				}
+								
 				messageSent = (message_t*)osPoolAlloc(mpool);
 				messageSent->msg_ID = GET_SPEED_MSG;
 				osMessagePut(spiQueue, (uint32_t)messageSent, 0);

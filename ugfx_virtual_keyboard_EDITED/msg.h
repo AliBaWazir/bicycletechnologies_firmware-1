@@ -3,6 +3,8 @@
 
 //#define DEBUG
 
+#define INVALID_DATA 0xFF
+
 #define GET_AVAILABILITY_MSG			0xDA
 // Group 0: Shifting Algorithm Parameters
 #define GET_SPEED_MSG 						0x01
