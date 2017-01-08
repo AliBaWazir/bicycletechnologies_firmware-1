@@ -43,6 +43,7 @@
 #include "../hrs_app.h"
 #include "../spis_app.h"
 #include "../connection_manager_app.h"
+#include "../algorithm_app.h"
 #include "../i2c_app.h"
 
 
@@ -775,8 +776,12 @@ static void power_manage(void)
     uint32_t err_code = sd_app_evt_wait();
 	/*TODO: figure out if these are redundant WFE*/
 	spisApp_spi_wait();
-	i2cApp_wait();
 	
+	/*TODO: figure out if this is redundant WFE*/
+	//i2cApp_wait();
+
+	/*TODO: figure out if this is redundant WFE*/
+	err_code= sd_app_evt_wait();
     APP_ERROR_CHECK(err_code);
 }
 

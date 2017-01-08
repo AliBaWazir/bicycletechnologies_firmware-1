@@ -59,6 +59,40 @@ bool i2cSimDriver_get_BNO055_id(){
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
+/**
+ * @brief Function for I2C scan.
+ */
+static bool i2cSimDriver_i2c_scan(nrf_drv_twi_t* twi, bool* xfer_done, uint8_t reg_addr, uint8_t* dest_array){
+	
+	bool ret= false;
+	ret_code_t err_code;
+	uint8_t i2c_address = 0x00;
+	uint8_t working_i2c_addresses[256];
+	uint8_t array_index=0;
+	
+	for(i2c_address=0; i2c_address <=255; i2c_address++){
+		
+		*xfer_done = false;
+		
+		//writing to pointer byte
+		err_code = nrf_drv_twi_tx(twi, (i2c_address), &reg_addr, 1, false);
+		for(int i=0; i<1000;i++){
+			;
+		}
+		
+		if(*xfer_done){
+			working_i2c_addresses[array_index]= i2c_address;
+			array_index++;
+		}
+		
+	}
+	
+	if(array_index==0){
+		return false;
+	} else{
+		return true;
+	}
+}
 
 /**
  * @brief Connection Manager App initialization.
