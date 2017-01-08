@@ -143,7 +143,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
         memset(m_tx_buf, 0x00, sizeof(m_tx_buf)); // clear the tx for visual clarity
         
         spis_xfer_done = true;
-        NRF_LOG_INFO("spisApp_event_handler: transfer completed. Received: %s\r\n",(uint32_t)m_rx_buf);
+        NRF_LOG_INFO("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
 
 		switch (command){
 			
