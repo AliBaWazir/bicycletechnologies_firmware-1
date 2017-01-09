@@ -40,6 +40,8 @@
 #define SPI_INSTANCE        1 /**< SPIS instance index. */
 
 
+#define SPI_DUMMY_COMMAND   0xF0       //this command is received when SPI master reads a response
+
 /*************************************************
  *SPI GETTER command definitions
  *************************************************/
@@ -146,6 +148,9 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
         NRF_LOG_INFO("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
 
 		switch (command){
+			case SPI_DUMMY_COMMAND
+				//do nothing
+			break;//SPI_DUMMY_COMMAND
 			
 			/**************************** GETTERS ********************************/
 			case SPI_GET_AVAILABLE_DATA_FLAGS:
@@ -266,8 +271,8 @@ static void spisApp_config(void){
     spis_config.miso_pin              = APP_SPIS_MISO_PIN;
     spis_config.mosi_pin              = APP_SPIS_MOSI_PIN;
     spis_config.sck_pin               = APP_SPIS_SCK_PIN;
-    spis_config.def = 0xDF; // This is the data to clock if SPI peripheral can't get control of the memory. Try transfer again.
-    spis_config.orc = 0xDC; //This is the data to clock if OVER READ BUFFER
+    spis_config.def = 0xF0; // This is the data to clock if SPI peripheral can't get control of the memory. Try transfer again.
+    spis_config.orc = 0xF1; //This is the data to clock if OVER READ BUFFER
 
     APP_ERROR_CHECK(nrf_drv_spis_init(&spis, &spis_config, spisApp_event_handler));
     
