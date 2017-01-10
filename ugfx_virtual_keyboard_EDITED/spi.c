@@ -6,6 +6,8 @@
 
 #include "tm_stm32_exti.h"
 
+bool connectionStatus;
+
 struct SPI_data spi_Data;
 char spiOutput[70];
 
@@ -16,6 +18,7 @@ bool nrfReceive(uint8_t *buffIn, uint32_t len);
 bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len);
 
 void nrfGetAvailability();
+void nrfGetDeviceName();
 bool nrfGetSpeed();
 bool nrfGetCadence();
 bool nrfGetDistance();
@@ -44,7 +47,9 @@ osMessageQId  spiQueue;
 
 void runSPI(){
 	nrfSetup();
-
+	
+	connectionStatus = true;
+	
 	spiQueue = osMessageCreate(osMessageQ(spiQueue), NULL);
 	
 	char temp[10];
@@ -52,6 +57,7 @@ void runSPI(){
 	while(1){
 		osEvent evt = osMessageGet(spiQueue, osWaitForever);
 		if (evt.status == osEventMessage) {
+			//nrfGetDeviceName();
 			messageReceived = (message_t*)evt.value.p;
 			if(messageReceived->msg_ID == GET_AVAILABILITY_MSG){
 				TRACE("SPI:,GET_AVAILABILITY_MSG\n");
@@ -83,14 +89,6 @@ void runSPI(){
 					spi_Data.gears.backGears[count] = 0;
 				}
 				nrfGetGearSettings();
-				/*spi_Data.gears.frontGears[0] = 4;
-				spi_Data.gears.backGears[0] = 9;
-				for(int x = 1; x <= 4; x++){
-					spi_Data.gears.frontGears[x] = x;
-				}
-				for(int x = 1; x <= 9; x++){
-					spi_Data.gears.backGears[x] = x;
-				}*/
 				sendGearSettingsMSG();
 			}else if(messageReceived->msg_ID == SET_GEAR_COUNT_MSG){
 				TRACE("SPI:,SET_GEAR_COUNT_MSG\n");
@@ -227,6 +225,28 @@ void nrfGetAvailability(){
 		TRACE("SPI:,Battery Data is available\n");
 		nrfGetBattery();
 	}
+}
+
+// TODO UNDER DEVELOPMENT
+void nrfGetDeviceName(){
+	char array[4];
+	uint8_t key = GET_DEVICE_NAME_MSG;
+	nrfSend(&key, 1);
+	uint8_t value[3];
+	nrfReceive(&value[0], 3);
+	if((value[0] == 0x4E) && (value[1] == 0x52) && (value[2] == 0x46)){
+		connectionStatus = true;
+		for(int x = 0; x<3; x++){
+			array[x] = value[x];
+		}
+		array[3] = '\0';
+		TRACE("SPI:,Connection to %c%c%c established\n", value[0],value[1],value[2]);
+		TRACE("SPI:,Connection to %s finished\n", array[0]);
+	}else{
+		connectionStatus = false;
+		TRACE("SPI:,Connection not established");
+	}
+	
 }
 
 bool nrfGetSpeed(){
@@ -415,7 +435,7 @@ uint8_t getSpeed(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.speed.age;
-  if((!nrfGetSpeed()) && (timeDiff > DATA_INVALID_TIME)){
+  if(((!connectionStatus) || (!nrfGetSpeed())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID SPEED: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
@@ -427,7 +447,7 @@ uint8_t getCadence(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.cadence.age;
-	if((!nrfGetCadence()) && (timeDiff > DATA_INVALID_TIME)){
+	if(((!connectionStatus) || (!nrfGetCadence())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID CADENCE: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
@@ -439,7 +459,7 @@ uint8_t getDistance(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.distance.age;
-	if((!nrfGetDistance()) && (timeDiff > DATA_INVALID_TIME)){
+	if(((!connectionStatus) || (!nrfGetDistance())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID DISTANCE: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
@@ -451,7 +471,7 @@ uint8_t getHeartRate(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.heartRate.age;
-	if((!nrfGetHeartRate()) && (timeDiff > DATA_INVALID_TIME)){
+	if(((!connectionStatus) || (!nrfGetHeartRate())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID HEART RATE: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
@@ -463,7 +483,7 @@ uint8_t getCadenceSetPoint(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.cadenceSetPoint.age;
-	if((!nrfGetCadenceSetPoint()) && (timeDiff > DATA_INVALID_TIME)){
+	if(((!connectionStatus) || (!nrfGetCadenceSetPoint())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID CADENCE SET POINT: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
@@ -475,7 +495,7 @@ uint8_t getBattery(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.batt.age;
-	if((!nrfGetBattery()) && (timeDiff > DATA_INVALID_TIME)){
+	if(((!connectionStatus) || (!nrfGetBattery())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID BATTERY: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
@@ -487,7 +507,7 @@ uint8_t getWheelDiameter(){
 	TM_RTC_t rtcd;
 	getRTC(&rtcd, TM_RTC_Format_BIN);
 	uint32_t timeDiff = TM_RTC_GetUnixTimeStamp(&rtcd) - spi_Data.wheelDiameter.age;
-	if((!nrfGetWheelDiameter()) && (timeDiff > DATA_INVALID_TIME)){
+	if(((!connectionStatus) || (!nrfGetWheelDiameter())) && (timeDiff > DATA_INVALID_TIME)){
 		TRACE("SPI:,INVALID WHEEL DIAMETER: Returning INVALID_DATA\n");
 		return INVALID_DATA;
 	}
