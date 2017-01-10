@@ -40,6 +40,8 @@ GHandle labels[6];
 GHandle buttons[8];
 GHandle lists[2];
 
+uint8_t previousBatt;
+static gdispImage battImage;
 
 GHandle ghImage1[10];
 
@@ -117,7 +119,7 @@ void button5Call();
 void button6Call();
 void button7Call();
 void handleMenuSwitches();
-
+void displayBattery(uint8_t currentBatt);
 void showCurrentGears();
 	
 static void createmainContainer(void)
@@ -314,24 +316,6 @@ static void createData(void)
 	gwinLabelSetBorder(labels[3], TRUE);
 	gwinSetFont(labels[3], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[3]);
-	
-	batteryOutput = 0;
-	formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
-	// Create label widget: labels[4]
-	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 366;
-	wi.g.width = 117;
-	wi.g.height = 114;
-	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = dataOutput;
-	wi.customDraw = gwinLabelDrawJustifiedCenter;
-	wi.customParam = 0;
-	wi.customStyle = &midnight;
-	labels[4] = gwinLabelCreate(0, &wi);
-	gwinLabelSetBorder(labels[4], TRUE);
-	gwinSetFont(labels[4], gdispOpenFont("Georgia40"));
-	gwinRedraw(labels[4]);
 	
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
@@ -1236,7 +1220,6 @@ static void destroyData(void)
 	gwinDestroy(labels[1]);
 	gwinDestroy(labels[2]);
 	gwinDestroy(labels[3]);
-	gwinDestroy(labels[4]);
 	gwinDestroy(buttons[0]);
 }
 
@@ -1497,6 +1480,8 @@ void guiEventLoop(void)
 	int tilexOffset;
 	int tileyOffset;
 	
+	previousBatt = 1;
+	
 	guiQueue = osMessageCreate(osMessageQ(guiQueue), NULL);
 	
 //	int oldtilex=0;
@@ -1578,10 +1563,11 @@ void guiEventLoop(void)
 				}
 				
 				if(batteryOutput == INVALID_DATA){
-					gwinSetText(labels[4], "--", TRUE);
+					displayBattery(0);
 				}else{
-					formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
-					gwinSetText(labels[4], dataOutput, TRUE);
+					//formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
+					//gwinSetText(labels[4], dataOutput, TRUE);
+					displayBattery(batteryOutput);
 				}
 								
 				messageSent = (message_t*)osPoolAlloc(mpool);
@@ -1747,6 +1733,7 @@ void button0Call(){
 		createMap();
 		gwinShow(containers[DATA_CONTAINER]);
 		gwinShow(containers[MAP_CONTAINER]);
+		previousBatt+=1;
 		oldtilex=0;
 		oldtiley=0;
 	}
@@ -1992,6 +1979,17 @@ void handleMenuSwitches(){
 		}
 		oldMenuSelectedItem = gwinListGetSelected(lists[0]);
 	}	
+}
+
+void displayBattery(uint8_t currentBatt){
+	if(currentBatt != previousBatt){
+		char battString[15];
+		formatString(battString, sizeof(battString), "Battery/%d.png", currentBatt);
+		gdispImageOpenFile(&battImage, battString);
+		gdispImageDraw(&battImage, 4, 391, 113, 63, 0, 0);
+		gdispImageClose(&battImage);
+		previousBatt = currentBatt;
+	}
 }
 
 void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset)

@@ -47,7 +47,8 @@ osMessageQId  spiQueue;
 
 void runSPI(){
 	nrfSetup();
-	
+	uint8_t batt = 0;
+	uint8_t count = 0;
 	connectionStatus = true;
 	
 	spiQueue = osMessageCreate(osMessageQ(spiQueue), NULL);
@@ -500,7 +501,29 @@ uint8_t getBattery(){
 		return INVALID_DATA;
 	}
 	TRACE("SPI:,VALID BATTERY: %d\n", spi_Data.batt.value);
-	return spi_Data.batt.value;
+	if(spi_Data.batt.value > 95){
+		return 100;
+	}else if(spi_Data.batt.value > 85){
+		return 90;
+	}else if(spi_Data.batt.value > 75){
+		return 80;
+	}else if(spi_Data.batt.value > 65){
+		return 70;
+	}else if(spi_Data.batt.value > 55){
+		return 60;
+	}else if(spi_Data.batt.value > 45){
+		return 50;
+	}else if(spi_Data.batt.value > 35){
+		return 40;
+	}else if(spi_Data.batt.value > 25){
+		return 30;
+	}else if(spi_Data.batt.value > 15){
+		return 20;
+	}else if(spi_Data.batt.value > 5){
+		return 10;
+	}else{
+		return 0;
+	}
 }
 
 uint8_t getWheelDiameter(){
