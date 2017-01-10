@@ -39,13 +39,15 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc;
+
 I2C_HandleTypeDef hi2c1;
-uint8_t temp = 0;
-uint8_t data1 = 0xF;
-uint8_t data2 = 0xA;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+uint8_t data[4];
+int i = 0;
+int flag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -53,6 +55,7 @@ void SystemClock_Config(void);
 void Error_Handler(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_ADC_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -81,11 +84,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_ADC_Init();
 
   /* USER CODE BEGIN 2 */
-	while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data1, 1, 10) != HAL_OK){}
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -99,29 +101,26 @@ int main(void)
 		
 		//HAL_I2C_Slave_Receive(hi2c1, uint8_t *pData, uint16_t Size, uint32_t Timeout)
 		//HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout)
-		
-		
-		//HAL_Delay(5000);			
-		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){}		
-		
-		while(HAL_I2C_Master_Receive(&hi2c1, 24, &temp, 1, 10) != HAL_OK){}
-		
-		switch(temp){
-			case 0xF:
-				while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){}
-
-				while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data2, 1, 10) != HAL_OK){}
-				HAL_Delay(1000);
-					break;
+		HAL_ADC_Start(&hadc);
+		while(flag == 0){
 			
-			case 0xA:
-				while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){}
-
-				while(HAL_I2C_Master_Transmit(&hi2c1, 24, &data1, 1, 10) != HAL_OK){}
-				HAL_Delay(1000);
-					break;
+			if(__HAL_ADC_GET_FLAG(&hadc, ADC_FLAG_EOC))
+			{
+				data[i] = HAL_ADC_GetValue(&hadc);
+				if(i == 3){
+					i = 0;
+					flag = 1;
+					HAL_ADC_Stop(&hadc);
+				}
+				else { i++;}
+			}
 		}
-			
+		
+		flag = 0;
+		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){ Error_Handler(); }		
+		
+ 	  while(HAL_I2C_Master_Transmit(&hi2c1, 24, data, 4, 1000) != HAL_OK){}
+			 
   }
   /* USER CODE END 3 */
 
@@ -179,6 +178,68 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
+/* ADC init function */
+static void MX_ADC_Init(void)
+{
+
+  ADC_ChannelConfTypeDef sConfig;
+
+    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+    */
+  hadc.Instance = ADC1;
+  hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc.Init.Resolution = ADC_RESOLUTION_8B;
+  hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
+  hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc.Init.LowPowerAutoWait = DISABLE;
+  hadc.Init.LowPowerAutoPowerOff = DISABLE;
+  hadc.Init.ContinuousConvMode = DISABLE;
+  hadc.Init.DiscontinuousConvMode = DISABLE;
+  hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc.Init.DMAContinuousRequests = DISABLE;
+  hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  if (HAL_ADC_Init(&hadc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel to be converted. 
+    */
+  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel to be converted. 
+    */
+  sConfig.Channel = ADC_CHANNEL_6;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel to be converted. 
+    */
+  sConfig.Channel = ADC_CHANNEL_8;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel to be converted. 
+    */
+  sConfig.Channel = ADC_CHANNEL_9;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
 /* I2C1 init function */
 static void MX_I2C1_Init(void)
 {
@@ -206,27 +267,14 @@ static void MX_I2C1_Init(void)
 
 }
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
+/** Pinout Configuration
 */
 static void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
-
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-
-  /*Configure GPIO pins : PA1 PA2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 

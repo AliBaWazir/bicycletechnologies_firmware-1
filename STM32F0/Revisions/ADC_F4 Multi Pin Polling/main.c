@@ -63,7 +63,6 @@ static void MX_NVIC_Init(void);
 
 /* USER CODE BEGIN 0 */
 uint16_t ADC1_val[3];
-uint8_t data[4];
 /* USER CODE END 0 */
 
 int main(void)
@@ -92,7 +91,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 		
-	
+		//uint8_t data[2];
 		
 
 		
@@ -103,43 +102,36 @@ int main(void)
       			HAL_Delay(500);
       		}
       		HAL_Delay(1000);
-		
-		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
-		{
-		}
-		
-		while(HAL_I2C_Slave_Receive_IT(&hi2c1, data , 4) != HAL_OK){
-			Error_Handler();
-		}
-	
+					int i =0;
+					HAL_ADC_Start(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-		while (1)
+  while (1)
   {
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+	
+		
+		if(__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOC))
+		{
+			ADC1_val[i] = HAL_ADC_GetValue(&hadc1);
+			if(i == 2){
+				i = 0;
+				
+				HAL_Delay(1000);
+				
+			
+			}
+			else { i++;}
+		}	
 		
   }
   /* USER CODE END 3 */
 
 }
-
-
-void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
-{
-	
-	
-	while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
-	{
-	}
-	while(HAL_I2C_Slave_Receive_IT(hi2c1, data , 4) != HAL_OK){
-			Error_Handler();
-	}
-}
-
 
 /** System Clock Configuration
 */
