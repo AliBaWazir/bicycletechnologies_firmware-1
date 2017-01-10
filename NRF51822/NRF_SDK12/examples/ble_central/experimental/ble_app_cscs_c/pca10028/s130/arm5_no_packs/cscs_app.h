@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "ble_cscs_c_developed.h"
+#include "drivers_commons.h"
 
 
 #ifdef __cplusplus
@@ -27,6 +28,7 @@ uint8_t cscsApp_get_current_speed_kmph(void);
 uint8_t cscsApp_get_current_cadence_rpm(void);
 uint8_t cscsApp_get_current_distance_km(void);
 
+void cscsApp_assing_new_meas_callback(new_meas_callback_f cb);
 bool cscsApp_cscs_c_init(void);
 
 #ifdef __cplusplus
