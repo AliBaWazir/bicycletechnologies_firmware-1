@@ -27,7 +27,13 @@ typedef enum {
 	CSCS_DATA_HR
 } cscs_data_type_e;
 
-
+/* not needed
+typedef enum{
+	GEAR_TYPE_CRANK,
+	GEAR_TYPE_WHEEL,
+	GEAR_TYPE_UNKNOWN
+} gear_type_e;
+*/
 
 /**********************************************************************************************
 * ROM STORED DATA
@@ -48,13 +54,32 @@ typedef enum{
 extern uint32_t cadence_setpoint_rpm;
 extern user_defined_bike_config_data_t  user_defined_bike_config_data;
 
-/* not needed
-typedef enum{
-	GEAR_TYPE_CRANK,
-	GEAR_TYPE_WHEEL,
-	GEAR_TYPE_UNKNOWN
-} gear_type_e;
-*/
+
+/**********************************************************************************************
+* SPI and other apps
+***********************************************************************************************/
+typedef enum {
+	//there are 32 bits. Every bit correponds to a data avaialble flag. The following are the indeces of the flags.
+
+	//Group 0: Shifting Algorithm Parameters	
+	SPI_AVAIL_FLAG_SPEED                  =(0x01<<0),
+	SPI_AVAIL_FLAG_CADENCE                =(0x01<<1),
+	SPI_AVAIL_FLAG_DISTANCE               =(0x01<<2),
+	SPI_AVAIL_FLAG_HR                     =(0x01<<3),
+	SPI_AVAIL_FLAG_BATTERY                =(0x01<<4),
+	//Group 1: Bike configuration
+	SPI_AVAIL_FLAG_BIKE_CONFIG_PRAMS      =(0x01<<8),
+	//Group 2: Bluetooth Device Configuration
+	SPI_AVAIL_FLAG_ADVER_DEVICES_COUNT    =(0x01<<16),
+	SPI_AVAIL_FLAG_PAIRED_DEVICES         =(0x01<<17),
+	SPI_AVAIL_FLAG_CONNECTED_DEVICES      =(0x01<<18),
+	SPI_AVAIL_FLAG_CSC_DEVICE_NAME        =(0x01<<19), 
+	SPI_AVAIL_FLAG_HR_DEVICE_NAME         =(0x01<<20),
+	SPI_AVAIL_FLAG_PHONE_DEVICE_NAME      =(0x01<<21)
+}spi_data_avail_flag_e;
+
+typedef void (*new_meas_callback_f)(spi_data_avail_flag_e flag, bool data_available);
+
 
 #ifdef __cplusplus
 }

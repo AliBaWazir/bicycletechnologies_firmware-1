@@ -40,9 +40,11 @@
 /**********************************************************************************************
 * STATIC VARIABLES
 ***********************************************************************************************/
-static ble_hrs_c_t        m_ble_hrs_c;                  /**< Structure used to identify the heart rate client module. */
-static ble_bas_c_t        m_ble_bas_c;                  /**< Structure used to identify the Battery Service client module. */
-static uint16_t           inst_hr_value;                // instantaious value of heart rate reading
+static ble_hrs_c_t        	  m_ble_hrs_c;              /**< Structure used to identify the heart rate client module. */
+static ble_bas_c_t        	  m_ble_bas_c;              /**< Structure used to identify the Battery Service client module. */
+static uint16_t               inst_hr_value;            // instantaious value of heart rate reading
+
+static new_meas_callback_f    new_meas_cb    = NULL;    // Function pointer to the function to be called when a new measuremnt is obtained
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -78,6 +80,10 @@ static void hrsApp_hrs_c_evt_handler(ble_hrs_c_t * p_hrs_c, ble_hrs_c_evt_t * p_
         case BLE_HRS_C_EVT_HRM_NOTIFICATION:
         {
             inst_hr_value = p_hrs_c_evt->params.hrm.hr_value;
+			//call the new measurement callback 
+			if(new_meas_cb != NULL){
+				new_meas_cb(SPI_AVAIL_FLAG_HR, true);
+			}
 			NRF_LOG_INFO("New Heart Rate reading= %d (bpm)\r\n", inst_hr_value);
         }break;
 
@@ -184,6 +190,12 @@ void hrsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 //function to return current instantanious heart rate
 uint8_t hrsApp_get_current_hr_bpm(void){
 	return (uint8_t)inst_hr_value;
+}
+
+void hrsApp_assing_new_meas_callback(new_meas_callback_f cb){
+	
+	new_meas_cb= cb;
+	return;
 }
 
 /**

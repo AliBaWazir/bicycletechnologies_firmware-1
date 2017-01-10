@@ -32,7 +32,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define SPI_DRIVER_SIM_MODE 1 /****************************************************
+#define SPI_DRIVER_SIM_MODE 0 /****************************************************
 							   *This flag is set to 1 only if SPI slave interaction
 							   *is in simulation mode.
 							   ***************************************************/
@@ -123,13 +123,43 @@ static volatile bool spis_xfer_done = true; /**< Flag used to indicate that SPIS
 
 uint8_t bitField[4] = {0x7F, 0x7F, 0x7F, 0x7F};  //static example for now.
 
-static uint32_t data_availability_flags = 0x00000000; 
+static volatile uint32_t data_availability_flags = 0x00000000; 
 
 
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
+
+// Function to set SPI interrupt pin HIGH to inform UI there is a new data
+static void spisApp_irq_set_high(void){
+	
+	nrf_gpio_pin_set(APP_SPIS_IRQ_PIN);
+	
+	return;
+}
+
+
+// Function to set SPI interrupt pin LOW after UI reads data availability flags
+static void spisApp_irq_set_low(){
+	
+	nrf_gpio_pin_clear(APP_SPIS_IRQ_PIN);
+	
+	return;
+}
+
+static void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool data_available){
+	
+	if (data_available){
+		
+		data_availability_flags|= (flag);
+		//set SPI IRQ HIGH
+		spisApp_irq_set_high();
+		
+	} else{
+		data_availability_flags&= ~(flag);
+	}
+}
 
 /**
  * @brief SPIS user event handler.
@@ -145,7 +175,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
         memset(m_tx_buf, 0x00, sizeof(m_tx_buf)); // clear the tx for visual clarity
         
         spis_xfer_done = true;
-        NRF_LOG_INFO("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
+        NRF_LOG_DEBUG("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
 
 		switch (command){
 			case SPI_DUMMY_COMMAND:
@@ -158,7 +188,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					spisSimDriver_get_data_availability_flags(m_tx_buf);
 				} else {
 					//memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
-					memcpy(m_tx_buf, &data_availability_flags, sizeof(data_availability_flags));
+					memcpy(m_tx_buf, (const void*)(&data_availability_flags), sizeof(data_availability_flags));
+					spisApp_irq_set_low();
 				}
 
 			break;
@@ -169,6 +200,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_SPEED);
 				} else {
 					m_tx_buf[0]= cscsApp_get_current_speed_kmph();
+					//reset speed flag bit
+					spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_SPEED, false);
 				}
 			break;
 			
@@ -178,6 +211,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_CADENCE);
 				} else {
 					m_tx_buf[0]= cscsApp_get_current_cadence_rpm();
+					//reset cadence flag bit
+					spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_CADENCE, false);					
 				}
 			break;
 				
@@ -187,6 +222,8 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_DISTANCE);
 				} else {
 					m_tx_buf[0]= cscsApp_get_current_distance_km();
+					//reset distance flag bit
+					spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_DISTANCE, false);					
 				}
 			break;
 			
@@ -196,28 +233,35 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 					m_tx_buf[0] = spisSimDriver_get_current_data(CSCS_DATA_HR);
 				} else {
 					m_tx_buf[0] = hrsApp_get_current_hr_bpm();
+					//reset hr flag bit
+					spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_HR, false);
 				}
 			break;//SPI_GET_HR
 			
 			case SPI_GET_CADENCE_SETPOINT:
 				m_tx_buf[0] = algorithmApp_get_cadence_setpoint();
+				/*TODO: figure out which bit to rest for avail flags*/
 			break;//SPI_GET_CADENCE_SETPOINT
 			
 			case SPI_GET_BATTERY_LEVEL:
 				/*TODO: call i2c app to retirieve batttery level from SO*/
+				/*TODO: figure out which bit to rest for avail flags*/
 			break;//SPI_GET_BATTERY_LEVEL
 						
 			case SPI_GET_WHEEL_DIAMETER:
 				m_tx_buf[0] = algorithmApp_get_wheel_diameter_cm();
+				/*TODO: figure out which bit to rest for avail flags*/
 			break;//SPI_GET_WHEEL_DIAMETER
 				
 			case SPI_GET_GEAR_COUNT:
 				m_tx_buf[0] = algorithmApp_get_gears_count_crank();
 				m_tx_buf[1] = algorithmApp_get_gears_count_wheel();
+				/*TODO: figure out which bit to rest for avail flags*/
 			break;//SPI_GET_GEAR_COUNT
 			
 			case SPI_GET_TEETH_COUNT_ON_GEAR:
 				m_tx_buf[0] = algorithmApp_get_teeth_count(m_rx_buf[INDEX_ARG_GEAR_TYPE], m_rx_buf[INDEX_ARG_GEAR_INDEX]);
+				/*TODO: figure out which bit to rest for avail flags*/
 			break;//SPI_GET_TEETH_COUNT_ON_GEAR
 			
 			
@@ -264,7 +308,7 @@ static void spisApp_config(void){
     LEDS_CONFIGURE(BSP_LED_0_MASK);
     LEDS_OFF(BSP_LED_0_MASK);
 
-    APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
+    //APP_ERROR_CHECK(NRF_LOG_INIT(NULL));
 
     nrf_drv_spis_config_t spis_config = NRF_DRV_SPIS_DEFAULT_CONFIG;
     spis_config.csn_pin               = APP_SPIS_CS_PIN;
@@ -275,22 +319,16 @@ static void spisApp_config(void){
     spis_config.orc = 0xF1; //This is the data to clock if OVER READ BUFFER
 
     APP_ERROR_CHECK(nrf_drv_spis_init(&spis, &spis_config, spisApp_event_handler));
+	
+	//set the inturrupt pin as output. By the default, it should LOW
+	nrf_gpio_cfg_output(APP_SPIS_IRQ_PIN);
+	nrf_gpio_pin_clear(APP_SPIS_IRQ_PIN);
     
 }
 
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
-
-void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool data_available){
-	
-	if (data_available){
-		data_availability_flags|= (flag);
-	} else{
-		data_availability_flags&= ~(flag);
-	}
-}
-
 
 bool spisApp_init(void)
 {
@@ -303,6 +341,10 @@ bool spisApp_init(void)
 		ret_code = spisSimDriver_init();
 	}
 
+	// assign a callback function to be called by other apps whenever a new measuremnt is received
+	hrsApp_assing_new_meas_callback(spisApp_update_data_avail_flags);
+	cscsApp_assing_new_meas_callback(spisApp_update_data_avail_flags);
+	
     if (ret_code){
 		NRF_LOG_INFO("SPIS APP initialized successfully\r\n");
 	} else {

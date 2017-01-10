@@ -66,9 +66,10 @@ typedef struct{
 ***********************************************************************************************/
 static ble_cscs_c_t                 m_ble_cscs_c;      /**< Structure used to identify the Cycling Speed and Cadence client module. */
 static cscs_instantanious_data_t    cscs_instantanious_data;
-static double                       wheel_circumference_cm = 2*PI*DFAULT_WHEEL_DIAMETER_CM;               /*The circumfrance is calculated by wheel diameter specified by user*/
-
 /* TODO: create a function to update wheelCircumference by user data*/
+static double                       wheel_circumference_cm = 2*PI*DFAULT_WHEEL_DIAMETER_CM;  /*The circumfrance is calculated by wheel diameter specified by user*/
+static new_meas_callback_f          new_meas_cb            = NULL;    // Function pointer to the function to be called when a new measuremnt is obtained
+
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -98,6 +99,11 @@ static int32_t process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t n
 			cscs_instantanious_data.travelDistance_m.is_read = false;
 			cscs_instantanious_data.totalTravelDistance.value =(new_cumulative_wheel_revs * wheel_circumference_cm)/100.0;
 		    cscs_instantanious_data.totalTravelDistance.is_read = false;
+			
+			//call the new measurement callback 
+			if(new_meas_cb != NULL){
+				new_meas_cb(SPI_AVAIL_FLAG_DISTANCE, true);
+			}
 		}
     }
 	
@@ -111,13 +117,18 @@ static int32_t process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t n
     }
 				
 	if (wheel_event_time_diff_s > 0) {
-        //speed is in units of m/s
+        //speed is in units of km/h
         cscs_instantanious_data.wheel_speed_kmph.value = (((wheel_revolutions_diff * wheel_circumference_cm)/100.0)/wheel_event_time_diff_s)*3.6;  //3.6 is to convert from m/s to km/h
 		cscs_instantanious_data.wheel_speed_kmph.is_read = false;
     } else{
 		//wheel is stopped. Set speed at 0 km/h
 		cscs_instantanious_data.wheel_speed_kmph.value = 0.0;
 		cscs_instantanious_data.wheel_speed_kmph.is_read = false;
+	}
+	
+	//call the new measurement callback 
+	if(new_meas_cb != NULL){
+		new_meas_cb(SPI_AVAIL_FLAG_SPEED, true);
 	}
     
 	//update the old revolution and envent time fields with new data
@@ -168,7 +179,13 @@ static int32_t process_crank_data(uint16_t new_cumulative_crank_revs, uint16_t n
 	cscs_instantanious_data.oldCrankEventTime.is_read= false;
 	cscs_instantanious_data.crank_cadence_rpm.value = cadence_rpm;
 	cscs_instantanious_data.crank_cadence_rpm.is_read = false;
-		
+	
+	//call the new measurement callback 
+	if(new_meas_cb != NULL){
+		/*TODO: figure out if cadence value is obtained from here or from wheel RPM*/
+		new_meas_cb(SPI_AVAIL_FLAG_CADENCE, true);
+	}
+	
 	return crank_revolutions_diff;
 }
 
@@ -334,6 +351,12 @@ uint8_t cscsApp_get_current_cadence_rpm(void){
 uint8_t cscsApp_get_current_distance_km(void){
 	//convert from m to km
 	return (uint8_t)((cscs_instantanious_data.travelDistance_m.value)/1000);
+}
+
+void cscsApp_assing_new_meas_callback(new_meas_callback_f cb){
+	
+	new_meas_cb= cb;
+	return;
 }
 
 /**
