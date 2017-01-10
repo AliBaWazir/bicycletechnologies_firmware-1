@@ -148,7 +148,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
         NRF_LOG_INFO("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
 
 		switch (command){
-			case SPI_DUMMY_COMMAND
+			case SPI_DUMMY_COMMAND:
 				//do nothing
 			break;//SPI_DUMMY_COMMAND
 			
