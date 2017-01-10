@@ -63,7 +63,9 @@ static void MX_NVIC_Init(void);
 
 /* USER CODE BEGIN 0 */
 uint16_t ADC1_val[3];
-uint8_t data[4];
+uint8_t data[8];
+uint16_t data2[4];
+uint16_t temp;
 /* USER CODE END 0 */
 
 int main(void)
@@ -108,7 +110,7 @@ int main(void)
 		{
 		}
 		
-		while(HAL_I2C_Slave_Receive_IT(&hi2c1, data , 4) != HAL_OK){
+		while(HAL_I2C_Slave_Receive_IT(&hi2c1, data , 8) != HAL_OK){
 			Error_Handler();
 		}
 	
@@ -130,12 +132,19 @@ int main(void)
 
 void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
 {
-	
+	int a = 0;
+	for(int i=0; i<=4;i++){
+		temp = data[a];
+		temp = temp << 8;
+		temp = data[a+1];
+		data2[i] = temp;
+		a=a+2;
+	}
 	
 	while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
 	{
 	}
-	while(HAL_I2C_Slave_Receive_IT(hi2c1, data , 4) != HAL_OK){
+	while(HAL_I2C_Slave_Receive_IT(hi2c1, data , 8) != HAL_OK){
 			Error_Handler();
 	}
 }

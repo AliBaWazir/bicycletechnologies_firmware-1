@@ -45,7 +45,9 @@ I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint8_t data[4];
+uint8_t data[8];
+uint16_t data2[4];
+uint8_t most_sig,least_sig;
 int i = 0;
 int flag = 0;
 /* USER CODE END PV */
@@ -106,7 +108,7 @@ int main(void)
 			
 			if(__HAL_ADC_GET_FLAG(&hadc, ADC_FLAG_EOC))
 			{
-				data[i] = HAL_ADC_GetValue(&hadc);
+				data2[i] = HAL_ADC_GetValue(&hadc);
 				if(i == 3){
 					i = 0;
 					flag = 1;
@@ -117,9 +119,19 @@ int main(void)
 		}
 		
 		flag = 0;
+		int a = 0;
+		for(int q=0;q<=4;q++){
+			most_sig = data2[q] >> 8;
+			least_sig = data2[q];
+			
+			data[a] = most_sig;
+			data[a+1] = least_sig;
+			a = a+2;
+		}
+		
 		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){ Error_Handler(); }		
 		
- 	  while(HAL_I2C_Master_Transmit(&hi2c1, 24, data, 4, 1000) != HAL_OK){}
+ 	  while(HAL_I2C_Master_Transmit(&hi2c1, 24, data, 8, 1000) != HAL_OK){}
 			 
   }
   /* USER CODE END 3 */
@@ -188,7 +200,7 @@ static void MX_ADC_Init(void)
     */
   hadc.Instance = ADC1;
   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
-  hadc.Init.Resolution = ADC_RESOLUTION_8B;
+  hadc.Init.Resolution = ADC_RESOLUTION_12B;
   hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
