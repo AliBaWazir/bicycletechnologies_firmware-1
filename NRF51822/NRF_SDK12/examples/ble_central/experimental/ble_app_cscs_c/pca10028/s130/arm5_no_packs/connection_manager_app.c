@@ -256,8 +256,8 @@ static void scanning_timer_handler( void * callback_data){
 static void connManagerApp_handle_queue_conn_requests(){
 	
 	uint8_t current_queued_conn_count = connection_requests_queue.queued_request_count;
-	//ensure that there are only MAX_CONNECTIONS_COUNT-1 connection requests in queue
-	if ( current_queued_conn_count < MAX_CONNECTIONS_COUNT){
+	//ensure that there are only MAX_CONNECTIONS_COUNT-1 connection requests in queue and more than 0 request in queue
+	if ((current_queued_conn_count < MAX_CONNECTIONS_COUNT) && (current_queued_conn_count > 0) ){
 		//serve last connection request in queue
 		if(!connManagerApp_advertised_device_connect(connection_requests_queue.queue_request[current_queued_conn_count-1])){
 			NRF_LOG_ERROR("connManagerApp_handle_queue_conn_requests: connManagerApp_advertised_device_connect failed \r\n");
