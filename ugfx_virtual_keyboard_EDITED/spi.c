@@ -172,12 +172,12 @@ void TM_SPI_InitCustomPinsCallback(SPI_TypeDef* SPIx, uint16_t AlternateFunction
 }
 
 bool nrfSend(uint8_t *buffOut, uint32_t len){
-	uint8_t buffIn = 0xFF;
+	uint8_t buffIn;
 	nrfTransmit(buffOut, &buffIn, len);
 }
 
 bool nrfReceive(uint8_t *buffIn, uint32_t len){
-	uint8_t buffOut = 0xFF;
+	uint8_t buffOut = DUMMY_VALUE;
 	nrfTransmit(&buffOut, buffIn, len);
 }
 
@@ -186,7 +186,7 @@ bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len){
 		TM_GPIO_SetPinLow(GPIOH, GPIO_PIN_6);
 		TM_SPI_SendMulti(SPI2, buffOut, buffIn, len);
 		TRACE("SPI:,buffOut = %d [%02hhX],buffIn = %d [%02hhX]\n", *buffOut, *buffOut, *buffIn, *buffIn);
-		if(*buffIn == 0xDF){
+		if(*buffIn == DUMMY_VALUE){
 			TM_GPIO_SetPinHigh(GPIOH, GPIO_PIN_6);
 			Delayms(50);
 		}else{
@@ -342,7 +342,7 @@ void nrfGetGearSettings(){
 	uint8_t command[3];
 	command[0] = GET_TEETH_COUNT_MSG;
 	// Front Gears
-	command[1] = 0xCA;
+	command[1] = GEAR_COMMAND_FRONT;
 	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
 		command[2] = count-1;
 		nrfSend(&command[0], 3);
@@ -352,7 +352,7 @@ void nrfGetGearSettings(){
 	}
 	
 	// Back Gears
-	command[1] = 0xEE;
+	command[1] = GEAR_COMMAND_BACK;
 	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
 		command[2] = count-1;
 		nrfSend(&command[0], 3);
@@ -377,13 +377,13 @@ void nrfSetGearSettings(){
 	nrfSend(&command[0], 3);
 	
 	command[0] = SET_TEETH_COUNT_MSG;
-	command[1] = 0xCA;
+	command[1] = GEAR_COMMAND_FRONT;
 	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
 		command[2] = count-1;
 		command[3] = spi_Data.gears.frontGears[count];
 		nrfSend(&command[0], 4);
 	}
-	command[1] = 0xEE;
+	command[1] = GEAR_COMMAND_BACK;
 	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
 		command[2] = count-1;
 		command[3] = spi_Data.gears.backGears[count];

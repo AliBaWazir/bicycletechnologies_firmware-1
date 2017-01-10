@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include "gui.h"
 
+#define DUMMY_VALUE			0xF0
+
 #define FLAG_SPEED			0x01
 #define FLAG_CADENCE 		0x02
 #define FLAG_DISTANCE		0x04
@@ -28,6 +30,9 @@
 #define MAXIMUM_CADENCE_SET_POINT	0xEF
 #define MAXIMUM_BATTERY						0x64
 #define MAXIMUM_WHEEL_DIAMETER		0xEF
+
+#define GEAR_COMMAND_FRONT	0xCA
+#define GEAR_COMMAND_BACK		0xEE
 
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
