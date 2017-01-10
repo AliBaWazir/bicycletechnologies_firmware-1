@@ -39,8 +39,10 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
 I2C_HandleTypeDef hi2c1;
-uint8_t data;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -51,6 +53,7 @@ void SystemClock_Config(void);
 void Error_Handler(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_ADC1_Init(void);
 static void MX_NVIC_Init(void);
 
 /* USER CODE BEGIN PFP */
@@ -59,7 +62,7 @@ static void MX_NVIC_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+uint16_t ADC1_val[3];
 /* USER CODE END 0 */
 
 int main(void)
@@ -67,6 +70,7 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -80,6 +84,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_ADC1_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -97,67 +102,37 @@ int main(void)
       			HAL_Delay(500);
       		}
       		HAL_Delay(1000);
-					
-	while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
-  {
-  }
-		
-	while(HAL_I2C_Slave_Receive_IT(&hi2c1, &data , 1) != HAL_OK){
-		Error_Handler();
-	}
-			
+					int i =0;
+					HAL_ADC_Start(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 HAL_Delay(10000);
+  /* USER CODE END WHILE */
+
+  /* USER CODE BEGIN 3 */
+	
+		
+		if(__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOC))
+		{
+			ADC1_val[i] = HAL_ADC_GetValue(&hadc1);
+			if(i == 2){
+				i = 0;
+				
+				HAL_Delay(1000);
+				
+			
+			}
+			else { i++;}
+		}	
+		
   }
   /* USER CODE END 3 */
 
 }
 
-void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
-{
-  switch (data){
-        			case 0xF:
-        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-								while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
-								{
-								}
-		
-								while(HAL_I2C_Slave_Transmit_IT(hi2c1, &data , 1) != HAL_OK){
-									Error_Handler();
-								}
-								break;
-        
-        			case 0xA:
-        				HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-								while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
-								{
-								}
-		
-								while(HAL_I2C_Slave_Transmit_IT(hi2c1, &data , 1) != HAL_OK){
-									Error_Handler();
-								}
-							
-        				break;
-        		}
-}
-
-void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c1)
-{
-	while (HAL_I2C_GetState(hi2c1) != HAL_I2C_STATE_READY)
-  {
-  }
-		
-	while(HAL_I2C_Slave_Receive_IT(hi2c1, &data , 1) != HAL_OK){
-		Error_Handler();
-	}
-}
-
-/** --------------------------------------------------------------------------**/
 /** System Clock Configuration
 */
 void SystemClock_Config(void)
@@ -227,6 +202,60 @@ static void MX_NVIC_Init(void)
   /* I2C1_ER_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(I2C1_ER_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
+}
+
+/* ADC1 init function */
+static void MX_ADC1_Init(void)
+{
+
+  ADC_ChannelConfTypeDef sConfig;
+
+    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+    */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 3;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = 2;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
+  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Rank = 3;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
 }
 
 /* I2C1 init function */
