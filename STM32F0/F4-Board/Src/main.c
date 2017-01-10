@@ -134,10 +134,7 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c1)
 {
 	int a = 0;
 	for(int i=0; i<=4;i++){
-		temp = data[a];
-		temp = temp << 8;
-		temp = data[a+1];
-		data2[i] = temp;
+		data2[i] = (data[a]<<8) | data[a+1];
 		a=a+2;
 	}
 	
