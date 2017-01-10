@@ -45,8 +45,8 @@ I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint8_t data[8];
-uint16_t data2[4];
+uint8_t data[12];
+uint16_t data2[6];
 uint8_t most_sig,least_sig;
 int i = 0;
 int flag = 0;
@@ -90,6 +90,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -109,7 +110,7 @@ int main(void)
 			if(__HAL_ADC_GET_FLAG(&hadc, ADC_FLAG_EOC))
 			{
 				data2[i] = HAL_ADC_GetValue(&hadc);
-				if(i == 3){
+				if(i == 5){
 					i = 0;
 					flag = 1;
 					HAL_ADC_Stop(&hadc);
@@ -120,7 +121,7 @@ int main(void)
 		
 		flag = 0;
 		int a = 0;
-		for(int q=0;q<=4;q++){
+		for(int q=0;q<=6;q++){
 			most_sig = data2[q] >> 8;
 			least_sig = data2[q];
 			
@@ -131,7 +132,7 @@ int main(void)
 		
 		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){ Error_Handler(); }		
 		
- 	  while(HAL_I2C_Master_Transmit(&hi2c1, 24, data, 8, 1000) != HAL_OK){}
+ 	  while(HAL_I2C_Master_Transmit(&hi2c1, 24, data, 12, 1000) != HAL_OK){}
 			 
   }
   /* USER CODE END 3 */
@@ -218,9 +219,17 @@ static void MX_ADC_Init(void)
 
     /**Configure for the selected ADC regular channel to be converted. 
     */
-  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_41CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel to be converted. 
+    */
+  sConfig.Channel = ADC_CHANNEL_5;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -229,6 +238,14 @@ static void MX_ADC_Init(void)
     /**Configure for the selected ADC regular channel to be converted. 
     */
   sConfig.Channel = ADC_CHANNEL_6;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+    /**Configure for the selected ADC regular channel to be converted. 
+    */
+  sConfig.Channel = ADC_CHANNEL_7;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     Error_Handler();
