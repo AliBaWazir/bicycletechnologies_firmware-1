@@ -37,7 +37,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define I2C_IN_SIMULATION_MODE   1        /*This is set to 1 only if the I2C app is running in debugging mode 
+#define I2C_IN_SIMULATION_MODE   0        /*This is set to 1 only if the I2C app is running in debugging mode 
                                            *to charecterize the I2C link between nRF module and gear controller
 										   */
 
@@ -61,6 +61,10 @@
 #define BNO055_I2C_ADDR           (0x29 >> 1)
 #define BNO_ID_REG                 0x00
 
+//Timer Defines
+#define APP_TIMER_PRESCALER          0               /**< Value of the RTC1 PRESCALER register. If changed, remember to change prescaler in main.c*/
+#define I2CAPP_MS_TO_TICK(MS) (APP_TIMER_TICKS(100, APP_TIMER_PRESCALER) * (MS / 100))
+#define I2CAPP_DATA_POLL_PERIOD_MS   10000           //time period in ms to pull data from sensors 
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -75,6 +79,10 @@ typedef struct{
 /**********************************************************************************************
 * STATIC VARIABLES
 ***********************************************************************************************/
+/* Polling Timer*/
+APP_TIMER_DEF(i2c_polling_timer_id);
+static bool polling_timer_started  = false;    //set after timer is started for first time
+
 /* Indicates if operation on TWI has ended. */
 static volatile bool m_xfer_done = false;
 
@@ -90,23 +98,22 @@ i2c_slaves_data_t m_i2c_slaves_data_new;
 /* Struct to hold old data received from I2C slave devices for comparison purposes*/
 i2c_slaves_data_t m_i2c_slaves_data_old;
 
+static new_meas_callback_f    new_meas_cb    = NULL;    // Function pointer to the function to be called when a new measuremnt is obtained
+
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
-
-
 
 /**
  * @brief Function for I2C scan for SOC. For testing purposes
  */
 static bool i2cApp_i2c_scan_soc(uint8_t reg_addr, uint8_t* dest_array){
 	
-	bool ret= false;
+	//bool ret= false;
 	uint8_t* addr; 
 	ret_code_t err_code;
 	uint8_t i2c_address = 0x00;
 	uint8_t working_i2c_addresses[256];
-	uint8_t array_index=0;
 	
 	addr= &reg_addr;
 	
@@ -153,22 +160,36 @@ static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest
 	m_xfer_done = false;
 	//writing to pointer byte
 	err_code = nrf_drv_twi_tx(&m_twi, i2c_address, &reg_addr, sizeof(reg_addr), false);
-	APP_ERROR_CHECK(err_code);
-    while ((!m_xfer_done) && (counter>0)){
-		counter--;
-	}
-	
-	if(counter == 0){
-		//no acknowldgement is received
-		NRF_LOG_ERROR("i2cApp_i2c_read: no acknowldgement is received for i2c slave adress= 0x%x\r\n", i2c_address);
-		ret = false; 
+	if (err_code != NRF_SUCCESS){
+		
+		NRF_LOG_ERROR("i2cApp_i2c_read: nrf_drv_twi_tx failed with err_code= %d\r\n", err_code);
+		ret = false;
+		
+	} else{
+		
+		//run the waiting for acknowledgement counter
+		while ((!m_xfer_done) && (counter>0)){
+			counter--;
+		}
+		
+		if(counter == 0){
+			//no acknowldgement is received
+			NRF_LOG_ERROR("i2cApp_i2c_read: no acknowldgement is received for i2c slave adress= 0x%x\r\n", i2c_address);
+			ret = false; 
+		}
 	}
 	
 	if(ret){
+		
 		//reading
 		m_xfer_done = false;
 		err_code = nrf_drv_twi_rx(&m_twi, i2c_address, dest_array, sizeof(dest_array));
-		APP_ERROR_CHECK(err_code);
+		if (err_code != NRF_SUCCESS){
+			NRF_LOG_ERROR("i2cApp_i2c_read: nrf_drv_twi_rx failed with err_code= %d\r\n", err_code);
+			ret = false;
+			
+		}
+		
 	}
 	
 	return ret;
@@ -236,7 +257,11 @@ __STATIC_INLINE void soc_data_handler(uint8_t state_of_charge_new, uint8_t state
 
 	if(state_of_charge_new != state_of_charge_old){
 		//state of charge value is changed. Report to GUI
-		/*TODO: Report to GUI*/
+		
+		//call the new measurement callback 
+		if(new_meas_cb != NULL){
+			new_meas_cb(SPI_AVAIL_FLAG_BATTERY, true);
+		}
 	}
 	
 	NRF_LOG_DEBUG("soc_data_handler: new SOC state of charge= %d percent\r\n", state_of_charge_new);
@@ -289,9 +314,67 @@ static void twi_init (void)
     nrf_drv_twi_enable(&m_twi);
 }
 
+static bool i2cApp_poll_data(){
+	
+	bool   retcode     = true;
+	
+	// save the recent values as old value for comparison
+	m_i2c_slaves_data_old.soc_state_of_charge= m_i2c_slaves_data_new.soc_state_of_charge;
+	
+	// read new values
+	if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, &(m_i2c_slaves_data_new.soc_state_of_charge))){
+		NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for SOC_I2C_ADDR\r\n");
+		retcode = false;
+	}
+	
+	return retcode;
+	
+}
+
+static void polling_timer_handler( void * callback_data){
+	
+	uint32_t* polling_request_id_p = (uint32_t*) callback_data;
+	uint32_t  nrf_err              = NRF_SUCCESS;   
+	
+	/*TODO: figure out if this is necessary*/
+	if (polling_request_id_p != NULL){
+		NRF_LOG_DEBUG("polling_timer_handler: polling request with ID=%d timed out\r\n", *polling_request_id_p);
+	}
+	
+	//stop scanning timer if the counter is alrady started previously
+	if(polling_timer_started){
+		(void)app_timer_stop(i2c_polling_timer_id);
+	}
+	
+	//poll i2c data
+	if (!i2cApp_poll_data()){
+		/*if in standalone mode, connect to all advertized devices once scannig is finished*/
+		NRF_LOG_ERROR("polling_timer_handler: i2cApp_poll_data failed \r\n");
+	}
+	
+	//start timer againg
+	nrf_err = app_timer_start(i2c_polling_timer_id, I2CAPP_MS_TO_TICK(I2CAPP_DATA_POLL_PERIOD_MS), (void*)NULL);
+	if (nrf_err != NRF_SUCCESS)
+	{
+		NRF_LOG_ERROR("polling_timer_handler: app_timer_start failed with error = %d\r\n", nrf_err);
+	}
+}
+
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
+void i2cApp_assing_new_meas_callback(new_meas_callback_f cb){
+	
+	new_meas_cb= cb;
+	return;
+}
+
+uint8_t i2cApp_get_battery_level(void){
+	
+	return m_i2c_slaves_data_new.soc_state_of_charge;
+	
+}
+
 void i2cApp_wait(){
 	//nrf_delay_ms(500);
 
@@ -303,13 +386,14 @@ void i2cApp_wait(){
     //read_gear_status();
 	
 }
+
 /**
- * @brief Connection Manager App initialization.
+ * @brief I2C App initialization.
  */
 bool i2cApp_init(void){
 	
 	bool         ret                = true;
-	//ret_code_t   nrf_err          = NRF_SUCCESS;
+	ret_code_t   nrf_err          = NRF_SUCCESS;
 	
 	twi_init();
 	
@@ -329,6 +413,23 @@ bool i2cApp_init(void){
 		}
 	
 		ret = i2cSimDriver_init();
+		
+	} else{
+		
+		//use timer to poll data from SOC after the specified time interval
+		nrf_err = app_timer_create(&i2c_polling_timer_id,
+									APP_TIMER_MODE_SINGLE_SHOT,
+									polling_timer_handler);
+		if (nrf_err != NRF_SUCCESS){
+			NRF_LOG_DEBUG("i2cApp_init: app_timer_create failed with error= %d\r\n", nrf_err);
+			ret = false;
+		}
+		
+	    if(ret){
+			//pull data then start the timer
+			polling_timer_handler(NULL);
+		}
+		
 	}
 		
 	return ret;	
