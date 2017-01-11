@@ -105,9 +105,16 @@ static gdispImage marker;
 osMessageQDef(guiQueue, 16, message_t);
 osMessageQId  guiQueue;
 
-	int oldtilex=0;
-	int oldtiley=0;
+int oldtilex=0;
+int oldtiley=0;
+int oldtilexOffset=0;
+int oldtileyOffset=0;
 
+my_GPS gpsData;
+static TM_GPS_Float_t GPS_Float_Lat;
+static TM_GPS_Float_t GPS_Float_Lon;
+	
+uint8_t previousSeconds;
 
 void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset);
 void button0Call();
@@ -1471,23 +1478,10 @@ void guiEventLoop(void)
 {
 	GEvent* pe;
 	int count = 0;
-	uint8_t previousSeconds = 0;
-	my_GPS gpsData;
-	TM_GPS_Float_t GPS_Float_Lat;
-	TM_GPS_Float_t GPS_Float_Lon;
-	int tilex;
-	int tiley;
-	int tilexOffset;
-	int tileyOffset;
-	
+	previousSeconds = 0;
 	previousBatt = 1;
 	
 	guiQueue = osMessageCreate(osMessageQ(guiQueue), NULL);
-	
-//	int oldtilex=0;
-//	int oldtiley=0;
-	int oldtilexOffset=0;
-	int oldtileyOffset=0;
 	
 	char temp[20];
 	message_t *messageReceived;
@@ -1608,77 +1602,8 @@ void guiEventLoop(void)
 		
     if(gwinGetVisible(containers[MAP_CONTAINER])){
 			gfxSleepMilliseconds(3);
-			/*///gdispGClear(GDISP, (LUMA2COLOR(0)));
-			gwinClear(mapWindow);
-			x=x+2;y=y+2;
-			for(int tempx = x+4*256; tempx>-256; tempx=tempx-256)
-			{
-					while(tempx > 4*256)
-					{
-							tempx=tempx-256;
-					}
-					for(int tempy = y+4*256; tempy>-256; tempy=tempy-256)
-					{   
-							while(tempy > 4*256)
-							{
-									tempy=tempy-256;
-							}
-							//drawTile(tempx, tempy);
-							gwinDrawBox(mapWindow, tempx, tempy, 256, 256);
-							
-					}
-			}*/
-			gpsData = getGPS();	
-#ifdef MAP_TILE_TEST_CANAL
-			gpsData.Validity = true;
-			gpsData.Latitude = 45.384365;
-			gpsData.Longitude = -75.698600;
-#endif
-#ifdef MAP_TILE_TEST_MAYTHAM
-			gpsData.Validity = true;
-			gpsData.Latitude = 45.378962;
-			gpsData.Longitude = -75.667347;
-#endif
-#ifdef MAP_TILE_TEST_JON
-			gpsData.Validity = true;
-			gpsData.Latitude = 45.409269;
-			gpsData.Longitude = -75.706862;
-#endif
-			if(!gpsData.Validity){
-				if(RTCD.Seconds != previousSeconds){
-					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
-					//TRACE("GPS Data is Invalid\n");
-					gwinSetText(labels[5], gpsOutput, TRUE);
-					previousSeconds = RTCD.Seconds;
-				}
-			}else{
-				if(RTCD.Seconds != previousSeconds){
-					gwinHide(labels[3]);
-					/* Latitude */
-					/* Convert float to integer and decimal part, with 6 decimal places */
-					//TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
-					
-					/* Longitude */
-					/* Convert float to integer and decimal part, with 6 decimal places */
-					//TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
-					
-					tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
-					tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
-					
-					//formatString(gpsOutput, sizeof(gpsOutput), "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
-					//formatString(gpsOutput, sizeof(gpsOutput), "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
-					//TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
-					if((tilex != oldtilex) && (tiley != oldtiley)){
-						drawTile(tilex, tiley, tilexOffset, tileyOffset);
-						oldtilex=tilex;
-						oldtiley=tiley;
-						oldtilexOffset=tilexOffset;
-						oldtileyOffset=tileyOffset;
-					}
-					
-					previousSeconds = RTCD.Seconds;
-				}
-			}
+			// ---------------------------------------
+			// DO GPS STUFF
 		}
 		
 		// Get an event
@@ -1986,7 +1911,7 @@ void displayBattery(uint8_t currentBatt){
 		char battString[15];
 		formatString(battString, sizeof(battString), "Battery/%d.png", currentBatt);
 		gdispImageOpenFile(&battImage, battString);
-		gdispImageDraw(&battImage, 4, 391, 113, 63, 0, 0);
+		gdispImageDraw(&battImage, 28, 408, 62, 35, 0, 0);
 		gdispImageClose(&battImage);
 		previousBatt = currentBatt;
 	}
@@ -2087,5 +2012,52 @@ void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset)
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {
 		// handle failure code
+	}
+}
+
+void newGPSData(){
+	int tilex;
+	int tiley;
+	int tilexOffset;
+	int tileyOffset;
+	
+	gpsData = getGPS();	
+#ifdef MAP_TILE_TEST_CANAL
+	gpsData.Validity = true;
+	gpsData.Latitude = 45.384365;
+	gpsData.Longitude = -75.698600;
+#endif
+#ifdef MAP_TILE_TEST_MAYTHAM
+	gpsData.Validity = true;
+	gpsData.Latitude = 45.378962;
+	gpsData.Longitude = -75.667347;
+#endif
+#ifdef MAP_TILE_TEST_JON
+	gpsData.Validity = true;
+	gpsData.Latitude = 45.409269;
+	gpsData.Longitude = -75.706862;
+#endif
+	if(!gpsData.Validity){
+		if(RTCD.Seconds != previousSeconds){
+			formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
+			//TRACE("GPS Data is Invalid\n");
+			gwinSetText(labels[5], gpsOutput, TRUE);
+			previousSeconds = RTCD.Seconds;
+		}
+	}else{
+		if(RTCD.Seconds != previousSeconds){
+			gwinHide(labels[3]);
+			tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
+			tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
+			TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+			if((tilex != oldtilex) && (tiley != oldtiley)){
+				drawTile(tilex, tiley, tilexOffset, tileyOffset);
+				oldtilex=tilex;
+				oldtiley=tiley;
+				oldtilexOffset=tilexOffset;
+				oldtileyOffset=tileyOffset;
+			}
+			previousSeconds = RTCD.Seconds;
+		}
 	}
 }
