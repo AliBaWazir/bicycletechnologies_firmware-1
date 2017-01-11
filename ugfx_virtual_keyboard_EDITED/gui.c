@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "msg.h"
+#include "romfs_files.h"
 
 //#define MAP_TILE_TEST_CANAL
 //#define MAP_TILE_TEST_MAYTHAM
@@ -1908,9 +1909,29 @@ void handleMenuSwitches(){
 
 void displayBattery(uint8_t currentBatt){
 	if(currentBatt != previousBatt){
-		char battString[15];
-		formatString(battString, sizeof(battString), "Battery/%d.png", currentBatt);
-		gdispImageOpenFile(&battImage, battString);
+		if(currentBatt == 0){
+			gdispImageOpenMemory(&battImage, battery0);
+		}else if(currentBatt == 10){
+			gdispImageOpenMemory(&battImage, battery10);
+		}else if(currentBatt == 20){
+			gdispImageOpenMemory(&battImage, battery20);
+		}else if(currentBatt == 30){
+			gdispImageOpenMemory(&battImage, battery30);
+		}else if(currentBatt == 40){
+			gdispImageOpenMemory(&battImage, battery40);
+		}else if(currentBatt == 50){
+			gdispImageOpenMemory(&battImage, battery50);
+		}else if(currentBatt == 60){
+			gdispImageOpenMemory(&battImage, battery60);
+		}else if(currentBatt == 70){
+			gdispImageOpenMemory(&battImage, battery70);
+		}else if(currentBatt == 80){
+			gdispImageOpenMemory(&battImage, battery80);
+		}else if(currentBatt == 90){
+			gdispImageOpenMemory(&battImage, battery90);
+		}else if(currentBatt == 100){
+			gdispImageOpenMemory(&battImage, battery100);
+		}
 		gdispImageDraw(&battImage, 28, 408, 62, 35, 0, 0);
 		gdispImageClose(&battImage);
 		previousBatt = currentBatt;
