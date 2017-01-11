@@ -167,17 +167,23 @@ bool algorithmApp_set_gear_count(uint8_t crank_gears_count, uint8_t wheel_gears_
 
 void algorithmApp_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_t new_teeth_count){
 	
+	bool teeth_is_updated    = false;
+	
 	if (gear_type == CRANK_IDENTIFIER){
 		user_defined_bike_config_data.crank_gears_teeth_count[gear_index] = new_teeth_count;
+		teeth_is_updated = true;
 	} else if (gear_type == WHEEL_IDENTIFIER){
 		user_defined_bike_config_data.wheel_gears_teeth_count[gear_index] = new_teeth_count;
+		teeth_is_updated = true;
 	} else {
 		NRF_LOG_ERROR("algorithmApp_set_teeth_count: called with invalid gear_type= %d\r\n",gear_type);
 	}
 	
-    //fire update event to encode updated data in ROM
-	algorithmApp_fire_event(BIKE_CONFIG_DATA_UPDATE);
-    NRF_LOG_INFO("algorithmApp_set_teeth_count: teeth_count for gear type=%d in gear index[%d] is updated to count= %d.\r\n", gear_type, gear_index, new_teeth_count);
+	if(teeth_is_updated){
+		//fire update event to encode updated data in ROM
+		algorithmApp_fire_event(BIKE_CONFIG_DATA_UPDATE);
+		NRF_LOG_INFO("algorithmApp_set_teeth_count: teeth_count for gear type=%d in gear index[%d] is updated to count= %d.\r\n", gear_type, gear_index, new_teeth_count);
+	}
 	
 }
 
