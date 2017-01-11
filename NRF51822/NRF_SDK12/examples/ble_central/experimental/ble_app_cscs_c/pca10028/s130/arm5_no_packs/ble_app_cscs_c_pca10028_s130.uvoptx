@@ -116,6 +116,11 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>DLGUARM</Key>
+          <Name></Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>ARMRTXEVENTFLAGS</Key>
           <Name>-L70 -Z18 -C0 -M0 -T1</Name>
         </SetRegEntry>
@@ -144,9 +149,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>300</LineNumber>
+          <LineNumber>170</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134402</Address>
+          <Address>134568</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -155,30 +160,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\i2c_app.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\nrf51822_xxac\i2c_app.c\300</Expression>
+          <Expression>\\nrf51822_xxac\i2c_app.c\170</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>242</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>163724</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\i2c_app.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\nrf51822_xxac\i2c_app.c\242</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
           <LineNumber>111</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>116676</Address>
+          <Address>116684</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -188,38 +177,6 @@
           <Filename>..\..\..\..\..\..\..\components\libraries\util\app_error.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\nrf51822_xxac\../../../../../../../components/libraries/util/app_error.c\111</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>0</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>116684</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename></Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>0x0001C7CC</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>163</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134220</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\i2c_app.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\nrf51822_xxac\i2c_app.c\163</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>

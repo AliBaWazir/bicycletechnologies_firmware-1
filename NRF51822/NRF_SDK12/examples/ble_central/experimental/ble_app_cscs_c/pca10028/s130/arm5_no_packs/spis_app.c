@@ -27,6 +27,8 @@
 #include "spis_sim_driver.h"
 #include "algorithm_app.h"
 #include "hrs_app.h"
+#include "i2c_app.h"
+
 #include "../spis_app.h"
 
 /**********************************************************************************************
@@ -244,8 +246,10 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			break;//SPI_GET_CADENCE_SETPOINT
 			
 			case SPI_GET_BATTERY_LEVEL:
-				/*TODO: call i2c app to retirieve batttery level from SO*/
-				/*TODO: figure out which bit to rest for avail flags*/
+				//call i2c app to retirieve batttery level from SO
+				m_tx_buf[0] = i2cApp_get_battery_level();
+				//reset hr flag bit
+				spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_BATTERY, false);
 			break;//SPI_GET_BATTERY_LEVEL
 						
 			case SPI_GET_WHEEL_DIAMETER:
@@ -344,6 +348,7 @@ bool spisApp_init(void)
 	// assign a callback function to be called by other apps whenever a new measuremnt is received
 	hrsApp_assing_new_meas_callback(spisApp_update_data_avail_flags);
 	cscsApp_assing_new_meas_callback(spisApp_update_data_avail_flags);
+	i2cApp_assing_new_meas_callback(spisApp_update_data_avail_flags);
 	
     if (ret_code){
 		NRF_LOG_INFO("SPIS APP initialized successfully\r\n");
