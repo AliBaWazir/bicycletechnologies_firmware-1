@@ -43,6 +43,7 @@ GHandle lists[2];
 
 uint8_t previousBatt;
 static gdispImage battImage;
+gdispImage settingsImage;
 
 GHandle ghImage1[10];
 
@@ -327,6 +328,7 @@ static void createData(void)
 	gwinSetFont(labels[3], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[3]);
 	
+	gdispImageOpenFile(&settingsImage, "setting.png");
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
 	wi.g.x = 126; // 117 + 9
@@ -334,13 +336,14 @@ static void createData(void)
 	wi.g.width = 170;
 	wi.g.height = 100;
 	wi.g.parent = containers[DATA_CONTAINER];
-  wi.text = "Settings";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
+  wi.text = "";
+	wi.customDraw = gwinButtonDraw_Image;
+	wi.customParam = &settingsImage;
+	wi.customStyle = 0;
+	//wi.customStyle = &belize;
 	buttons[0] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[0], gdispOpenFont("Georgia36"));
-	gwinRedraw(buttons[0]);
+	//gwinSetFont(buttons[0], gdispOpenFont("Georgia36"));
+	//gwinRedraw(buttons[0]);
 }
 
 static void createMenu(void)
@@ -1241,6 +1244,7 @@ static void destroyData(void)
 	gwinDestroy(labels[2]);
 	gwinDestroy(labels[3]);
 	gwinDestroy(buttons[0]);
+	gdispImageClose(&settingsImage);
 }
 
 static void destroyMenu(void)

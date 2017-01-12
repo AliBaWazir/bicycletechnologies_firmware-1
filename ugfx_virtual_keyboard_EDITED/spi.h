@@ -81,14 +81,6 @@ struct SPI_data{
 	}bluetooth;
 };
 
-/*
-bool nrfGetData(void);
-void runTestCase(uint8_t* target);
-bool nrfTransmitSingle(uint8_t* out, uint8_t* in);
-bool nrfTransmit(uint8_t *buffOut, uint8_t *buffIn, uint32_t len);
-bool nrfTransmit2(uint8_t *buffOut, uint8_t *buffIn, uint32_t len);
-*/
-
 void runSPI(void);
 void nrfSetup(void);
 
