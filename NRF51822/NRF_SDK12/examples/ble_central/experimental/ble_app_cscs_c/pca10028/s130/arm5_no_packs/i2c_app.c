@@ -58,7 +58,7 @@
 #define FULL_CHARGE_CAPACITY_REG   0x12
 
 //BNO
-#define BNO055_I2C_ADDR           (0x29 >> 1)
+#define BNO055_I2C_ADDR           (0x28)
 #define BNO_ID_REG                 0x00
 
 //Timer Defines
@@ -70,7 +70,7 @@
 * TYPE DEFINITIONS
 ***********************************************************************************************/
 typedef struct{
-	uint8_t bno055_;
+	uint8_t bno055_id;
 	uint8_t soc_state_of_charge;
 	uint8_t gearContoller_front_gear;
 	uint8_t gearContoller_back_gear;
@@ -167,6 +167,8 @@ static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest
 		
 	} else{
 		
+		while (m_xfer_done == false);
+		/*
 		//run the waiting for acknowledgement counter
 		while ((!m_xfer_done) && (counter>0)){
 			counter--;
@@ -177,6 +179,7 @@ static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest
 			NRF_LOG_ERROR("i2cApp_i2c_read: no acknowldgement is received for i2c slave adress= 0x%x\r\n", i2c_address);
 			ret = false; 
 		}
+		*/
 	}
 	
 	if(ret){
@@ -268,6 +271,12 @@ __STATIC_INLINE void soc_data_handler(uint8_t state_of_charge_new, uint8_t state
 	
 }
 
+__STATIC_INLINE void bno055_data_handler(uint8_t bno055_id_new, uint8_t bno055_id_old){
+	
+	NRF_LOG_DEBUG("bno055_data_handler: new bno055 id= %d\r\n", bno055_id_new);
+	
+}
+
 /**
  * @brief TWI events handler.
  */
@@ -280,6 +289,8 @@ static void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
 				
 				if(p_event->xfer_desc.address == SOC_I2C_ADDR){
 					soc_data_handler(m_i2c_slaves_data_new.soc_state_of_charge, m_i2c_slaves_data_old.soc_state_of_charge);
+				} else if(p_event->xfer_desc.address == BNO055_I2C_ADDR){
+					bno055_data_handler(m_i2c_slaves_data_new.bno055_id, m_i2c_slaves_data_old.bno055_id);
 				} else{
 					/*TODO: add else if statements to handle other adresses*/
 					//data_handler(m_gear_status);
@@ -288,6 +299,7 @@ static void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
             m_xfer_done = true;
             break;
         default:
+			NRF_LOG_WARNING("twi_handler: i2c communication to address= 0x%x returned event type= %d\r\n", p_event->xfer_desc.address, p_event->type);
             break;
     }
 }
@@ -305,7 +317,7 @@ static void twi_init (void)
        .sda                = NRF_SDA_PIN,
        .frequency          = NRF_TWI_FREQ_100K,
        .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-       .clear_bus_init     = false
+       .clear_bus_init     = true
     };
 
     err_code = nrf_drv_twi_init(&m_twi, &twi_lm75b_config, twi_handler, NULL);
@@ -319,7 +331,8 @@ static bool i2cApp_poll_data(){
 	bool   retcode     = true;
 	
 	// save the recent values as old value for comparison
-	m_i2c_slaves_data_old.soc_state_of_charge= m_i2c_slaves_data_new.soc_state_of_charge;
+	m_i2c_slaves_data_old.soc_state_of_charge = m_i2c_slaves_data_new.soc_state_of_charge;
+	m_i2c_slaves_data_old.bno055_id = m_i2c_slaves_data_new.bno055_id;
 	
 	// read new values
 	if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, &(m_i2c_slaves_data_new.soc_state_of_charge))){
@@ -327,6 +340,14 @@ static bool i2cApp_poll_data(){
 		retcode = false;
 	}
 	
+	nrf_delay_ms(1);
+	if(retcode){
+		if(!i2cApp_i2c_read(BNO055_I2C_ADDR, BNO_ID_REG, &(m_i2c_slaves_data_new.bno055_id))){
+			NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for BNO055_I2C_ADDR\r\n");
+			retcode = false;
+		}
+	}
+
 	return retcode;
 	
 }
@@ -412,7 +433,7 @@ bool i2cApp_init(void){
 			NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for SOC_I2C_ADDR\r\n");
 		}
 	
-		ret = i2cSimDriver_init();
+		ret = i2cSimDriver_init(&m_twi, (bool*)&m_xfer_done);
 		
 	} else{
 		

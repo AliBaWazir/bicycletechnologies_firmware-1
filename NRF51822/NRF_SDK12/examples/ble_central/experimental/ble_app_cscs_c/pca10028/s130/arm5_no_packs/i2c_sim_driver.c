@@ -20,7 +20,6 @@
 #include <string.h>
 #include "boards.h"
 #include "app_util_platform.h"
-#include "nrf_drv_twi.h"
 #include "nrf_delay.h"
 #include "app_error.h"
 #include "app_timer.h"
@@ -62,13 +61,15 @@ bool i2cSimDriver_get_BNO055_id(){
 /**
  * @brief Function for I2C scan.
  */
-static bool i2cSimDriver_i2c_scan(nrf_drv_twi_t* twi, bool* xfer_done, uint8_t reg_addr, uint8_t* dest_array){
+static bool i2cSimDriver_scan_avail_slave_addr(const nrf_drv_twi_t* twi, bool* xfer_done, uint8_t reg_addr){
 	
 	bool ret= false;
 	ret_code_t err_code;
 	uint8_t i2c_address = 0x00;
 	uint8_t working_i2c_addresses[256];
 	uint8_t array_index=0;
+	
+	memset(working_i2c_addresses, 0x00, sizeof(working_i2c_addresses));
 	
 	for(i2c_address=0; i2c_address <=255; i2c_address++){
 		
@@ -97,12 +98,12 @@ static bool i2cSimDriver_i2c_scan(nrf_drv_twi_t* twi, bool* xfer_done, uint8_t r
 /**
  * @brief Connection Manager App initialization.
  */
-bool i2cSimDriver_init(void){
+bool i2cSimDriver_init(const nrf_drv_twi_t* twi, bool* xfer_done_p){
 	
 	bool         ret_code         = true;
 	ret_code_t   nrf_err          = NRF_SUCCESS;
 	
-	
+	i2cSimDriver_scan_avail_slave_addr(twi, xfer_done_p, 0x00);
 		
 	return ret_code;	
 }
