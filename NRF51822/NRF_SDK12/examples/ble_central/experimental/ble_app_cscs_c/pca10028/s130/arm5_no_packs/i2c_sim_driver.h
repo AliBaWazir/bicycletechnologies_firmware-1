@@ -4,11 +4,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "nrf_drv_twi.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool i2cSimDriver_init(void);
+bool i2cSimDriver_init(const nrf_drv_twi_t* twi, bool* xfer_done_p);
 
 
 #ifdef __cplusplus
