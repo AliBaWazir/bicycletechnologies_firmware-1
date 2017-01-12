@@ -28,7 +28,14 @@
 #define SET_TEETH_COUNT_MSG				0x1A
 
 // Group 2: Bluetooth Device Configuration
+#define GET_ADVERTISING_COUNT_MSG	0x20
+#define GET_MAC_ADDRESS_MSG				0x24
 
+#define NRF_SCAN_MSG							0x2A
+#define NRF_CONNECT_MSG						0x2B
+#define	NRF_FORGET_MSG						0x2C
+
+#define MAXIMUM_BLUETOOTH					0x0A
 
 typedef struct {
   uint8_t msg_ID;
@@ -40,5 +47,7 @@ typedef struct {
 extern osPoolId mpool;
 extern osMessageQId  spiQueue;
 extern osMessageQId  guiQueue;
+
+extern uint8_t devicesMAC[10][6];
 
 #endif /* _MSG_H_ */

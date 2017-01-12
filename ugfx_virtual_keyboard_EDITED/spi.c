@@ -32,6 +32,10 @@ void nrfSetGearSettings();
 void nrfSetWheelDiameter();
 void nrfSetCadenceSetPoint();
 
+void nrfScan();
+bool nrfGetAdvertisingCount();
+void nrfGetMacAddress();
+
 uint8_t getSpeed();
 uint8_t getCadence();
 uint8_t getDistance();
@@ -39,8 +43,11 @@ uint8_t getHeartRate();
 uint8_t getCadenceSetPoint();
 uint8_t getBattery();
 
+void getBluetooth();
+
 void sendResponseMSG(uint8_t msg_ID, uint8_t value);
 void sendGearSettingsMSG();
+void sendBluetoothScanMSG();
 
 osMessageQDef(spiQueue, 16, message_t);
 osMessageQId  spiQueue;
@@ -100,6 +107,8 @@ void runSPI(){
 					spi_Data.gears.backGears[count] = messageReceived->backGears[count];
 				}
 				nrfSetGearSettings();
+			}else if(messageReceived->msg_ID == NRF_SCAN_MSG){
+				getBluetooth();
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -118,12 +127,20 @@ void sendGearSettingsMSG(){
 	message_t *messageSent;
 	messageSent = (message_t*)osPoolAlloc(mpool);
 	messageSent->msg_ID = GET_GEAR_COUNT_MSG;
-	for(int count = 0; count <= spi_Data.gears.frontGears[0]; count++){
+	for(uint8_t count = 0; count <= spi_Data.gears.frontGears[0]; count++){
 		messageSent->frontGears[count] = spi_Data.gears.frontGears[count];
 	}
-	for(int count = 0; count <= spi_Data.gears.backGears[0]; count++){
+	for(uint8_t count = 0; count <= spi_Data.gears.backGears[0]; count++){
 		messageSent->backGears[count] = spi_Data.gears.backGears[count];
 	}
+	osMessagePut(guiQueue, (uint32_t)messageSent, 0);
+}
+
+void sendBluetoothScanMSG(){
+	message_t *messageSent;
+	messageSent = (message_t*)osPoolAlloc(mpool);
+	messageSent->msg_ID = NRF_SCAN_MSG;
+	messageSent->value = spi_Data.bluetooth.deviceCount;
 	osMessagePut(guiQueue, (uint32_t)messageSent, 0);
 }
 
@@ -237,7 +254,7 @@ void nrfGetDeviceName(){
 	nrfReceive(&value[0], 3);
 	if((value[0] == 0x4E) && (value[1] == 0x52) && (value[2] == 0x46)){
 		connectionStatus = true;
-		for(int x = 0; x<3; x++){
+		for(uint8_t x = 0; x<3; x++){
 			array[x] = value[x];
 		}
 		array[3] = '\0';
@@ -385,6 +402,35 @@ void nrfGetGearSettings(){
 	spi_Data.gears.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
 
+bool nrfGetAdvertisingCount(){
+	uint8_t key = GET_ADVERTISING_COUNT_MSG;
+	nrfSend(&key, 1);
+	uint8_t value;
+	nrfReceive(&value, 1);
+	if((value == INVALID_DATA) || (value > MAXIMUM_BLUETOOTH)){
+		return false;
+	}
+	spi_Data.bluetooth.deviceCount = value;
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.bluetooth.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
+	return true;
+}
+
+void nrfGetMacAddress(){
+	uint8_t command[3];
+	command[0] = GET_MAC_ADDRESS_MSG;
+	for(uint8_t count = 0; count < spi_Data.bluetooth.deviceCount; count++){
+		command[1] = count;
+		nrfSend(&command[0], 2);
+		nrfReceive(&devicesMAC[count][0], 6);
+		TRACE("SPI:,Device %d,MAC Address; %d:%d:%d:%d:%d:%d\n", count, devicesMAC[count][0], 
+																																		devicesMAC[count][1], 
+																																		devicesMAC[count][2], 
+																																		devicesMAC[count][3], 
+																																		devicesMAC[count][4], 
+																																		devicesMAC[count][5]);
+	}
+}
 
 /*
 * ======================== SETTERS ========================
@@ -399,13 +445,13 @@ void nrfSetGearSettings(){
 	
 	command[0] = SET_TEETH_COUNT_MSG;
 	command[1] = GEAR_COMMAND_FRONT;
-	for(int count = 1; count <= spi_Data.gears.frontGears[0]; count++){
+	for(uint8_t count = 1; count <= spi_Data.gears.frontGears[0]; count++){
 		command[2] = count-1;
 		command[3] = spi_Data.gears.frontGears[count];
 		nrfSend(&command[0], 4);
 	}
 	command[1] = GEAR_COMMAND_BACK;
-	for(int count = 1; count <= spi_Data.gears.backGears[0]; count++){
+	for(uint8_t count = 1; count <= spi_Data.gears.backGears[0]; count++){
 		command[2] = count-1;
 		command[3] = spi_Data.gears.backGears[count];
 		nrfSend(&command[0], 4);
@@ -425,6 +471,13 @@ void nrfSetCadenceSetPoint(){
 	uint8_t command[2];
 	command[0] = SET_CADENCE_SETPOINT_MSG;
 	command[1] = spi_Data.cadenceSetPoint.value;
+	nrfSend(&command[0], 2);
+}
+
+void nrfScan(){
+	uint8_t command[2];
+	command[0] = NRF_SCAN_MSG;
+	command[1] = NRF_SCAN_PERIOD;
 	nrfSend(&command[0], 2);
 }
 
@@ -536,6 +589,15 @@ uint8_t getWheelDiameter(){
 	}
 	TRACE("SPI:,VALID WHEEL DIAMETER: %d\n", spi_Data.wheelDiameter.value);
 	return spi_Data.wheelDiameter.value;
+}
+
+void getBluetooth(){
+	nrfScan();
+	Delayms(1000*NRF_SCAN_PERIOD);
+	if(nrfGetAdvertisingCount()){
+		nrfGetMacAddress();
+		sendBluetoothScanMSG();
+	}
 }
 
 /*

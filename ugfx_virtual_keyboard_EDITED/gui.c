@@ -46,6 +46,9 @@ static gdispImage battImage;
 
 GHandle ghImage1[10];
 
+uint8_t devicesCount;
+uint8_t devicesMAC[10][6];
+
 // GEAR STATUS SPECIALS
 GHandle gearsChangesFrontGearLabel[MAXIMUM_FRONT_GEARS+1];
 GHandle gearsChangesBackGearLabel[MAXIMUM_BACK_GEARS+1];
@@ -186,7 +189,6 @@ static void createmainContainer(void)
 	containers[BLUETOOTH_SEARCH_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
 	// create container widget: containers[BLUETOOTH_DEVICE_CONTAINER]
-	wi.g.show = TRUE;
 	wi.text = "containers[BLUETOOTH_DEVICE_CONTAINER]";
 	containers[BLUETOOTH_DEVICE_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
@@ -410,7 +412,40 @@ static void createBluetooth(void)
 	gwinSetFont(labels[0], gdispOpenFont("Georgia60"));
 	gwinRedraw(labels[0]);
 	
-  // Create list widget: lists[1]
+	// create button widget: buttons[1]
+	wi.g.show = TRUE;
+	wi.g.x = 40;
+	wi.g.y = 25;
+	wi.g.width = 200;
+	wi.g.height = 100;
+	wi.g.parent = containers[BLUETOOTH_CONTAINER];
+	wi.text = "Scan";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	buttons[1] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[1], gdispOpenFont("Georgia40"));
+	
+	// create button widget: buttons[2]
+	wi.g.show = TRUE;
+	wi.g.x = 255;
+	wi.g.y = 25;
+	wi.g.width = 200;
+	wi.g.height = 100;
+	wi.g.parent = containers[BLUETOOTH_CONTAINER];
+	wi.text = "Connect";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	buttons[2] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[2], gdispOpenFont("Georgia40"));
+}
+
+static void createBluetoothList(void){
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+	
+	// Create list widget: lists[1]
 	wi.g.show = TRUE;
 	wi.g.x = 0;
 	wi.g.y = 0;
@@ -424,40 +459,17 @@ static void createBluetooth(void)
 	lists[1] = gwinListCreate(0, &wi, TRUE);
 	gwinSetFont(lists[1], gdispOpenFont("Georgia60"));
 	gwinListSetScroll(lists[1], scrollSmooth);
-	gwinListAddItem(lists[1], "Device 0", FALSE);
-	gwinListAddItem(lists[1], "Device 1", FALSE);
-	gwinListAddItem(lists[1], "Device 2", FALSE);
-	gwinListAddItem(lists[1], "Device 3", FALSE);
-	gwinListAddItem(lists[1], "Device 4", FALSE);
-	gwinListAddItem(lists[1], "Device 5", FALSE);
-	gwinListAddItem(lists[1], "Device 6", FALSE);
-	gwinListAddItem(lists[1], "Device 7", FALSE);
-	gwinListAddItem(lists[1], "Device 8", FALSE);
-	gwinListAddItem(lists[1], "Device 9", FALSE);
-	gwinListSetSelected(lists[1], 0, TRUE);
-	gwinListSetSelected(lists[1], 1, FALSE);
-	gwinListSetSelected(lists[1], 2, FALSE);
-	gwinListSetSelected(lists[1], 3, FALSE);
-	gwinListSetSelected(lists[1], 4, FALSE);
-	gwinListSetSelected(lists[1], 5, FALSE);
-	gwinListSetSelected(lists[1], 6, FALSE);
-	gwinListSetSelected(lists[1], 7, FALSE);
-	gwinListSetSelected(lists[1], 8, FALSE);
-	gwinListSetSelected(lists[1], 9, FALSE);
-	
-	// create button widget: buttons[1]
-	wi.g.show = TRUE;
-	wi.g.x = 150;
-	wi.g.y = 25;
-	wi.g.width = 195;
-	wi.g.height = 100;
-	wi.g.parent = containers[BLUETOOTH_CONTAINER];
-	wi.text = "Search";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	buttons[1] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[1], gdispOpenFont("Georgia40"));
+	char bluetoothDevices[18];
+	for(uint8_t count = 0; count < devicesCount; count++){
+		formatString(&bluetoothDevices[0], sizeof(bluetoothDevices), "%d:%d:%d:%d:%d:%d", devicesMAC[count][0],
+																																											devicesMAC[count][1],
+																																											devicesMAC[count][2],
+																																											devicesMAC[count][3],
+																																											devicesMAC[count][4],
+																																											devicesMAC[count][5]);
+		gwinListAddItem(lists[1], bluetoothDevices, FALSE);
+		gwinListSetSelected(lists[1], count, FALSE);
+	}
 }
 
 static void createGearsSettings(void)
@@ -1244,8 +1256,7 @@ static void destroyBluetooth(void)
 	gwinDestroy(labels[0]);
 	gwinDestroy(lists[1]);
 	gwinDestroy(buttons[1]);
-	gwinDestroy(containers[BLUETOOTH_DEVICE_CONTAINER]);
-	gwinDestroy(containers[BLUETOOTH_SEARCH_CONTAINER]);
+	gwinDestroy(buttons[2]);
 	gwinHide(containers[BLUETOOTH_CONTAINER]);
 }
 
@@ -1515,6 +1526,11 @@ void guiEventLoop(void)
 					gearBackCurrent[count] = messageReceived->backGears[count];
 				}
 				showCurrentGears();
+			}else if(messageReceived->msg_ID == NRF_SCAN_MSG){
+				devicesCount = messageReceived->value;
+				createBluetoothList();
+				gwinHide(containers[BLUETOOTH_SEARCH_CONTAINER]);
+				gwinShow(containers[BLUETOOTH_DEVICE_CONTAINER]);
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -1560,8 +1576,6 @@ void guiEventLoop(void)
 				if(batteryOutput == INVALID_DATA){
 					displayBattery(0);
 				}else{
-					//formatString(dataOutput, sizeof(dataOutput), "%d%%", batteryOutput);
-					//gwinSetText(labels[4], dataOutput, TRUE);
 					displayBattery(batteryOutput);
 				}
 								
@@ -1667,14 +1681,13 @@ void button0Call(){
 
 void button1Call(){
 	if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
+		message_t *messageSent;
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = NRF_SCAN_MSG;
+		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 		// BLUETOOTH SEARCH
 		gwinHide(containers[BLUETOOTH_DEVICE_CONTAINER]);
 		gwinShow(containers[BLUETOOTH_SEARCH_CONTAINER]);
-		
-		gfxSleepMilliseconds(5000);
-		
-		gwinHide(containers[BLUETOOTH_SEARCH_CONTAINER]);
-		gwinShow(containers[BLUETOOTH_DEVICE_CONTAINER]);
 	}else if(gwinGetVisible(containers[GEARS_CONTAINER])){
 		// FRONT GEARS PLUS
 		if(gearFrontSettings[0] != MAXIMUM_FRONT_GEARS){

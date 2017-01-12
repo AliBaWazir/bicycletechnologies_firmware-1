@@ -34,6 +34,8 @@
 #define GEAR_COMMAND_FRONT	0xCA
 #define GEAR_COMMAND_BACK		0xEE
 
+#define NRF_SCAN_PERIOD			10 //Seconds
+
 //initialize the SPI data struct containing all the data coming from the NRF51822
 struct SPI_data{
 	struct Availability{
@@ -73,6 +75,10 @@ struct SPI_data{
 			uint8_t backGears[MAXIMUM_BACK_GEARS+1];
 			uint32_t age;
 	}gears;
+	struct Bluetooth{
+		uint8_t deviceCount;
+		uint32_t age;
+	}bluetooth;
 };
 
 /*
