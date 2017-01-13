@@ -773,8 +773,8 @@ static void turn_on_fast_charging(){
  */
 static void power_manage(void)
 {
-    uint32_t err_code = sd_app_evt_wait();
-	/*TODO: figure out if these are redundant WFE*/
+    uint32_t err_code = NRF_SUCCESS;
+	
 	spisApp_spi_wait();
 	
 	/*TODO: figure out if this is redundant WFE*/

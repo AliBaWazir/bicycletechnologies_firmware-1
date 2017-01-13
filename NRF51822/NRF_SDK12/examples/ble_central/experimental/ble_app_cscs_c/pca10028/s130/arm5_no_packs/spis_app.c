@@ -34,7 +34,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define SPI_DRIVER_SIM_MODE 0 /****************************************************
+#define SPI_DRIVER_SIM_MODE 1 /****************************************************
 							   *This flag is set to 1 only if SPI slave interaction
 							   *is in simulation mode.
 							   ***************************************************/
@@ -246,10 +246,13 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			break;//SPI_GET_CADENCE_SETPOINT
 			
 			case SPI_GET_BATTERY_LEVEL:
-				//call i2c app to retirieve batttery level from SO
-				m_tx_buf[0] = i2cApp_get_battery_level();
-				//reset hr flag bit
-				spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_BATTERY, false);
+				if (SPI_DRIVER_SIM_MODE){
+					m_tx_buf[0] = spisSimDriver_get_current_battery();
+				} else {
+					m_tx_buf[0] = i2cApp_get_battery_level();
+					//reset hr flag bit
+					spisApp_update_data_avail_flags(SPI_AVAIL_FLAG_BATTERY, false);
+				}
 			break;//SPI_GET_BATTERY_LEVEL
 						
 			case SPI_GET_WHEEL_DIAMETER:

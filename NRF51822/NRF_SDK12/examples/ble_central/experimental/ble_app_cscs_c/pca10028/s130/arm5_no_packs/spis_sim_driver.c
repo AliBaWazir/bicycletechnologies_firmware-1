@@ -33,7 +33,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define SIM_DATA_ARRAY_SIZE 2
+#define SIM_DATA_ARRAY_SIZE 10   //The size has to be even number
 #define MAX_SIM_SPEED       40   //For cyclists in Copenhagen, the average cycling speed is 15.5 km/h 
                                  //(9.6 mph). On a racing bicycle, a reasonably fit rider can ride 
 								 //at 40 km/h (25 mph) on flat ground for short periods.
@@ -44,6 +44,8 @@
 							     //group stages and individual time trials of ~50 km.
 #define MAX_SIM_DISTANCE    200
 #define MAX_SIM_HR          100
+#define MAX_SIM_BATTERY     100
+
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -67,6 +69,7 @@ static uint8_t speed_kmph_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t cadence_rpm_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t distance_km_sim_array [SIM_DATA_ARRAY_SIZE];
 static uint8_t hr_bpm_sim_array [SIM_DATA_ARRAY_SIZE];
+static uint8_t battery_sim_array [SIM_DATA_ARRAY_SIZE];
 
 
 //indexes for the current value of sim data
@@ -74,11 +77,13 @@ static uint8_t speed_index      = 0;
 static uint8_t cadence_index    = 0;
 static uint8_t distance_index   = 0;
 static uint8_t hr_index         = 0;
+static uint8_t battery_index    = 0;
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
-//update the current index to the next value
+
+//update the current index to the next value for CSCS arrays
 static bool spisSimDriver_update_index (cscs_data_type_e index_type){
 	bool ret_code = true;
 	
@@ -208,11 +213,47 @@ static bool spisSimDriver_init_hr_array(){
 }
 
 
+static bool spisSimDriver_init_battery_array(){
+	bool    ret_code  = true;
+	uint8_t i         = 0;
+	
+	for (i =0; i<SIM_DATA_ARRAY_SIZE; i++){
+		if (i<=(SIM_DATA_ARRAY_SIZE/2)){
+			// at the first half simulation cycle, hr will increase gradually from 0 to MAX_SIM_BATTERY
+			battery_sim_array[i]= i*(MAX_SIM_BATTERY/(SIM_DATA_ARRAY_SIZE/2));
+		} else {
+			// at the second half simulation cycle, cadence will decrease gradually from MAX_SIM_BATTERY to 0
+			// make use of symmetry
+			uint8_t symmetric_i = (SIM_DATA_ARRAY_SIZE/2) - (i -SIM_DATA_ARRAY_SIZE/2);
+			battery_sim_array[i]= battery_sim_array[symmetric_i];
+		}
+		
+	}
+	
+	return ret_code;
+}
+
 
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
 
+uint8_t spisSimDriver_get_current_battery(){
+	
+	uint8_t current_data  = 0;
+
+	current_data = battery_sim_array[battery_index];
+	
+	//update the index to get next data next time
+	if ((battery_index+1)<SIM_DATA_ARRAY_SIZE){
+		battery_index +=1;
+	} else {
+		//reset the index to 0
+		battery_index = 0;
+	}
+	
+	return current_data;
+}
 uint8_t spisSimDriver_get_current_data(cscs_data_type_e data_type) {
 	uint8_t current_data  = 0;
 	
@@ -303,6 +344,10 @@ bool spisSimDriver_init(void){
 		
 	if (ret_code){
 		ret_code = spisSimDriver_init_hr_array();
+	}
+	
+	if (ret_code){
+		ret_code = spisSimDriver_init_battery_array();
 	}
 	
 	return ret_code;
