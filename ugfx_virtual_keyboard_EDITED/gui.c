@@ -134,6 +134,7 @@ void button7Call();
 void handleMenuSwitches();
 void displayBattery(uint8_t currentBatt);
 void showCurrentGears();
+void connectBluetooth();
 	
 static void createmainContainer(void)
 {
@@ -1263,6 +1264,7 @@ static void destroyBluetooth(void)
 	TRACE("destroyBluetooth\n");
 	gwinDestroy(labels[0]);
 	gwinDestroy(lists[1]);
+	lists[1] = NULL;
 	gwinDestroy(buttons[1]);
 	gwinDestroy(buttons[2]);
 	gwinHide(containers[BLUETOOTH_CONTAINER]);
@@ -1741,7 +1743,6 @@ void button1Call(){
 		//deleteTraceFile();
 		closeTraceFile();
 		openTraceFile();
-
 	}	
 }
 
@@ -1770,7 +1771,9 @@ void button2Call(){
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Selection Up
 		if(clockChangeSelectedItem != 0){clockChangeSelectedItem--;}
-	}	
+	}else if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
+		connectBluetooth();
+	}
 }
 
 void button3Call(){
@@ -1956,6 +1959,20 @@ void displayBattery(uint8_t currentBatt){
 		gdispImageDraw(&battImage, 28, 408, 62, 35, 0, 0);
 		gdispImageClose(&battImage);
 		previousBatt = currentBatt;
+	}
+}
+
+void connectBluetooth(){
+	if(lists[1] != NULL){
+		for(uint8_t count = 0; count < devicesCount; count++){
+			if(gwinListItemIsSelected(lists[1], count)){
+				message_t *messageSent;
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = NRF_CONNECT_MSG;
+				messageSent->value = count;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+			}
+		}
 	}
 }
 

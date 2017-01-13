@@ -33,6 +33,8 @@ void nrfSetWheelDiameter();
 void nrfSetCadenceSetPoint();
 
 void nrfScan();
+void nrfConnect(uint8_t device);
+void nrfForget(uint8_t device);
 bool nrfGetAdvertisingCount();
 void nrfGetMacAddress();
 
@@ -110,6 +112,12 @@ void runSPI(){
 			}else if(messageReceived->msg_ID == NRF_SCAN_MSG){
 				TRACE("SPI:,NRF_SCAN_MSG\n");
 				getBluetooth();
+			}else if(messageReceived->msg_ID == NRF_CONNECT_MSG){
+				TRACE("SPI:,NRF_CONNECT_MSG\n");
+				nrfConnect(messageReceived->value);
+			}else if(messageReceived->msg_ID == NRF_FORGET_MSG){
+				TRACE("SPI:,NRF_FORGET_MSG\n");
+				nrfForget(messageReceived->value);
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -479,6 +487,20 @@ void nrfScan(){
 	uint8_t command[2];
 	command[0] = NRF_SCAN_MSG;
 	command[1] = NRF_SCAN_PERIOD;
+	nrfSend(&command[0], 2);
+}
+
+void nrfConnect(uint8_t device){
+	uint8_t command[2];
+	command[0] = NRF_CONNECT_MSG;
+	command[1] = device;
+	nrfSend(&command[0], 2);
+}
+
+void nrfForget(uint8_t device){
+	uint8_t command[2];
+	command[0] = NRF_FORGET_MSG;
+	command[1] = device;
 	nrfSend(&command[0], 2);
 }
 
