@@ -55,6 +55,14 @@ static bool  gear_level_locked = false;                     /*TODO: this boolean
 															 *If set to true, lock gear level at the middle to maximize efficiency.  
 															 */
 
+/*              | wheel gears -->
+ *crankset gears|-------------------------------
+ *              |
+ */ 
+static float gear_ratios_array [1][MAX_GEARS_COUNT];  /*the ratios array has a defined size but only the ratios for 
+													   *actual gear indices will be populated. 
+													   *Currently, the algorithm supports a single crank gear 
+													   */
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -85,6 +93,35 @@ static void algorithmApp_fire_event (algorithmApp_event_e event){
 	
 }
 
+static bool algorithmApp_gear_ratios_array_populate(void){
+	
+	bool retcode                  = true;
+	uint8_t crankset_gears_count  = user_defined_bike_config_data.crank_gears_count;
+	uint8_t wheel_gears_count     = user_defined_bike_config_data.wheel_gears_count;
+	uint8_t i                     = 0;
+	uint8_t j                     = 0;
+
+	memset (gear_ratios_array, 0x00, (sizeof(gear_ratios_array)/sizeof(gear_ratios_array[0][0])));
+
+	if(crankset_gears_count != 1){
+		NRF_LOG_WARNING("algorithmApp_gear_ratios_array_populate: crankset_gears_count= %d has to be 1\r\n", crankset_gears_count)
+		return false;
+	}
+	
+	for (i=0; i<crankset_gears_count; i++){
+		for (j=0; j<wheel_gears_count; j++ ){
+			if(user_defined_bike_config_data.wheel_gears_teeth_count[j] == 0){
+				//division by zero
+				NRF_LOG_WARNING("algorithmApp_gear_ratios_array_populate: division by zero for wheel gear index= %d\r\n",
+								 user_defined_bike_config_data.wheel_gears_teeth_count[j]);
+			} else{
+				gear_ratios_array[i][j]= ((float)user_defined_bike_config_data.crank_gears_teeth_count[i])/user_defined_bike_config_data.wheel_gears_teeth_count[j];
+			}
+		}
+	}
+	
+	return retcode;
+}
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
@@ -194,7 +231,7 @@ bool algorithmApp_init(void){
 	memset (&user_defined_bike_config_data, 0, sizeof(user_defined_bike_config_data_t));
 	
 	/*decode bicycle preoperties defined by user from FDS to a static struct*/
-	if(!applicationFdsApp_init()){
+	if(!applicationFdsApp_init(algorithmApp_gear_ratios_array_populate)){
 		NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_init() failed\r\n");
 		ret_code= false;
 	} else{
@@ -250,6 +287,12 @@ bool algorithmApp_init(void){
 				}
 			} else{
 				NRF_LOG_INFO("algorithmApp_init: bike config struct is retrieved from flash data storage\r\n");
+				
+				//populate the gear ratios array
+				if(!algorithmApp_gear_ratios_array_populate()){
+					NRF_LOG_INFO("algorithmApp_init: algorithmApp_gear_ratios_array_populate failed\r\n");
+					ret_code= false;
+				}
 			}
 			
 		}

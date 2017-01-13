@@ -54,6 +54,7 @@ typedef enum{
 extern uint32_t cadence_setpoint_rpm;
 extern user_defined_bike_config_data_t  user_defined_bike_config_data;
 
+typedef bool (*algorithmApp_ratios_poulate_f)(void);
 
 /**********************************************************************************************
 * SPI and other apps

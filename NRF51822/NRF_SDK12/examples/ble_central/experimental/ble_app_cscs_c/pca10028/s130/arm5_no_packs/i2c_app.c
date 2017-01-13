@@ -347,7 +347,7 @@ static bool i2cApp_poll_data(){
 			retcode = false;
 		}
 	}
-
+	
 	return retcode;
 	
 }

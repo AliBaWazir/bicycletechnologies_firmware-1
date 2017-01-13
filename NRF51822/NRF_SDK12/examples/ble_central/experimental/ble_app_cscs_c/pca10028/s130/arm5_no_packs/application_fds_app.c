@@ -47,7 +47,10 @@
 static bool m_app_fds_initialized    = false;
 //static bool m_app_fds_delete_queued  = false;
 //static bool m_app_fds_delete_ongoing = false;
- 
+
+//pointer to callbak to be called after FDS write/update
+algorithmApp_ratios_poulate_f app_fds_write_cb  = NULL;
+
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -99,6 +102,17 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
 						//read back the written value
 						if(!applicationFdsApp_fds_read(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*) &user_defined_bike_config_data)){
 							NRF_LOG_ERROR("applicationFdsApp_evt_handler: applicationFdsApp_fds_read() failed to read bike config\r\n");
+						} else{
+							
+							//populate the gear ratios array
+							if(app_fds_write_cb == NULL){
+									NRF_LOG_ERROR("applicationFdsApp_evt_handler: app_fds_write_cb is NULL\r\n");
+							} else{
+								if(!app_fds_write_cb()){
+									NRF_LOG_INFO("applicationFdsApp_evt_handler: app_fds_write_cb() failed\r\n");
+								}
+							}
+							
 						}
 					break;
 						
@@ -333,13 +347,22 @@ bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8
 	return ret_code;
 }
 
-bool applicationFdsApp_init(void){
+bool applicationFdsApp_init(algorithmApp_ratios_poulate_f cb){
 	
 	bool ret_code  = true;
 	ret_code_t ret;
 
 	if (!m_app_fds_initialized){
 		
+		//assign a callback
+		if(cb == NULL){
+			NRF_LOG_ERROR("applicationFdsApp_init: cb is NULL \r\n");
+			return NRF_ERROR_INVALID_PARAM;
+		} else{
+			app_fds_write_cb= cb;
+		}
+		
+		//register event handler function
 		ret = fds_register(applicationFdsApp_evt_handler);
 		if (ret != NRF_SUCCESS)
 		{

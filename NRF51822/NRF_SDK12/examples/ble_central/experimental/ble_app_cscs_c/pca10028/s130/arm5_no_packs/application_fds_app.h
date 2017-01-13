@@ -14,7 +14,7 @@ extern "C" {
 bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, const void* dest_p);
 bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8_t* source_p);
 	
-bool applicationFdsApp_init(void);
+bool applicationFdsApp_init(algorithmApp_ratios_poulate_f cb);
 
 #ifdef __cplusplus
 }
