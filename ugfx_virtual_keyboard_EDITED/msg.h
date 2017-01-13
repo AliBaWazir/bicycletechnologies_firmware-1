@@ -1,8 +1,6 @@
 #ifndef _MSG_H_
 #define _MSG_H_
 
-//#define DEBUG
-
 #define INVALID_DATA 0xFF
 
 #define GET_AVAILABILITY_MSG			0xDA

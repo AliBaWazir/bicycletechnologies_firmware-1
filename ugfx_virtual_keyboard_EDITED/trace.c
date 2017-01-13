@@ -77,15 +77,16 @@ void TRACE(const char *fmt, ...)
 	
 	TM_RTC_GetDateTime(&rtcd, TM_RTC_Format_BIN);
 	charcount += sprintf(timedBuffer, "[%d/%02d/%02d || %02d:%02d:%02d],",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
-#ifdef DEBUG
-	sprintf(buffer, "Saving Into SDCard: [%d/%02d/%02d || %02d:%02d:%02d]\n",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
-	TM_USART_Puts(USART3, buffer);
-#endif
   va_list args;
   va_start (args, fmt);
   charcount += vsprintf (buffer, fmt, args);
 	strcat(timedBuffer, buffer);
 	gfileWrite(myfile, timedBuffer, charcount);
+	
+#ifdef DEBUG
+	TM_USART_Puts(USART3, timedBuffer);
+#endif
+	
 	va_end(args);
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {

@@ -74,22 +74,22 @@ void runSPI(){
 				nrfGetAvailability();
 			}else if(messageReceived->msg_ID == GET_SPEED_MSG){
 				TRACE("SPI:,GET_SPEED_MSG\n");
-				sendResponseMSG(GET_SPEED_MSG, getSpeed());
+				//sendResponseMSG(GET_SPEED_MSG, getSpeed());
 			}else if(messageReceived->msg_ID == GET_CADENCE_MSG){
 				TRACE("SPI:,GET_CADENCE_MSG\n");
-				sendResponseMSG(GET_CADENCE_MSG, getCadence());
+				//sendResponseMSG(GET_CADENCE_MSG, getCadence());
 			}else if(messageReceived->msg_ID == GET_DISTANCE_MSG){
 				TRACE("SPI:,GET_DISTANCE_MSG\n");
-				sendResponseMSG(GET_DISTANCE_MSG, getDistance());
+				//sendResponseMSG(GET_DISTANCE_MSG, getDistance());
 			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
 				TRACE("SPI:,GET_HEARTRATE_MSG\n");
-				sendResponseMSG(GET_HEARTRATE_MSG, getHeartRate());
+				//sendResponseMSG(GET_HEARTRATE_MSG, getHeartRate());
 			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
 				TRACE("SPI:,GET_CADENCE_SETPOINT_MSG\n");
-				sendResponseMSG(GET_CADENCE_SETPOINT_MSG, getCadenceSetPoint());
+				//sendResponseMSG(GET_CADENCE_SETPOINT_MSG, getCadenceSetPoint());
 			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
 				TRACE("SPI:,GET_BATTERY_MSG\n");
-				sendResponseMSG(GET_BATTERY_MSG, getBattery());
+				//sendResponseMSG(GET_BATTERY_MSG, getBattery());
 			}else if(messageReceived->msg_ID == GET_GEAR_COUNT_MSG){
 				TRACE("SPI:,GET_GEAR_COUNT_MSG\n");
 				for(int count = 0; count <= MAXIMUM_FRONT_GEARS; count++){
@@ -174,15 +174,16 @@ void nrfSetup(){
 	TM_SPI_Init(SPI2, TM_SPI_PinsPack_Custom);
 	
 	// Enabling Interrupts from NRF
-	if (TM_EXTI_Attach(GPIOA, GPIO_Pin_7, TM_EXTI_Trigger_Rising) == TM_EXTI_Result_Ok) {
+	if (TM_EXTI_Attach(GPIOA, GPIO_Pin_7, TM_EXTI_Trigger_Rising_Falling) == TM_EXTI_Result_Ok) {
 		TRACE("NRF Interrupts Are Enabled\n");
 	}
 }
 
 void TM_EXTI_Handler(uint16_t GPIO_Pin) {
+	TRACE("INT:,INTERRUPTED\n");
 	/* Handle external line 7 interrupts */
 	if (GPIO_Pin == GPIO_Pin_7) {
-		TRACE("SPI:,INTERRUPTED\n");
+		TRACE("SPI:,Interrupt SPI\n");
 		message_t *messageSent;
 		messageSent = (message_t*)osPoolAlloc(mpool);
 		messageSent->msg_ID = GET_AVAILABILITY_MSG;
@@ -271,7 +272,7 @@ void nrfGetDeviceName(){
 		TRACE("SPI:,Connection to %s finished\n", array[0]);
 	}else{
 		connectionStatus = false;
-		TRACE("SPI:,Connection not established");
+		TRACE("SPI:,Connection not established\n");
 	}
 	
 }

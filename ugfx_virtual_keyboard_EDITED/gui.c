@@ -50,6 +50,7 @@ GHandle ghImage1[10];
 
 uint8_t devicesCount;
 uint8_t devicesMAC[10][6];
+char bluetoothDevices[18];
 
 // GEAR STATUS SPECIALS
 GHandle gearsChangesFrontGearLabel[MAXIMUM_FRONT_GEARS+1];
@@ -459,12 +460,17 @@ static void createBluetoothList(void){
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
 	lists[1] = gwinListCreate(0, &wi, TRUE);
-	gwinSetFont(lists[1], gdispOpenFont("Georgia60"));
+	gwinSetFont(lists[1], gdispOpenFont("Georgia40"));
 	gwinListSetScroll(lists[1], scrollSmooth);
 	if(devicesCount > 0){
-		char bluetoothDevices[18];
 		for(uint8_t count = 0; count < devicesCount; count++){
-			formatString(&bluetoothDevices[0], sizeof(bluetoothDevices), "%02X:%02X:%02X:%02X:%02X:%02X", devicesMAC[count][0],
+			TRACE("GUI:, Device %d, %02X:%02X:%02X:%02X:%02X:%02X'n", count, devicesMAC[count][0],
+																																		devicesMAC[count][1],
+																																		devicesMAC[count][2],
+																																		devicesMAC[count][3],
+																																		devicesMAC[count][4],
+																																		devicesMAC[count][5]);
+			formatString(bluetoothDevices, sizeof(bluetoothDevices), "%02X:%02X:%02X:%02X:%02X:%02X", devicesMAC[count][0],
 																																												devicesMAC[count][1],
 																																												devicesMAC[count][2],
 																																												devicesMAC[count][3],
@@ -1690,14 +1696,13 @@ void button0Call(){
 }
 
 void button1Call(){
+	message_t *messageSent;
 	if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
-		message_t *messageSent;
-		messageSent = (message_t*)osPoolAlloc(mpool);
-		messageSent->msg_ID = NRF_SCAN_MSG;
-		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 		// BLUETOOTH SEARCH
 		gwinHide(containers[BLUETOOTH_DEVICE_CONTAINER]);
 		gwinShow(containers[BLUETOOTH_SEARCH_CONTAINER]);
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = NRF_SCAN_MSG;
 	}else if(gwinGetVisible(containers[GEARS_CONTAINER])){
 		// FRONT GEARS PLUS
 		if(gearFrontSettings[0] != MAXIMUM_FRONT_GEARS){
@@ -1720,7 +1725,6 @@ void button1Call(){
 		gwinSetText(labels[3], gearBuffer, TRUE);
 	}else if(gwinGetVisible(containers[STATUS_CONTAINER])){
 		// SUBMIT
-		message_t *messageSent;
 		messageSent = (message_t*)osPoolAlloc(mpool);
 		messageSent->msg_ID = SET_GEAR_COUNT_MSG;
 		for(int count = 0; count <= gearFrontSettings[0]; count++){
@@ -1729,7 +1733,6 @@ void button1Call(){
 		for(int count = 0; count <= gearBackSettings[0]; count++){
 			messageSent->backGears[count] = gearBackSettings[count];
 		}
-		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 		TRACE("Submit Gears\n");
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Submit
@@ -1743,7 +1746,8 @@ void button1Call(){
 		//deleteTraceFile();
 		closeTraceFile();
 		openTraceFile();
-	}	
+	}
+	osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 }
 
 void button2Call(){
@@ -1963,10 +1967,10 @@ void displayBattery(uint8_t currentBatt){
 }
 
 void connectBluetooth(){
+	message_t *messageSent;
 	if(lists[1] != NULL){
 		for(uint8_t count = 0; count < devicesCount; count++){
 			if(gwinListItemIsSelected(lists[1], count)){
-				message_t *messageSent;
 				messageSent = (message_t*)osPoolAlloc(mpool);
 				messageSent->msg_ID = NRF_CONNECT_MSG;
 				messageSent->value = count;
