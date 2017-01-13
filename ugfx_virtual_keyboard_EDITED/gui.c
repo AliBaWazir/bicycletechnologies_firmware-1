@@ -44,6 +44,7 @@ GHandle lists[2];
 uint8_t previousBatt;
 static gdispImage battImage;
 gdispImage settingsImage;
+gdispImage returnImage;
 
 GHandle ghImage1[10];
 
@@ -76,20 +77,20 @@ typedef struct {
 ClockChangesStruct clockChangesStruct;
 TM_RTC_t RTCD;
 
-int gearFrontCurrent[MAXIMUM_FRONT_GEARS+1];
-int gearBackCurrent[MAXIMUM_BACK_GEARS+1];
-int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
-int gearBackSettings[MAXIMUM_BACK_GEARS+1];
+uint8_t gearFrontCurrent[MAXIMUM_FRONT_GEARS+1];
+uint8_t gearBackCurrent[MAXIMUM_BACK_GEARS+1];
+uint8_t gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
+uint8_t gearBackSettings[MAXIMUM_BACK_GEARS+1];
 char gearBuffer[5];
 char gearsStatus[26];
 
 char timeBuffer[23];
 char gpsOutput[70];
 
-int currentGearSide;
-int currentGearTeethWindow;
-int currentTeethTeethWindow;
-int oldMenuSelectedItem;
+uint8_t currentGearSide;
+uint8_t currentGearTeethWindow;
+uint8_t currentTeethTeethWindow;
+uint8_t oldMenuSelectedItem;
 
 uint8_t speedOutput;
 uint8_t cadenceOutput;
@@ -328,7 +329,7 @@ static void createData(void)
 	gwinSetFont(labels[3], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[3]);
 	
-	gdispImageOpenFile(&settingsImage, "setting.png");
+	gdispImageOpenMemory(&settingsImage, settingImageArray);
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
 	wi.g.x = 126; // 117 + 9
@@ -340,10 +341,7 @@ static void createData(void)
 	wi.customDraw = gwinButtonDraw_Image;
 	wi.customParam = &settingsImage;
 	wi.customStyle = 0;
-	//wi.customStyle = &belize;
 	buttons[0] = gwinButtonCreate(0, &wi);
-	//gwinSetFont(buttons[0], gdispOpenFont("Georgia36"));
-	//gwinRedraw(buttons[0]);
 }
 
 static void createMenu(void)
@@ -378,6 +376,7 @@ static void createMenu(void)
   gwinListSetSelected(lists[0], 4, FALSE);
 	oldMenuSelectedItem = -1;
 	
+	gdispImageOpenMemory(&returnImage, returnImageArray);
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
 	wi.g.x = 50;
@@ -385,12 +384,11 @@ static void createMenu(void)
 	wi.g.width = 200;
 	wi.g.height = 60;
 	wi.g.parent = containers[MENU_CONTAINER];
-	wi.text = "Return";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.text = "";
+	wi.customDraw = gwinButtonDraw_Image;
+	wi.customParam = &returnImage;
+	wi.customStyle = 0;
 	buttons[0] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[0], gdispOpenFont("Georgia40"));
 }
 
 static void createBluetooth(void)
@@ -462,16 +460,21 @@ static void createBluetoothList(void){
 	lists[1] = gwinListCreate(0, &wi, TRUE);
 	gwinSetFont(lists[1], gdispOpenFont("Georgia60"));
 	gwinListSetScroll(lists[1], scrollSmooth);
-	char bluetoothDevices[18];
-	for(uint8_t count = 0; count < devicesCount; count++){
-		formatString(&bluetoothDevices[0], sizeof(bluetoothDevices), "%d:%d:%d:%d:%d:%d", devicesMAC[count][0],
-																																											devicesMAC[count][1],
-																																											devicesMAC[count][2],
-																																											devicesMAC[count][3],
-																																											devicesMAC[count][4],
-																																											devicesMAC[count][5]);
-		gwinListAddItem(lists[1], bluetoothDevices, FALSE);
-		gwinListSetSelected(lists[1], count, FALSE);
+	if(devicesCount > 0){
+		char bluetoothDevices[18];
+		for(uint8_t count = 0; count < devicesCount; count++){
+			formatString(&bluetoothDevices[0], sizeof(bluetoothDevices), "%02X:%02X:%02X:%02X:%02X:%02X", devicesMAC[count][0],
+																																												devicesMAC[count][1],
+																																												devicesMAC[count][2],
+																																												devicesMAC[count][3],
+																																												devicesMAC[count][4],
+																																												devicesMAC[count][5]);
+			gwinListAddItem(lists[1], bluetoothDevices, FALSE);
+			gwinListSetSelected(lists[1], count, FALSE);
+		}
+	}else{
+		gwinListAddItem(lists[1], "N/A", FALSE);
+		gwinListSetSelected(lists[1], 0, FALSE);
 	}
 }
 
@@ -1252,6 +1255,7 @@ static void destroyMenu(void)
 	TRACE("destroyMenu\n");
 	gwinDestroy(lists[0]);
 	gwinDestroy(buttons[0]);
+	gdispImageClose(&returnImage);
 }
 
 static void destroyBluetooth(void)

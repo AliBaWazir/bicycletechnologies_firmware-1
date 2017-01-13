@@ -17,13 +17,13 @@ extern GListener glistener;
 #define MAXIMUM_TEETH 35
 #define MINIMUM_TEETH 25
 
-extern int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
-extern int gearBackSettings[MAXIMUM_BACK_GEARS+1];
+extern uint8_t gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
+extern uint8_t gearBackSettings[MAXIMUM_BACK_GEARS+1];
 
-extern int currentGearSide;
-extern int currentGearTeethWindow;
-extern int currentTeethTeethWindow;
-extern int oldMenuSelectedItem;
+extern uint8_t currentGearSide;
+extern uint8_t currentGearTeethWindow;
+extern uint8_t currentTeethTeethWindow;
+extern uint8_t oldMenuSelectedItem;
 
 // Function Prototypes
 void guiCreate(void);

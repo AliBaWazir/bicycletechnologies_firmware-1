@@ -108,6 +108,7 @@ void runSPI(){
 				}
 				nrfSetGearSettings();
 			}else if(messageReceived->msg_ID == NRF_SCAN_MSG){
+				TRACE("SPI:,NRF_SCAN_MSG\n");
 				getBluetooth();
 			}
 			osPoolFree(mpool, messageReceived);
@@ -423,7 +424,7 @@ void nrfGetMacAddress(){
 		command[1] = count;
 		nrfSend(&command[0], 2);
 		nrfReceive(&devicesMAC[count][0], 6);
-		TRACE("SPI:,Device %d,MAC Address; %d:%d:%d:%d:%d:%d\n", count, devicesMAC[count][0], 
+		TRACE("SPI:,Device %d,MAC Address; %02X:%02X:%02X:%02X:%02X:%02X\n", count, devicesMAC[count][0], 
 																																		devicesMAC[count][1], 
 																																		devicesMAC[count][2], 
 																																		devicesMAC[count][3], 
