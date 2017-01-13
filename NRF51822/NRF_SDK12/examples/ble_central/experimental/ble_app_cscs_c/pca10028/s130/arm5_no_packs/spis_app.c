@@ -28,6 +28,7 @@
 #include "algorithm_app.h"
 #include "hrs_app.h"
 #include "i2c_app.h"
+#include "connection_manager_app.h"
 
 #include "../spis_app.h"
 
@@ -40,7 +41,7 @@
 							   ***************************************************/
 
 #define SPI_INSTANCE        1 /**< SPIS instance index. */
-
+#define SPI_TX_BUFFER_SIZE  6
 
 #define SPI_DUMMY_COMMAND   0xF0       //this command is received when SPI master reads a response
 
@@ -68,6 +69,7 @@
 #define SPI_GET_ADV_DEVICE_DATA_BY_INDEX    0x21
 #define SPI_GET_PAIRED_DEVICES              0x22
 #define SPI_GET_CONNECTED_DEVICES           0x23
+#define SPI_GET_ADV_DEVICE_MAC_ADDR         0x24
 #define SPI_GET_CSC_DEVICE_NAME             0x27
 #define SPI_GET_HR_DEVICE_NAME              0x28
 #define SPI_GET_PHONE_DEVICE_NAME           0x29
@@ -102,8 +104,8 @@
 #define INDEX_ARG_WHEEL_GEARS_COUNT  (INDEX_ARG_BASE+1) 
 #define INDEX_ARG_GEAR_INDEX         (INDEX_ARG_BASE+1) //index starts from 0 for fisrt gear
 #define INDEX_ARG_TEETH_COUNT        (INDEX_ARG_BASE+2) //teeth count in a gear defined by INDEX_ARG_GEAR_TYPE and INDEX_ARG_GEAR_INDEX.
-
-
+#define INDEX_ARG_BLE_SCAN_PERIOD     INDEX_ARG_BASE    //scan period is in ms
+#define INDEX_ARG_ADV_DEVICE_INDEX    INDEX_ARG_BASE
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -117,7 +119,7 @@
 static const nrf_drv_spis_t spis = NRF_DRV_SPIS_INSTANCE(SPI_INSTANCE);/**< SPIS instance. */
 
 
-static uint8_t       m_tx_buf[4];          /**< TX buffer. */
+static uint8_t       m_tx_buf[SPI_TX_BUFFER_SIZE];          /**< TX buffer. */
 static uint8_t       m_rx_buf[sizeof(m_tx_buf) + 1];    /**< RX buffer. */
 static const uint8_t m_length = sizeof(m_tx_buf);        /**< Transfer length. */
 
@@ -271,8 +273,31 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				/*TODO: figure out which bit to rest for avail flags*/
 			break;//SPI_GET_TEETH_COUNT_ON_GEAR
 			
+			case SPI_GET_ADV_DEVICE_COUNT:
+				m_tx_buf[0] = connManagerApp_get_adv_devices_count();
+			break;//SPI_GET_ADV_DEVICE_COUNT
 			
+			case SPI_GET_ADV_DEVICE_MAC_ADDR:
+			{
+				uint8_t* mac_addr_p  = NULL;
 				
+				mac_addr_p= connManagerApp_get_adv_device_mac(m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX]);
+				if (mac_addr_p == NULL){
+					NRF_LOG_ERROR("spisApp_event_handler: connManagerApp_get_adv_device_mac returned NULL\r\n");
+				} else{
+					
+					m_tx_buf[0] = *(mac_addr_p);
+					m_tx_buf[1] = *(mac_addr_p+1);
+					m_tx_buf[2] = *(mac_addr_p+2);
+					m_tx_buf[3] = *(mac_addr_p+3);
+					m_tx_buf[4] = *(mac_addr_p+4);
+					m_tx_buf[5] = *(mac_addr_p+5);
+					
+				}
+			}
+			break;//SPI_GET_ADV_DEVICE_MAC_ADDR
+			
+			
 			/**************************** SETTERS ********************************/
 			case SPI_SET_CADENCE_SETPOINT:
 				algorithmApp_set_cadence_setpoint (m_rx_buf[INDEX_ARG_SETPOINT]);
@@ -295,7 +320,11 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			case SPI_SET_TEETH_COUNT_ON_GEAR:
 				algorithmApp_set_teeth_count(m_rx_buf[INDEX_ARG_GEAR_TYPE], m_rx_buf[INDEX_ARG_GEAR_INDEX], m_rx_buf[INDEX_ARG_TEETH_COUNT]);
 			break;//SPI_SET_GEAR_COUNT
-				
+			
+			case SPI_BEGIN_SCAN:
+				connManagerApp_scan_start(m_rx_buf[INDEX_ARG_BLE_SCAN_PERIOD]*1000);
+			break;//SPI_BEGIN_SCAN
+			
 			default:
 				NRF_LOG_ERROR("spisApp_event_handler: command in rx buffer is unknown. command= 0x%x\r\n",command);
 			break;

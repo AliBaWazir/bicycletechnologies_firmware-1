@@ -280,6 +280,27 @@ void connManagerApp_debug_print_conn_params(const ble_gap_conn_params_t* conn_pa
 	NRF_LOG_DEBUG("connManagerApp_debug_print_conn_params: -----------------------------------------------------------\r\n");
 }
 
+//function to get count of advertised devices
+uint8_t connManagerApp_get_adv_devices_count(void){
+	return advertised_devices.count;
+}
+
+//function to get pointer to an advertised device MAC address
+uint8_t* connManagerApp_get_adv_device_mac(uint8_t adv_device_index){
+	
+	uint8_t*   ret = NULL;
+	
+	//check if the index is valid
+	if (adv_device_index >= advertised_devices.count){
+		NRF_LOG_WARNING("connManagerApp_get_adv_device_mac: adv_device_index =%d is greater than adv devices count= %d\r\n", 
+						 adv_device_index, advertised_devices.count);
+	} else{
+		ret= (uint8_t*) advertised_devices.advertised_devices_data[adv_device_index].peer_addr.addr;
+	}
+	
+	return ret;
+}
+
 //function to get device type based of peer address
 advertised_device_type_e connManagerApp_get_device_type (const ble_gap_addr_t *peer_addr){
 	
