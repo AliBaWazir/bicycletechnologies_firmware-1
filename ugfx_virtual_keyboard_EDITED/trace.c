@@ -81,12 +81,7 @@ void TRACE(const char *fmt, ...)
   va_start (args, fmt);
   charcount += vsprintf (buffer, fmt, args);
 	strcat(timedBuffer, buffer);
-	gfileWrite(myfile, timedBuffer, charcount);
-	
-#ifdef DEBUG
-	TM_USART_Puts(USART3, timedBuffer);
-#endif
-	
+	gfileWrite(myfile, timedBuffer, charcount);	
 	va_end(args);
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {

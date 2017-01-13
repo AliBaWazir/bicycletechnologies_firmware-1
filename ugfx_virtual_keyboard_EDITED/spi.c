@@ -174,17 +174,17 @@ void nrfSetup(){
 	TM_SPI_Init(SPI2, TM_SPI_PinsPack_Custom);
 	
 	// Enabling Interrupts from NRF
-	if (TM_EXTI_Attach(GPIOA, GPIO_Pin_7, TM_EXTI_Trigger_Rising_Falling) == TM_EXTI_Result_Ok) {
+	if (TM_EXTI_Attach(GPIOA, GPIO_Pin_7, TM_EXTI_Trigger_Rising) == TM_EXTI_Result_Ok) {
 		TRACE("NRF Interrupts Are Enabled\n");
 	}
 }
 
 void TM_EXTI_Handler(uint16_t GPIO_Pin) {
 	TRACE("INT:,INTERRUPTED\n");
+	message_t *messageSent;
 	/* Handle external line 7 interrupts */
 	if (GPIO_Pin == GPIO_Pin_7) {
 		TRACE("SPI:,Interrupt SPI\n");
-		message_t *messageSent;
 		messageSent = (message_t*)osPoolAlloc(mpool);
 		messageSent->msg_ID = GET_AVAILABILITY_MSG;
 		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
