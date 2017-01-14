@@ -16,25 +16,16 @@ uint32_t fileSavedTime;
 
 void deleteTraceFile(void)
 {
-#ifdef DEBUG
-					TM_USART_Puts(USART3, "Deleting File\n");
-#endif	
 	gfileDelete(filename);
 }
 
 void closeTraceFile(void)
 {
-#ifdef DEBUG
-					TM_USART_Puts(USART3, "Closing File\n");
-#endif	
 	gfileClose(myfile);
 }
 
 void openTraceFile(void)
 {	
-#ifdef DEBUG
-					TM_USART_Puts(USART3, "Opening File\n");
-#endif	
 	TM_RTC_t rtcd;
 	osStatus status;
 	status  = osMutexWait(traceMutex, 0);
@@ -45,12 +36,7 @@ void openTraceFile(void)
 	TM_RTC_GetDateTime(&rtcd, TM_RTC_Format_BIN);
 	fileSavedTime = TM_RTC_GetUnixTimeStamp(&fileTime);
 	
-	sprintf(filename, "%d_%02d_%02d-%02d_%02d_%02d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
-#ifdef DEBUG
-	char buffer[50];
-	sprintf(buffer, "Opening File: %d_%02d_%02d-%02d_%02d_%02d.csv\n",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);
-	TM_USART_Puts(USART3, buffer);
-#endif		
+	sprintf(filename, "%d_%02d_%02d-%02d_%02d_%02d.csv",rtcd.Year,rtcd.Month,rtcd.Day,rtcd.Hours,rtcd.Minutes,rtcd.Seconds);	
 	if(gfileExists(filename)){
 		gfileDelete(filename);
 	}
@@ -81,7 +67,7 @@ void TRACE(const char *fmt, ...)
   va_start (args, fmt);
   charcount += vsprintf (buffer, fmt, args);
 	strcat(timedBuffer, buffer);
-	gfileWrite(myfile, timedBuffer, charcount);	
+	gfileWrite(myfile, timedBuffer, charcount);
 	va_end(args);
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {
@@ -116,11 +102,7 @@ TM_RTC_Result_t updateRTC(TM_RTC_t* data, TM_RTC_Format_t format)
 	if (status != osOK){
 		// handle failure code
 	}
-#ifdef DEBUG
-	char buffer[50];
-	sprintf(buffer, "Updating the RTC with: [%d/%02d/%02d || %02d:%02d:%02d]\n",data->Year,data->Month,data->Day,data->Hours,data->Minutes,data->Seconds);
-	TM_USART_Puts(USART3, buffer);
-#endif				
+	
 	TM_RTC_SetDateTime(data, format);
 	
 	status = osMutexRelease(traceMutex);

@@ -137,6 +137,15 @@ void displayBattery(uint8_t currentBatt);
 void showCurrentGears();
 void connectBluetooth();
 	
+bool interrupted;
+// INTERRUPT
+void TM_EXTI_Handler(uint16_t GPIO_Pin) {
+	/* Handle external line 7 interrupts */
+	if (GPIO_Pin == GPIO_Pin_7) {
+		interrupted = true;
+	}
+}
+	
 static void createmainContainer(void)
 {
 	TRACE("createcreatemainContainer\n");
@@ -1508,6 +1517,7 @@ void guiEventLoop(void)
 	int count = 0;
 	previousSeconds = 0;
 	previousBatt = 1;
+	interrupted = false;
 	
 	guiQueue = osMessageCreate(osMessageQ(guiQueue), NULL);
 	
@@ -1549,6 +1559,13 @@ void guiEventLoop(void)
 				gwinShow(containers[BLUETOOTH_DEVICE_CONTAINER]);
 			}
 			osPoolFree(mpool, messageReceived);
+		}
+		
+		if(interrupted == true){
+			messageSent = (message_t*)osPoolAlloc(mpool);
+			messageSent->msg_ID = GET_AVAILABILITY_MSG;
+			osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+			interrupted = false;
 		}
 		
 		// MUST STAY THIS IS THE MAIN THING FOR THIS

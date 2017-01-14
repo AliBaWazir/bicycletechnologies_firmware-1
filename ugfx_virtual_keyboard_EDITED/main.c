@@ -143,7 +143,7 @@ void gpsThread (void const *arg)
 }
 osThreadDef (gpsThread, osPriorityNormal, 1, 0);            // define gpsThread
 
-osPoolDef(mpool, 16, message_t);
+osPoolDef(mpool, 32, message_t);
 osPoolId mpool;
 
 int main (void)
