@@ -36,7 +36,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define SPI_DRIVER_SIM_MODE 1 /****************************************************
+#define SPI_DRIVER_SIM_MODE 0 /****************************************************
 							   *This flag is set to 1 only if SPI slave interaction
 							   *is in simulation mode.
 							   ***************************************************/
@@ -185,7 +185,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
         memset(m_tx_buf, 0x00, sizeof(m_tx_buf)); // clear the tx for visual clarity
         
         spis_xfer_done = true;
-        NRF_LOG_DEBUG("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
+        //NRF_LOG_DEBUG("spisApp_event_handler: transfer completed. Received: 0x%x\r\n",command);
 
 		switch (command){
 			case SPI_DUMMY_COMMAND:
