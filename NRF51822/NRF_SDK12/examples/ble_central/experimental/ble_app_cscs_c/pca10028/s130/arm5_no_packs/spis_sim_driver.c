@@ -27,6 +27,8 @@
 #define NRF_LOG_MODULE_NAME "SPI SLAVE SIM DRIVER"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "app_timer.h"
+#include "nrf_gpio.h"
 
 #include "spis_sim_driver.h"
 
@@ -46,6 +48,10 @@
 #define MAX_SIM_HR          100
 #define MAX_SIM_BATTERY     100
 
+//Timer Defines
+#define APP_TIMER_PRESCALER           0               /**< Value of the RTC1 PRESCALER register. If changed, remember to change prescaler in main.c*/
+#define I2CAPP_MS_TO_TICK(MS) (APP_TIMER_TICKS(100, APP_TIMER_PRESCALER) * (MS / 100))
+#define SPI_SIM_IRQ_TOGGLE_PERIOD_MS  1000            //time period in ms to pull data from sensors 
 
 /**********************************************************************************************
 * TYPE DEFINITIONS
@@ -78,6 +84,9 @@ static uint8_t cadence_index    = 0;
 static uint8_t distance_index   = 0;
 static uint8_t hr_index         = 0;
 static uint8_t battery_index    = 0;
+
+/* IRQ toggling timer*/
+APP_TIMER_DEF(spi_sim_irq_timer_id);
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -234,6 +243,34 @@ static bool spisSimDriver_init_battery_array(){
 }
 
 
+static void spisSimDriver_spi_irq_timer_handler( void * callback_data){
+	
+	uint32_t* polling_request_id_p = (uint32_t*) callback_data;
+	uint32_t  nrf_err              = NRF_SUCCESS;   
+	
+	/*TODO: figure out if this is necessary*/
+	if (polling_request_id_p != NULL){
+		NRF_LOG_DEBUG("spisSimDriver_spi_irq_timer_handler: polling request with ID=%d timed out\r\n", *polling_request_id_p);
+	}
+	
+	//stop timer
+
+	(void)app_timer_stop(spi_sim_irq_timer_id);
+
+	
+	//toggle spi irq
+	nrf_gpio_pin_toggle(APP_SPIS_IRQ_PIN);
+	NRF_LOG_DEBUG("spisSimDriver_spi_irq_timer_handler: SPI IRQ is toggled\r\n");
+
+	
+	//start timer againg
+	nrf_err = app_timer_start(spi_sim_irq_timer_id, I2CAPP_MS_TO_TICK(SPI_SIM_IRQ_TOGGLE_PERIOD_MS), (void*)NULL);
+	if (nrf_err != NRF_SUCCESS)
+	{
+		NRF_LOG_ERROR("spisSimDriver_spi_irq_timer_handler: app_timer_start failed with error = %d\r\n", nrf_err);
+	}
+}
+
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
@@ -329,8 +366,9 @@ bool spisSimDriver_get_data_availability_flags(uint8_t* dest_buffer){
 
 /*Initialize SPIS simulation driver*/
 bool spisSimDriver_init(void){
-	bool ret_code  = true;
-			
+	bool     ret_code  = true;
+	uint32_t nrf_err   = NRF_SUCCESS;
+	
 	//initialze sim data arrays
 	ret_code = spisSimDriver_init_speed_array();
 	
@@ -348,6 +386,27 @@ bool spisSimDriver_init(void){
 	
 	if (ret_code){
 		ret_code = spisSimDriver_init_battery_array();
+	}
+	
+	if (ret_code){
+		//use timer to toggle SPI IRQ
+		nrf_err = app_timer_create(&spi_sim_irq_timer_id,
+									APP_TIMER_MODE_SINGLE_SHOT,
+									spisSimDriver_spi_irq_timer_handler);
+		if (nrf_err != NRF_SUCCESS){
+			NRF_LOG_DEBUG("spisSimDriver_init: app_timer_create failed with error= %d\r\n", nrf_err);
+			ret_code = false;
+		} else{
+			
+			//start the timer
+			nrf_err = app_timer_start(spi_sim_irq_timer_id, I2CAPP_MS_TO_TICK(SPI_SIM_IRQ_TOGGLE_PERIOD_MS), (void*)NULL);
+			if (nrf_err != NRF_SUCCESS)
+			{
+				NRF_LOG_ERROR("spisSimDriver_init: app_timer_start failed with error = %d\r\n", nrf_err);
+				ret_code = false;
+			}
+			
+		}
 	}
 	
 	return ret_code;

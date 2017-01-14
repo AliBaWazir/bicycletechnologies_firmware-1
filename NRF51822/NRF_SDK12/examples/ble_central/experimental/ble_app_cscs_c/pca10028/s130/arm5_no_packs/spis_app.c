@@ -22,6 +22,7 @@
 #define NRF_LOG_MODULE_NAME "SPIS APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "nrf_delay.h"
 
 #include "cscs_app.h"
 #include "spis_sim_driver.h"
@@ -157,8 +158,13 @@ static void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool dat
 	if (data_available){
 		
 		data_availability_flags|= (flag);
+		//clear SPI IRQ
+		spisApp_irq_set_low();
+		nrf_delay_us(10);
 		//set SPI IRQ HIGH
 		spisApp_irq_set_high();
+		
+		NRF_LOG_DEBUG("spisApp_update_data_avail_flags: IRQ is set high due to flag change= %d\r\n", flag);
 		
 	} else{
 		data_availability_flags&= ~(flag);
@@ -325,6 +331,13 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				connManagerApp_scan_start(m_rx_buf[INDEX_ARG_BLE_SCAN_PERIOD]*1000);
 			break;//SPI_BEGIN_SCAN
 			
+			case SPI_CONNECT_DEVICE:
+				if(!connManagerApp_advertised_device_connect(m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX])){
+					NRF_LOG_ERROR("spisApp_event_handler: connManagerApp_advertised_device_connect failed to connect to device with index=%d\r\n",
+								   m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX]);
+				}
+			break;//SPI_CONNECT_DEVICE
+						
 			default:
 				NRF_LOG_ERROR("spisApp_event_handler: command in rx buffer is unknown. command= 0x%x\r\n",command);
 			break;
