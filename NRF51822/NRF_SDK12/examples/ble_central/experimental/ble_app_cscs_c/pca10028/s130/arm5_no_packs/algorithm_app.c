@@ -25,6 +25,7 @@
 #define NRF_LOG_MODULE_NAME "ALGORITHM APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "nrf_delay.h"
 #include "drivers_commons.h"
 #include "application_fds_app.h"
 
@@ -54,6 +55,9 @@ user_defined_bike_config_data_t  user_defined_bike_config_data;  //will contain 
 static bool  gear_level_locked = false;                     /*TODO: this boolean has to be checked before running the gear shifting algorithm
 															 *If set to true, lock gear level at the middle to maximize efficiency.  
 															 */
+
+static user_defined_bike_config_data_t default_bike_config;      //Struct will be initialized in the init function
+static uint32_t cadence_setpoint_value = DEFAULT_CADENCE_SETPOINT_RPM;  //For now, if cadence setpoint is not already set, set it to default value
 
 /*              | wheel gears -->
  *crankset gears|-------------------------------
@@ -229,6 +233,20 @@ bool algorithmApp_init(void){
 	bool ret_code  = true;
 	
 	memset (&user_defined_bike_config_data, 0, sizeof(user_defined_bike_config_data_t));
+	memset (&default_bike_config, 0, sizeof(user_defined_bike_config_data_t));
+	default_bike_config.wheel_diameter_cm= 72;
+	default_bike_config.crank_gears_count= 1;
+	default_bike_config.crank_gears_teeth_count[0]= 32;
+	default_bike_config.wheel_gears_count= 8;
+	default_bike_config.wheel_gears_teeth_count[0]= 11;
+	default_bike_config.wheel_gears_teeth_count[1]= 13;
+	default_bike_config.wheel_gears_teeth_count[2]= 15;
+	default_bike_config.wheel_gears_teeth_count[3]= 18;
+	default_bike_config.wheel_gears_teeth_count[4]= 22; 
+	default_bike_config.wheel_gears_teeth_count[5]= 26; 
+	default_bike_config.wheel_gears_teeth_count[6]= 30; 
+	default_bike_config.wheel_gears_teeth_count[7]= 34;
+
 	
 	/*decode bicycle preoperties defined by user from FDS to a static struct*/
 	if(!applicationFdsApp_init(algorithmApp_gear_ratios_array_populate)){
@@ -241,10 +259,8 @@ bool algorithmApp_init(void){
 			
 			NRF_LOG_WARNING("algorithmApp_init: applicationFdsApp_fds_read() failed. Default cadenceSetPoint value will be written\r\n");
 			
-			/*TODO: figure out a way to ask user to enter cadence setpoint for fisrt time use.*/
+			//TODO: figure out a way to ask user to enter cadence setpoint for fisrt time use.
 			
-			//For now, if cadence setpoint is not already set, set it to default value
-			uint32_t cadence_setpoint_value = DEFAULT_CADENCE_SETPOINT_RPM;
 			if(!applicationFdsApp_fds_store(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*)&cadence_setpoint_value)){
 				NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_store() failed to write cadence_setpoint_rpm\r\n");
 				ret_code= false;
@@ -257,6 +273,14 @@ bool algorithmApp_init(void){
 		}
 		
 		if(ret_code){
+			
+			//wait for the app FDS writing activity to be done if it's running
+			if(fds_app_busy_writing){
+				//TODO: figure out how to schedule the next writing asynchronously using reserve()
+				NRF_LOG_INFO("algorithmApp_init: waiting for FDS to finish writing data\r\n");
+				while(fds_app_busy_writing);
+			}
+			
 
 			//read bike configration data from FDS
 			if(!applicationFdsApp_fds_read(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*) &user_defined_bike_config_data)){
@@ -265,21 +289,7 @@ bool algorithmApp_init(void){
 				/*TODO: figure out a way to ask user to enter bike configuration for fisrt time use.*/
 				
 				//For now, if cadence setpoint is not already set, set it to default value
-				user_defined_bike_config_data_t default_config;
-				memset (&default_config, 0, sizeof(user_defined_bike_config_data_t));
-				default_config.wheel_diameter_cm= 72;
-				default_config.crank_gears_count= 1;
-				default_config.crank_gears_teeth_count[0]= 32;
-				default_config.wheel_gears_count= 8;
-				default_config.wheel_gears_teeth_count[0]= 11;
-			    default_config.wheel_gears_teeth_count[1]= 13;
-				default_config.wheel_gears_teeth_count[2]= 15;
-				default_config.wheel_gears_teeth_count[3]= 18;
-				default_config.wheel_gears_teeth_count[4]= 22; 
-				default_config.wheel_gears_teeth_count[5]= 26; 
-				default_config.wheel_gears_teeth_count[6]= 30; 
-				default_config.wheel_gears_teeth_count[7]= 34;
-				if(!applicationFdsApp_fds_store(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*)&default_config)){
+				if(!applicationFdsApp_fds_store(USER_DEFINED_BIKE_CONFIG_DATA, (uint8_t*)&default_bike_config)){
 					NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_store() failed to write bike config\r\n");
 					ret_code= false;
 				} else{

@@ -32,6 +32,8 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
+#define APP_FDS_IN_DEBUG_MODE              0   //This is set to 1 if file needs to be deleted and garbage collection needed to be performed 
+
 #define USER_DEFINED_PROPERTIES_FILE_ID    0x1000
 #define CADENCE_SET_POINT_REC_KEY          0x1000
 #define BIKE_CONFIG_DATA_REC_KEY           0x1010
@@ -42,14 +44,19 @@
 
 
 /**********************************************************************************************
-* STATIC VARIABLES
+* GLOBAL/STATIC VARIABLES
 ***********************************************************************************************/
+//this is a global variable
+bool fds_app_busy_writing = false;
+
 static bool m_app_fds_initialized    = false;
 //static bool m_app_fds_delete_queued  = false;
 //static bool m_app_fds_delete_ongoing = false;
 
 //pointer to callbak to be called after FDS write/update
 algorithmApp_ratios_poulate_f app_fds_write_cb  = NULL;
+
+static bool fds_app_running_gc = false;
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -62,6 +69,7 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
     {
         case FDS_EVT_WRITE:
         case FDS_EVT_UPDATE:
+		{
 			//check if this event concerns application FDS
             if ( (p_fds_evt->write.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
                 || (p_fds_evt->write.record_key == CADENCE_SET_POINT_REC_KEY)
@@ -70,20 +78,20 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
 				
                 if (p_fds_evt->id == FDS_EVT_WRITE){
 					if(p_fds_evt->result == FDS_SUCCESS){
-						NRF_LOG_DEBUG("applicationFdsApp_evt_handler: writing record with key= %d was successful \r\n",
+						NRF_LOG_DEBUG("applicationFdsApp_evt_handler: writing record with key= 0x%x was successful \r\n",
 									   p_fds_evt->write.record_key);
 					} else{
-						NRF_LOG_ERROR("applicationFdsApp_evt_handler: writing record with key= %d failed with result= \r\n", 
+						NRF_LOG_ERROR("applicationFdsApp_evt_handler: writing record with key= 0x%x failed with result= \r\n", 
 									   p_fds_evt->write.record_key,
 									   p_fds_evt->result);
 					}
 					
                 } else{
 					if(p_fds_evt->result == FDS_SUCCESS){
-						NRF_LOG_DEBUG("applicationFdsApp_evt_handler: updating record with key= %d was successful \r\n",
+						NRF_LOG_DEBUG("applicationFdsApp_evt_handler: updating record with key= 0x%x was successful \r\n",
 									   p_fds_evt->write.record_key);
 					} else{
-						NRF_LOG_ERROR("applicationFdsApp_evt_handler: updating record with key= %d failed with result= \r\n", 
+						NRF_LOG_ERROR("applicationFdsApp_evt_handler: updating record with key= 0x%x failed with result= \r\n", 
 									   p_fds_evt->write.record_key,
 									   p_fds_evt->result);
 					}
@@ -122,6 +130,10 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
 				}
 				
             }
+			
+			//reset busy writing flag to allow writing requests
+			fds_app_busy_writing= 0;
+		}
         break;
 
         case FDS_EVT_DEL_RECORD:
@@ -144,8 +156,8 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
 
         case FDS_EVT_DEL_FILE:
         {
-			if ((p_fds_evt->del.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
-                 && (p_fds_evt->del.record_key == FDS_RECORD_KEY_DIRTY))
+			if (p_fds_evt->del.file_id == USER_DEFINED_PROPERTIES_FILE_ID)
+                 //&& (p_fds_evt->del.record_key == FDS_RECORD_KEY_DIRTY))
             {
 
 				if (p_fds_evt->result == FDS_SUCCESS){
@@ -163,7 +175,7 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
         break;
 
         case FDS_EVT_GC:
-
+			fds_app_running_gc= false;
         break;
 
         default:
@@ -248,7 +260,7 @@ bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, const 
 						
 				record_found= true;
 				if (fds_record_open(&record_desc, &flash_record) != FDS_SUCCESS){
-					NRF_LOG_ERROR("applicationFdsApp_fds_read: failed to open record with record_key= %d\r\n", CADENCE_SET_POINT_REC_KEY);
+					NRF_LOG_ERROR("applicationFdsApp_fds_read: failed to open record with record_key= 0x%x\r\n", record_key);
 				} else{
 
 					memcpy((uint8_t*)dest_p, (uint8_t*)flash_record.p_data, bytes_to_read);
@@ -259,7 +271,7 @@ bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, const 
 			}
 				
 			if(!record_found){
-				NRF_LOG_DEBUG("applicationFdsApp_fds_read: did not find record with key= %d\r\n", record_key);
+				NRF_LOG_DEBUG("applicationFdsApp_fds_read: did not find record with key= 0x%x\r\n", record_key);
 				ret_code= false;
 			}
 		}
@@ -335,6 +347,9 @@ bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8
 				ret_code= false;;
 			}
 			
+			//set busy writing flag to prevent concurrent writing requests
+			fds_app_busy_writing= 1;
+			
 		}
 		break;
 					
@@ -376,6 +391,27 @@ bool applicationFdsApp_init(algorithmApp_ratios_poulate_f cb){
 		}
 
 		m_app_fds_initialized = true;
+		
+		if(APP_FDS_IN_DEBUG_MODE){
+			
+			ret= fds_file_delete(USER_DEFINED_PROPERTIES_FILE_ID);
+			if(ret != NRF_SUCCESS){
+				NRF_LOG_ERROR("applicationFdsApp_init: deleting FDS file= %x failed with ret= %d\r\n", USER_DEFINED_PROPERTIES_FILE_ID, ret);
+			}
+			
+			ret= fds_gc();
+			if(ret != NRF_SUCCESS){
+				NRF_LOG_ERROR("applicationFdsApp_init: fds_gc() failed with ret= %d\r\n", USER_DEFINED_PROPERTIES_FILE_ID, ret);
+			} else{
+				fds_app_running_gc= true;
+			}
+			
+			if(fds_app_running_gc){
+				NRF_LOG_INFO("applicationFdsApp_init: waiting for fds_gc() to finish\r\n");
+				while(fds_app_running_gc);
+			}
+
+		}
 		
 	}
 	

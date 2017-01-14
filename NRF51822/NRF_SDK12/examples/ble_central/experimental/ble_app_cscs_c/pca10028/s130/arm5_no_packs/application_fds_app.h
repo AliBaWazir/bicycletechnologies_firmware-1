@@ -10,6 +10,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+extern bool fds_app_busy_writing;
 	
 bool applicationFdsApp_fds_read(user_defined_properties_type_e data_type, const void* dest_p);
 bool applicationFdsApp_fds_store(user_defined_properties_type_e data_type, uint8_t* source_p);
