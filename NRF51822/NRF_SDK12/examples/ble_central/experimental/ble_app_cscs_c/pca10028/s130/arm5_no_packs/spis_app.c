@@ -159,10 +159,11 @@ static void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool dat
 		
 		data_availability_flags|= (flag);
 		//clear SPI IRQ
-		spisApp_irq_set_low();
-		nrf_delay_us(10);
+		//spisApp_irq_set_low();
+		//nrf_delay_ms(100);
 		//set SPI IRQ HIGH
 		spisApp_irq_set_high();
+		spisApp_irq_set_low();
 		
 		NRF_LOG_DEBUG("spisApp_update_data_avail_flags: IRQ is set high due to flag change= %d\r\n", flag);
 		

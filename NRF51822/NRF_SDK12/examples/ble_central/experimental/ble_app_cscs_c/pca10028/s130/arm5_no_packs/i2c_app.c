@@ -333,15 +333,13 @@ static bool i2cApp_poll_data(){
 	// save the recent values as old value for comparison
 	m_i2c_slaves_data_old.soc_state_of_charge = m_i2c_slaves_data_new.soc_state_of_charge;
 	m_i2c_slaves_data_old.bno055_id = m_i2c_slaves_data_new.bno055_id;
-	
+/*	
 	// read new values
-	/*
 	if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, &(m_i2c_slaves_data_new.soc_state_of_charge))){
 		NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for SOC_I2C_ADDR\r\n");
 		retcode = false;
 	}
-	*/
-	
+*/	
 	/*
 	nrf_delay_ms(1);
 	if(retcode){
