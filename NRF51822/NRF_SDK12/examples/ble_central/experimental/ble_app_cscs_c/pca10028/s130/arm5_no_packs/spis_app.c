@@ -200,7 +200,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				} else {
 					//memcpy(m_tx_buf, bitField, 4); // Copy current available data into tx buffer in preperation for clock out. 
 					memcpy(m_tx_buf, (const void*)(&data_availability_flags), sizeof(data_availability_flags));
-					spisApp_irq_set_low();
+					//spisApp_irq_set_low();
 				}
 
 			break;
