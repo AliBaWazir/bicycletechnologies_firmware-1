@@ -35,21 +35,6 @@
 * TYPE DEFINITIONS
 ***********************************************************************************************/
 typedef struct{
-	uint32_t value;
-	bool     is_read;
-}uint32_data_field_t;
-
-typedef struct{
-	uint16_t value;
-	bool     is_read;
-}uint16_data_field_t;
-
-typedef struct{
-	double   value;
-	bool     is_read;
-}double_data_field_t;
-
-typedef struct{
 	uint32_t            first_wheel_revolutions; //This number records the initial wheel revolutions state reported from sensor . Used for debugging
 	uint32_data_field_t oldWheelRevolutions;
 	uint16_data_field_t oldCrankRevolutions;
@@ -341,16 +326,49 @@ void cscsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 }
 
 uint8_t cscsApp_get_current_speed_kmph(void){
-	return (uint8_t)cscs_instantanious_data.wheel_speed_kmph.value;
+	
+	uint8_t ret_value = 0;
+	
+	if (cscs_instantanious_data.wheel_speed_kmph.is_read){
+		return SPI_NO_NEW_MEAS;
+	} else{
+		/*TODO: check the limits for every return value to SPI. Also, do double seal/floor*/
+		ret_value= (uint8_t)cscs_instantanious_data.wheel_speed_kmph.value;
+		//set the existing measurement as read
+		cscs_instantanious_data.wheel_speed_kmph.is_read= true;
+	}		
+	return ret_value; 
 }
 
 uint8_t cscsApp_get_current_cadence_rpm(void){
-	return (uint8_t)cscs_instantanious_data.crank_cadence_rpm.value;
+	
+	uint8_t ret_value = 0;
+	
+	if (cscs_instantanious_data.crank_cadence_rpm.is_read){
+		return SPI_NO_NEW_MEAS;
+	} else{
+		/*TODO: check the limits for every return value to SPI. Also, do double seal/floor*/
+		ret_value= (uint8_t)cscs_instantanious_data.crank_cadence_rpm.value;
+		//set the existing measurement as read
+		cscs_instantanious_data.crank_cadence_rpm.is_read= true;
+	}		
+	return ret_value; 
 }
 
 uint8_t cscsApp_get_current_distance_km(void){
-	//convert from m to km
-	return (uint8_t)((cscs_instantanious_data.travelDistance_m.value)/1000);
+	
+	uint8_t ret_value = 0;
+	
+	if (cscs_instantanious_data.travelDistance_m.is_read){
+		return SPI_NO_NEW_MEAS;
+	} else{
+		/*TODO: check the limits for every return value to SPI. Also, do double seal/floor*/
+		//convert from m to km
+		ret_value= (uint8_t)((cscs_instantanious_data.travelDistance_m.value)/1000);
+		//set the existing measurement as read
+		cscs_instantanious_data.travelDistance_m.is_read= true;
+	}		
+	return ret_value; 
 }
 
 void cscsApp_assing_new_meas_callback(new_meas_callback_f cb){

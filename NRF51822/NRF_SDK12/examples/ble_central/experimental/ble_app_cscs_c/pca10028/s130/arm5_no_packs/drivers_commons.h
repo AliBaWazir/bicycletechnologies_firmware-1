@@ -17,8 +17,8 @@ extern "C" {
 #define MAX_GEARS_COUNT  16    //defines max of number of gears in crank/wheel
 
 /**********************************************************************************************
-* CSCS
-***********************************************************************************************/	
+* CSCS and HR
+***********************************************************************************************/
 //enum to specify what CSCS data to handle
 typedef enum {
 	CSCS_DATA_SPEED,
@@ -34,6 +34,21 @@ typedef enum{
 	GEAR_TYPE_UNKNOWN
 } gear_type_e;
 */
+
+typedef struct{
+	uint32_t value;
+	bool     is_read;
+}uint32_data_field_t;
+
+typedef struct{
+	uint16_t value;
+	bool     is_read;
+}uint16_data_field_t;
+
+typedef struct{
+	double   value;
+	bool     is_read;
+}double_data_field_t;
 
 /**********************************************************************************************
 * ROM STORED DATA
@@ -59,6 +74,7 @@ typedef bool (*algorithmApp_ratios_poulate_f)(void);
 /**********************************************************************************************
 * SPI and other apps
 ***********************************************************************************************/
+#define SPI_NO_NEW_MEAS  0xFE         //This value will be retund to SPI master if nRF doesn't have a new measurement
 typedef enum {
 	//there are 32 bits. Every bit correponds to a data avaialble flag. The following are the indeces of the flags.
 
