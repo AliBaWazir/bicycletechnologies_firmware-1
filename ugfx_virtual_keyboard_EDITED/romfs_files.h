@@ -18,3 +18,7 @@
 #include "images/battery100.h"
 #include "images/setting.h"
 #include "images/return.h"
+#include "images/speed.h"
+#include "images/cadence.h"
+#include "images/distance.h"
+#include "images/heartrate.h"

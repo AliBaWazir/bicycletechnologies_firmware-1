@@ -49,6 +49,7 @@ uint8_t previousBatt;
 static gdispImage battImage;
 gdispImage settingsImage;
 gdispImage returnImage;
+static gdispImage dataIcons;
 
 GHandle ghImage1[10];
 
@@ -140,6 +141,7 @@ void handleMenuSwitches();
 void displayBattery(uint8_t currentBatt);
 void showCurrentGears();
 void connectBluetooth();
+void displayDataIcons();
 	
 bool interrupted;
 // INTERRUPT
@@ -338,7 +340,7 @@ static void createData(void)
 	gwinLabelSetBorder(labels[1], TRUE);
 	gwinSetFont(labels[1], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[1]);
-	
+
 	distanceOutput = 0;
 	formatString(dataOutput, sizeof(dataOutput), "%d", distanceOutput);
 	// Create label widget: labels[2]
@@ -374,13 +376,13 @@ static void createData(void)
 	gwinLabelSetBorder(labels[3], TRUE);
 	gwinSetFont(labels[3], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[3]);
-	
+
 	gdispImageOpenMemory(&settingsImage, settingImageArray);
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
-	wi.g.x = 126; // 117 + 9
+	wi.g.x = 147; // 117 + 9
 	wi.g.y = 373; // 366 + 7
-	wi.g.width = 170;
+	wi.g.width = 129;
 	wi.g.height = 100;
 	wi.g.parent = containers[DATA_CONTAINER];
   wi.text = "";
@@ -1544,6 +1546,8 @@ void guiCreate(void)
 	
 	// Select the default display page
 	guiShowPage(0);
+	
+	displayDataIcons();
 }
 
 void guiEventLoop(void)
@@ -1588,6 +1592,8 @@ void guiEventLoop(void)
 				}
 				showCurrentGears();
 			}else if(messageReceived->msg_ID == NRF_SCAN_MSG){
+				gwinDestroy(lists[1]);
+				lists[1] = NULL;
 				devicesCount = messageReceived->value;
 				createBluetoothList();
 				gwinHide(containers[BLUETOOTH_SEARCH_CONTAINER]);
@@ -1741,6 +1747,9 @@ void button0Call(){
 		createMap();
 		gwinShow(containers[DATA_CONTAINER]);
 		gwinShow(containers[MAP_CONTAINER]);
+		
+		displayDataIcons();
+		
 		previousBatt+=1;
 		oldtilex=0;
 		oldtiley=0;
@@ -1962,6 +1971,7 @@ void handleMenuSwitches(){
 		switch(gwinListGetSelected(lists[0])){
 			case 0:
 				createBluetooth();
+				createBluetoothList();
 				gwinShow(containers[BLUETOOTH_CONTAINER]);
 				break;
 			case 1:
@@ -2030,6 +2040,24 @@ void connectBluetooth(){
 			}
 		}
 	}
+}
+
+void displayDataIcons(){
+	gdispImageOpenMemory(&dataIcons, speedImageArray);
+	gdispImageDraw(&dataIcons, 1, 1, 111, 111, 0, 0);
+	gdispImageClose(&dataIcons);
+	
+	gdispImageOpenMemory(&dataIcons, cadenceImageArray);
+	gdispImageDraw(&dataIcons, 1, 114, 111, 98, 0, 0);
+	gdispImageClose(&dataIcons);
+	
+	gdispImageOpenMemory(&dataIcons, distanceImageArray);
+	gdispImageDraw(&dataIcons, 1, 214, 111, 80, 0, 0);
+	gdispImageClose(&dataIcons);
+	
+	gdispImageOpenMemory(&dataIcons, heartRateImageArray);
+	gdispImageDraw(&dataIcons, 1, 296, 111, 69, 0, 0);
+	gdispImageClose(&dataIcons);
 }
 
 void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset)
