@@ -63,7 +63,7 @@ const GWidgetStyle black = {
 	}
 };
 
-// WidgetStyle: Black
+// WidgetStyle: midnight
 const GWidgetStyle midnight = {
 	HTML2COLOR(0x2C3E50),              // background
 	HTML2COLOR(0x2A8FCD),              // focus
@@ -93,7 +93,7 @@ const GWidgetStyle midnight = {
 	}
 };
 
-// WidgetStyle: Black
+// WidgetStyle: belize
 const GWidgetStyle belize = {
 	HTML2COLOR(0x2980B9),              // background
 	HTML2COLOR(0x2C3E50),              // focus
@@ -120,6 +120,20 @@ const GWidgetStyle belize = {
 		HTML2COLOR(0x3498DB),         // edge
 		HTML2COLOR(0x3498DB),         // fill
 		HTML2COLOR(0x2C3E50),         // progress (active area)
+	}
+};
+
+// WidgetStyle: dataLabels
+const GWidgetStyle dataLabels = {
+	HTML2COLOR(0x2C3E50),              // background
+	HTML2COLOR(0x2A8FCD),              // focus
+
+	// Enabled color set
+	{
+		HTML2COLOR(0xFDFDFD),         // text
+		HTML2COLOR(0x2C3E50),         // edge
+		HTML2COLOR(0x2980B9),         // fill
+		HTML2COLOR(0x008000),         // progress (inactive area)
 	}
 };
 

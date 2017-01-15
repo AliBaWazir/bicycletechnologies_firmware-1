@@ -32,11 +32,15 @@
 #define TEETH_CONTAINER 8
 #define STATUS_CONTAINER 9
 #define CLOCK_CONTAINER 10
+#define SPEED_CONTAINER 11
+#define CADENCE_CONTAINER 12
+#define DISTANCE_CONTAINER 13
+#define HEART_RATE_CONTAINER 14
 
 // GListeners
 GListener glistener;
 
-GHandle containers[11];
+GHandle containers[15];
 GHandle labels[6];
 GHandle buttons[8];
 GHandle lists[2];
@@ -180,10 +184,41 @@ static void createmainContainer(void)
 	wi.customStyle = &midnight;
 	containers[DATA_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
+	// create container widget: containers[SPEED_CONTAINER]
+	wi.g.x = 0;
+	wi.g.height = 113;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[SPEED_CONTAINER]";
+	containers[SPEED_CONTAINER] = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// create container widget: containers[CADENCE_CONTAINER]
+	wi.g.y = 113;
+	wi.g.height = 100;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[CADENCE_CONTAINER]";
+	containers[CADENCE_CONTAINER] = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// create container widget: containers[DISTANCE_CONTAINER]
+	wi.g.y = 213;
+	wi.g.height = 82;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[DISTANCE_CONTAINER]";
+	containers[DISTANCE_CONTAINER] = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// create container widget: containers[HEART_RATE_CONTAINER]
+	wi.g.y = 295;
+	wi.g.height = 71;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[HEART_RATE_CONTAINER]";
+	containers[HEART_RATE_CONTAINER] = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
 	// create container widget: containers[MENU_CONTAINER]
 	wi.g.show = FALSE;
 	wi.g.x = 0;
+	wi.g.y = 0;
 	wi.g.width = 305;
+	wi.g.height = 480;
+	wi.g.parent = containers[MAIN_CONTAINER];
 	wi.text = "containers[MENU_CONTAINER]";
 	containers[MENU_CONTAINER] = gwinContainerCreate(0, &wi, 0);	
 	
@@ -267,74 +302,74 @@ static void createData(void)
 	TRACE("createData\n");
 	GWidgetInit wi; 
 	gwinWidgetClearInit(&wi);
-		
+	
 	speedOutput = 0;
-	formatString(dataOutput, sizeof(dataOutput), "%d km/h", speedOutput);
+	formatString(dataOutput, sizeof(dataOutput), "%d", speedOutput);
 	// Create label widget: labels[0]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
+	wi.g.x = 113;
 	wi.g.y = 0;
-	wi.g.width = 305;
+	wi.g.width = 192;
 	wi.g.height = 113;
-	wi.g.parent = containers[DATA_CONTAINER];
+	wi.g.parent = containers[SPEED_CONTAINER];
 	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
 	gwinSetFont(labels[0], gdispOpenFont("Georgia60"));
 	gwinRedraw(labels[0]);
 
 	cadenceOutput = 0;
-	formatString(dataOutput, sizeof(dataOutput), "%d RPM", cadenceOutput);
+	formatString(dataOutput, sizeof(dataOutput), "%d", cadenceOutput);
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 113;
-	wi.g.width = 305;
+	wi.g.x = 113;
+	wi.g.y = 0;
+	wi.g.width = 192;
 	wi.g.height = 100;
-	wi.g.parent = containers[DATA_CONTAINER];
+	wi.g.parent = containers[CADENCE_CONTAINER];
 	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[1] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[1], TRUE);
 	gwinSetFont(labels[1], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[1]);
 	
 	distanceOutput = 0;
-	formatString(dataOutput, sizeof(dataOutput), "%d km", distanceOutput);
+	formatString(dataOutput, sizeof(dataOutput), "%d", distanceOutput);
 	// Create label widget: labels[2]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 213;
-	wi.g.width = 305;
+	wi.g.x = 113;
+	wi.g.y = 0;
+	wi.g.width = 192;
 	wi.g.height = 82;
-	wi.g.parent = containers[DATA_CONTAINER];
+	wi.g.parent = containers[DISTANCE_CONTAINER];
 	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[2] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[2], TRUE);
 	gwinSetFont(labels[2], gdispOpenFont("Georgia40"));
 	gwinRedraw(labels[2]);
 	
 	heartrateOutput = 0;
-	formatString(dataOutput, sizeof(dataOutput), "%d BPM", heartrateOutput);
+	formatString(dataOutput, sizeof(dataOutput), "%d", heartrateOutput);
 	// Create label widget: labels[3]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 295;
-	wi.g.width = 305;
+	wi.g.x = 113;
+	wi.g.y = 0;
+	wi.g.width = 192;
 	wi.g.height = 71;
-	wi.g.parent = containers[DATA_CONTAINER];
+	wi.g.parent = containers[HEART_RATE_CONTAINER];
 	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[3] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[3], TRUE);
 	gwinSetFont(labels[3], gdispOpenFont("Georgia40"));
@@ -1581,28 +1616,28 @@ void guiEventLoop(void)
 				if(speedOutput == INVALID_DATA){
 					gwinSetText(labels[0], "--", TRUE);
 				}else{
-					formatString(dataOutput, sizeof(dataOutput), "%d km/h", speedOutput);
+					formatString(dataOutput, sizeof(dataOutput), "%d", speedOutput);
 					gwinSetText(labels[0], dataOutput, TRUE);
 				}
 				
 				if(cadenceOutput == INVALID_DATA){
 					gwinSetText(labels[1], "--", TRUE);
 				}else{
-					formatString(dataOutput, sizeof(dataOutput), "%d RPM", cadenceOutput);
+					formatString(dataOutput, sizeof(dataOutput), "%d", cadenceOutput);
 					gwinSetText(labels[1], dataOutput, TRUE);
 				}
 				
 				if(distanceOutput == INVALID_DATA){
 					gwinSetText(labels[2], "--", TRUE);
 				}else{
-					formatString(dataOutput, sizeof(dataOutput), "%d km", distanceOutput);
+					formatString(dataOutput, sizeof(dataOutput), "%d", distanceOutput);
 					gwinSetText(labels[2], dataOutput, TRUE);
 				}
 				
 				if(heartrateOutput == INVALID_DATA){
 					gwinSetText(labels[3], "--", TRUE);
 				}else{
-					formatString(dataOutput, sizeof(dataOutput), "%d BPM", heartrateOutput);
+					formatString(dataOutput, sizeof(dataOutput), "%d", heartrateOutput);
 					gwinSetText(labels[3], dataOutput, TRUE);
 				}
 				
