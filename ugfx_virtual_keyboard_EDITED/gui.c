@@ -473,7 +473,7 @@ static void createBluetoothList(void){
 	gwinListSetScroll(lists[1], scrollSmooth);
 	if(devicesCount > 0){
 		for(uint8_t count = 0; count < devicesCount; count++){
-			TRACE("GUI:, Device %d, %02X:%02X:%02X:%02X:%02X:%02X'n", count, devicesMAC[count][0],
+			TRACE("GUI:, Device %d, %02X:%02X:%02X:%02X:%02X:%02X\n", count, devicesMAC[count][0],
 																																		devicesMAC[count][1],
 																																		devicesMAC[count][2],
 																																		devicesMAC[count][3],
@@ -485,7 +485,7 @@ static void createBluetoothList(void){
 																																												devicesMAC[count][3],
 																																												devicesMAC[count][4],
 																																												devicesMAC[count][5]);
-			gwinListAddItem(lists[1], bluetoothDevices, FALSE);
+			gwinListAddItem(lists[1], bluetoothDevices, TRUE);
 			gwinListSetSelected(lists[1], count, FALSE);
 		}
 	}else{
