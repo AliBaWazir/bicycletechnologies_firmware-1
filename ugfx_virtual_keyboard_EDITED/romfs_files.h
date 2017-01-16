@@ -16,6 +16,7 @@
 #include "images/battery80.h"
 #include "images/battery90.h"
 #include "images/battery100.h"
+
 #include "images/setting.h"
 #include "images/return.h"
 #include "images/speed.h"
