@@ -1,4 +1,4 @@
-#include "rsc/Georgia24.c"
-#include "rsc/Georgia36.c"
-#include "rsc/Georgia40.c"
-#include "rsc/Georgia60.c"
+#include "rsc/LatoRegular24.c"
+#include "rsc/LatoRegular36.c"
+#include "rsc/LatoRegular40.c"
+#include "rsc/LatoRegular60.c"

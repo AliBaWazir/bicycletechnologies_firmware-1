@@ -11,8 +11,10 @@
 #include "gps.h"
 #include <stdio.h>
 #include <string.h>
+#include "msg.h"
+#include "romfs_files.h"
 
-#define MAP_TILE_TEST_CANAL
+//#define MAP_TILE_TEST_CANAL
 //#define MAP_TILE_TEST_MAYTHAM
 //#define MAP_TILE_TEST_JON
 
@@ -30,17 +32,30 @@
 #define TEETH_CONTAINER 8
 #define STATUS_CONTAINER 9
 #define CLOCK_CONTAINER 10
+#define SPEED_CONTAINER 11
+#define CADENCE_CONTAINER 12
+#define DISTANCE_CONTAINER 13
+#define HEART_RATE_CONTAINER 14
 
 // GListeners
 GListener glistener;
 
-GHandle containers[11];
+GHandle containers[15];
 GHandle labels[6];
 GHandle buttons[8];
 GHandle lists[2];
 
+uint8_t previousBatt;
+static gdispImage battImage;
+gdispImage settingsImage;
+gdispImage returnImage;
+static gdispImage dataIcons;
 
 GHandle ghImage1[10];
+
+uint8_t devicesCount;
+uint8_t devicesMAC[10][6];
+char bluetoothDevices[18];
 
 // GEAR STATUS SPECIALS
 GHandle gearsChangesFrontGearLabel[MAXIMUM_FRONT_GEARS+1];
@@ -68,21 +83,28 @@ typedef struct {
 ClockChangesStruct clockChangesStruct;
 TM_RTC_t RTCD;
 
-int gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
-int gearBackSettings[MAXIMUM_BACK_GEARS+1];
+uint8_t gearFrontCurrent[MAXIMUM_FRONT_GEARS+1];
+uint8_t gearBackCurrent[MAXIMUM_BACK_GEARS+1];
+uint8_t gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
+uint8_t gearBackSettings[MAXIMUM_BACK_GEARS+1];
 char gearBuffer[5];
 char gearsStatus[26];
 
 char timeBuffer[23];
 char gpsOutput[70];
 
-int currentGearSide;
-int currentGearTeethWindow;
-int currentTeethTeethWindow;
-int oldMenuSelectedItem;
+uint8_t currentGearSide;
+uint8_t currentGearTeethWindow;
+uint8_t currentTeethTeethWindow;
+uint8_t oldMenuSelectedItem;
 
-int speed;
-char speedout[10];
+uint8_t speedOutput;
+uint8_t cadenceOutput;
+uint8_t cadenceSetPointOutput;
+uint8_t distanceOutput;
+uint8_t heartrateOutput;
+uint8_t batteryOutput;
+char dataOutput[10];
 
 static gdispImage myImage[9];
 static gdispImage marker;
@@ -92,10 +114,19 @@ static gdispImage marker;
 //static GDisplay* pixmap;
 //static pixel_t* surface;
 
+osMessageQDef(guiQueue, 16, message_t);
+osMessageQId  guiQueue;
 
-	int oldtilex=0;
-	int oldtiley=0;
+int oldtilex=0;
+int oldtiley=0;
+int oldtilexOffset=0;
+int oldtileyOffset=0;
 
+my_GPS gpsData;
+static TM_GPS_Float_t GPS_Float_Lat;
+static TM_GPS_Float_t GPS_Float_Lon;
+	
+uint8_t previousSeconds;
 
 void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset);
 void button0Call();
@@ -107,6 +138,19 @@ void button5Call();
 void button6Call();
 void button7Call();
 void handleMenuSwitches();
+void displayBattery(uint8_t currentBatt);
+void showCurrentGears();
+void connectBluetooth();
+void displayDataIcons();
+	
+bool interrupted;
+// INTERRUPT
+void TM_EXTI_Handler(uint16_t GPIO_Pin) {
+	/* Handle external line 7 interrupts */
+	if (GPIO_Pin == GPIO_Pin_7) {
+		interrupted = true;
+	}
+}
 	
 static void createmainContainer(void)
 {
@@ -142,10 +186,41 @@ static void createmainContainer(void)
 	wi.customStyle = &midnight;
 	containers[DATA_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
+	// create container widget: containers[SPEED_CONTAINER]
+	wi.g.x = 0;
+	wi.g.height = 113;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[SPEED_CONTAINER]";
+	containers[SPEED_CONTAINER] = gwinContainerCreate(0, &wi, 0);
+	
+	// create container widget: containers[CADENCE_CONTAINER]
+	wi.g.y = 113;
+	wi.g.height = 100;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[CADENCE_CONTAINER]";
+	containers[CADENCE_CONTAINER] = gwinContainerCreate(0, &wi, 0);
+	
+	// create container widget: containers[DISTANCE_CONTAINER]
+	wi.g.y = 213;
+	wi.g.height = 82;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[DISTANCE_CONTAINER]";
+	containers[DISTANCE_CONTAINER] = gwinContainerCreate(0, &wi, 0);
+	
+	// create container widget: containers[HEART_RATE_CONTAINER]
+	wi.g.y = 295;
+	wi.g.height = 71;
+	wi.g.parent = containers[DATA_CONTAINER];
+	wi.text = "containers[HEART_RATE_CONTAINER]";
+	containers[HEART_RATE_CONTAINER] = gwinContainerCreate(0, &wi, 0);
+	
 	// create container widget: containers[MENU_CONTAINER]
 	wi.g.show = FALSE;
 	wi.g.x = 0;
+	wi.g.y = 0;
 	wi.g.width = 305;
+	wi.g.height = 480;
+	wi.g.parent = containers[MAIN_CONTAINER];
 	wi.text = "containers[MENU_CONTAINER]";
 	containers[MENU_CONTAINER] = gwinContainerCreate(0, &wi, 0);	
 	
@@ -164,7 +239,6 @@ static void createmainContainer(void)
 	containers[BLUETOOTH_SEARCH_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
 	// create container widget: containers[BLUETOOTH_DEVICE_CONTAINER]
-	wi.g.show = TRUE;
 	wi.text = "containers[BLUETOOTH_DEVICE_CONTAINER]";
 	containers[BLUETOOTH_DEVICE_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
@@ -208,7 +282,7 @@ static void createMap(void)
   mapWindow = gwinGWindowCreate(GDISP,NULL, &windowInitStruct);*/
 	
 	
-	// Create label widget: labels[1]
+	// Create label widget: labels[5]
 	wi.g.show = TRUE;
 	wi.g.x = 20;
 	wi.g.y = 20;
@@ -219,10 +293,10 @@ static void createMap(void)
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
-	labels[3] = gwinLabelCreate(0, &wi);
-	gwinLabelSetBorder(labels[3], TRUE);
-	gwinSetFont(labels[3], gdispOpenFont("Georgia24"));
-	//gwinSetText(labels[3], gearsStatus, TRUE);
+	labels[5] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[5], TRUE);
+	gwinSetFont(labels[5], gdispOpenFont("LatoRegular24"));
+	//gwinSetText(labels[5], gearsStatus, TRUE);
 }
 
 static void createData(void)
@@ -230,71 +304,92 @@ static void createData(void)
 	TRACE("createData\n");
 	GWidgetInit wi; 
 	gwinWidgetClearInit(&wi);
-		
-	speed = 0;
-	formatString(speedout, sizeof(speedout), "%d km/h", speed);
+	
+	speedOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d", speedOutput);
 	// Create label widget: labels[0]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
+	wi.g.x = 113;
 	wi.g.y = 0;
-	wi.g.width = 305;
+	wi.g.width = 192;
 	wi.g.height = 113;
-	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = speedout;
+	wi.g.parent = containers[SPEED_CONTAINER];
+	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
-	gwinSetFont(labels[0], gdispOpenFont("Georgia60"));
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular60"));
 	gwinRedraw(labels[0]);
 
+	cadenceOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d", cadenceOutput);
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 114;
-	wi.g.width = 305;
-	wi.g.height = 71;
-	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = "69 RPM";
+	wi.g.x = 113;
+	wi.g.y = 0;
+	wi.g.width = 192;
+	wi.g.height = 100;
+	wi.g.parent = containers[CADENCE_CONTAINER];
+	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[1] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[1], TRUE);
-	gwinSetFont(labels[1], gdispOpenFont("Georgia40"));
+	gwinSetFont(labels[1], gdispOpenFont("LatoRegular40"));
 	gwinRedraw(labels[1]);
-	
+
+	distanceOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d", distanceOutput);
 	// Create label widget: labels[2]
 	wi.g.show = TRUE;
-	wi.g.x = 0;
-	wi.g.y = 366;
-	wi.g.width = 117;
-	wi.g.height = 114;
-	wi.g.parent = containers[DATA_CONTAINER];
-	wi.text = "100%";
+	wi.g.x = 113;
+	wi.g.y = 0;
+	wi.g.width = 192;
+	wi.g.height = 82;
+	wi.g.parent = containers[DISTANCE_CONTAINER];
+	wi.text = dataOutput;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
-	wi.customStyle = &midnight;
+	wi.customStyle = &dataLabels;
 	labels[2] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[2], TRUE);
-	gwinSetFont(labels[2], gdispOpenFont("Georgia40"));
+	gwinSetFont(labels[2], gdispOpenFont("LatoRegular40"));
 	gwinRedraw(labels[2]);
 	
+	heartrateOutput = 0;
+	formatString(dataOutput, sizeof(dataOutput), "%d", heartrateOutput);
+	// Create label widget: labels[3]
+	wi.g.show = TRUE;
+	wi.g.x = 113;
+	wi.g.y = 0;
+	wi.g.width = 192;
+	wi.g.height = 71;
+	wi.g.parent = containers[HEART_RATE_CONTAINER];
+	wi.text = dataOutput;
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &dataLabels;
+	labels[3] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[3], TRUE);
+	gwinSetFont(labels[3], gdispOpenFont("LatoRegular40"));
+	gwinRedraw(labels[3]);
+
+	gdispImageOpenMemory(&settingsImage, settingImageArray);
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
-	wi.g.x = 126; // 117 + 9
-	wi.g.y = 373; // 366 + 7
-	wi.g.width = 170;
+	wi.g.x = 171;
+	wi.g.y = 388;
+	wi.g.width = 90;
 	wi.g.height = 100;
 	wi.g.parent = containers[DATA_CONTAINER];
-  wi.text = "Settings";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
+  wi.text = "";
+	wi.customDraw = gwinButtonDraw_Image;
+	wi.customParam = &settingsImage;
+	wi.customStyle = 0;
 	buttons[0] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[0], gdispOpenFont("Georgia36"));
-	gwinRedraw(buttons[0]);
 }
 
 static void createMenu(void)
@@ -315,7 +410,7 @@ static void createMenu(void)
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
 	lists[0] = gwinListCreate(0, &wi, FALSE);
-	gwinSetFont(lists[0], gdispOpenFont("Georgia40"));
+	gwinSetFont(lists[0], gdispOpenFont("LatoRegular40"));
 	gwinListSetScroll(lists[0], scrollSmooth);
 	gwinListAddItem(lists[0], "Bluetooth", FALSE);
 	gwinListAddItem(lists[0], "Gears Settings", FALSE);
@@ -329,19 +424,19 @@ static void createMenu(void)
   gwinListSetSelected(lists[0], 4, FALSE);
 	oldMenuSelectedItem = -1;
 	
+	gdispImageOpenMemory(&returnImage, returnImageArray);
 	// create button widget: buttons[0]
 	wi.g.show = TRUE;
-	wi.g.x = 50;
-	wi.g.y = 410;
-	wi.g.width = 200;
-	wi.g.height = 60;
+	wi.g.x = 90;
+	wi.g.y = 419;
+	wi.g.width = 120;
+	wi.g.height = 42;
 	wi.g.parent = containers[MENU_CONTAINER];
-	wi.text = "Return";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
+	wi.text = "";
+	wi.customDraw = gwinButtonDraw_Image;
+	wi.customParam = &returnImage;
+	wi.customStyle = 0;
 	buttons[0] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[0], gdispOpenFont("Georgia40"));
 }
 
 static void createBluetooth(void)
@@ -363,10 +458,43 @@ static void createBluetooth(void)
 	wi.customStyle = &midnight;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
-	gwinSetFont(labels[0], gdispOpenFont("Georgia60"));
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular60"));
 	gwinRedraw(labels[0]);
 	
-  // Create list widget: lists[1]
+	// create button widget: buttons[1]
+	wi.g.show = TRUE;
+	wi.g.x = 40;
+	wi.g.y = 25;
+	wi.g.width = 200;
+	wi.g.height = 100;
+	wi.g.parent = containers[BLUETOOTH_CONTAINER];
+	wi.text = "Scan";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	buttons[1] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[1], gdispOpenFont("LatoRegular40"));
+	
+	// create button widget: buttons[2]
+	wi.g.show = TRUE;
+	wi.g.x = 255;
+	wi.g.y = 25;
+	wi.g.width = 200;
+	wi.g.height = 100;
+	wi.g.parent = containers[BLUETOOTH_CONTAINER];
+	wi.text = "Connect";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	buttons[2] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular40"));
+}
+
+static void createBluetoothList(void){
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+	
+	// Create list widget: lists[1]
 	wi.g.show = TRUE;
 	wi.g.x = 0;
 	wi.g.y = 0;
@@ -378,42 +506,29 @@ static void createBluetooth(void)
 	wi.customParam = 0;
 	wi.customStyle = &midnight;
 	lists[1] = gwinListCreate(0, &wi, TRUE);
-	gwinSetFont(lists[1], gdispOpenFont("Georgia60"));
+	gwinSetFont(lists[1], gdispOpenFont("LatoRegular40"));
 	gwinListSetScroll(lists[1], scrollSmooth);
-	gwinListAddItem(lists[1], "Device 0", FALSE);
-	gwinListAddItem(lists[1], "Device 1", FALSE);
-	gwinListAddItem(lists[1], "Device 2", FALSE);
-	gwinListAddItem(lists[1], "Device 3", FALSE);
-	gwinListAddItem(lists[1], "Device 4", FALSE);
-	gwinListAddItem(lists[1], "Device 5", FALSE);
-	gwinListAddItem(lists[1], "Device 6", FALSE);
-	gwinListAddItem(lists[1], "Device 7", FALSE);
-	gwinListAddItem(lists[1], "Device 8", FALSE);
-	gwinListAddItem(lists[1], "Device 9", FALSE);
-	gwinListSetSelected(lists[1], 0, TRUE);
-	gwinListSetSelected(lists[1], 1, FALSE);
-	gwinListSetSelected(lists[1], 2, FALSE);
-	gwinListSetSelected(lists[1], 3, FALSE);
-	gwinListSetSelected(lists[1], 4, FALSE);
-	gwinListSetSelected(lists[1], 5, FALSE);
-	gwinListSetSelected(lists[1], 6, FALSE);
-	gwinListSetSelected(lists[1], 7, FALSE);
-	gwinListSetSelected(lists[1], 8, FALSE);
-	gwinListSetSelected(lists[1], 9, FALSE);
-	
-	// create button widget: buttons[1]
-	wi.g.show = TRUE;
-	wi.g.x = 150;
-	wi.g.y = 25;
-	wi.g.width = 195;
-	wi.g.height = 100;
-	wi.g.parent = containers[BLUETOOTH_CONTAINER];
-	wi.text = "Search";
-	wi.customDraw = gwinButtonDraw_Rounded;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	buttons[1] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[1], gdispOpenFont("Georgia40"));
+	if(devicesCount > 0){
+		for(uint8_t count = 0; count < devicesCount; count++){
+			TRACE("GUI:, Device %d, %02X:%02X:%02X:%02X:%02X:%02X\n", count, devicesMAC[count][0],
+																																		devicesMAC[count][1],
+																																		devicesMAC[count][2],
+																																		devicesMAC[count][3],
+																																		devicesMAC[count][4],
+																																		devicesMAC[count][5]);
+			formatString(bluetoothDevices, sizeof(bluetoothDevices), "%02X:%02X:%02X:%02X:%02X:%02X", devicesMAC[count][0],
+																																												devicesMAC[count][1],
+																																												devicesMAC[count][2],
+																																												devicesMAC[count][3],
+																																												devicesMAC[count][4],
+																																												devicesMAC[count][5]);
+			gwinListAddItem(lists[1], bluetoothDevices, TRUE);
+			gwinListSetSelected(lists[1], count, FALSE);
+		}
+	}else{
+		gwinListAddItem(lists[1], "N/A", FALSE);
+		gwinListSetSelected(lists[1], 0, FALSE);
+	}
 }
 
 static void createGearsSettings(void)
@@ -435,7 +550,7 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
-	gwinSetFont(labels[0], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
@@ -450,7 +565,7 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	labels[1] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[1], TRUE);
-  gwinSetFont(labels[1], gdispOpenFont("Georgia36"));
+  gwinSetFont(labels[1], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[2]
 	wi.g.show = TRUE;
@@ -465,7 +580,7 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	labels[2] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[2], TRUE);
-	gwinSetFont(labels[2], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[2], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[3]
 	wi.g.show = TRUE;
@@ -481,7 +596,7 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	labels[3] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[3], TRUE);
-	gwinSetFont(labels[3], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[3], gdispOpenFont("LatoRegular36"));
 	gwinSetText(labels[3], gearBuffer, TRUE);
 
 	// create button widget: buttons[1]
@@ -496,7 +611,7 @@ static void createGearsSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[1] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[1], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[1], gdispOpenFont("LatoRegular36"));
 
 	// create button widget: buttons[2]
 	wi.g.show = TRUE;
@@ -510,7 +625,7 @@ static void createGearsSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[2] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[2], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular36"));
 
 	// Create label widget: labels[4]
 	wi.g.show = TRUE;
@@ -526,7 +641,7 @@ static void createGearsSettings(void)
 	wi.customStyle = &belize;
 	labels[4] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[4], TRUE);
-	gwinSetFont(labels[4], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[4], gdispOpenFont("LatoRegular36"));
 	gwinSetText(labels[4], gearBuffer, TRUE);
 
 	// create button widget: buttons[3]
@@ -541,7 +656,7 @@ static void createGearsSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[3] = gwinButtonCreate(0, &wi);
-  gwinSetFont(buttons[3], gdispOpenFont("Georgia36"));
+  gwinSetFont(buttons[3], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[4]
 	wi.g.show = TRUE;
@@ -555,7 +670,7 @@ static void createGearsSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[4] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[4], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[4], gdispOpenFont("LatoRegular36"));
 }
 
 static void createTeethSettings(void)
@@ -577,7 +692,7 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
-	gwinSetFont(labels[0], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[5]
 	wi.g.show = TRUE;
@@ -591,7 +706,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[5] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[5], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[5], gdispOpenFont("LatoRegular36"));
 
 	// create button widget: buttons[6]
 	wi.g.show = TRUE;
@@ -605,7 +720,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[6] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[6], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[6], gdispOpenFont("LatoRegular36"));
 
 	// Create label widget: labels[4]
 	wi.g.show = TRUE;
@@ -620,7 +735,7 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	labels[4] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[4], TRUE);
-	gwinSetFont(labels[4], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[4], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
@@ -635,7 +750,7 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	labels[1] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[1], TRUE);
-	gwinSetFont(labels[1], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[1], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[2]
 	wi.g.show = TRUE;
@@ -650,7 +765,7 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	labels[2] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[2], TRUE);
-	gwinSetFont(labels[2], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[2], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[3]
 	wi.g.show = TRUE;
@@ -666,7 +781,7 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	labels[3] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[3], TRUE);
-	gwinSetFont(labels[3], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[3], gdispOpenFont("LatoRegular36"));
 	gwinSetText(labels[3], gearBuffer, TRUE);
 	
 	// create button widget: buttons[1]
@@ -681,7 +796,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[1] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[1], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[1], gdispOpenFont("LatoRegular36"));
 
 	// create button widget: buttons[2]
 	wi.g.show = TRUE;
@@ -695,7 +810,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[2] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[2], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular36"));
 
 	// Create label widget: labels[5]
 	wi.g.show = TRUE;
@@ -711,7 +826,7 @@ static void createTeethSettings(void)
 	wi.customStyle = &belize;
 	labels[5] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[5], TRUE);
-	gwinSetFont(labels[5], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[5], gdispOpenFont("LatoRegular36"));
 	gwinSetText(labels[5], gearBuffer, TRUE);
 
 	// create button widget: buttons[3]
@@ -726,7 +841,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[3] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[3], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[3], gdispOpenFont("LatoRegular36"));
 
 	// create button widget: buttons[4]
 	wi.g.show = TRUE;
@@ -740,7 +855,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[4] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[4], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[4], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[7]
 	wi.g.show = TRUE;
@@ -754,7 +869,7 @@ static void createTeethSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[7] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[7], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[7], gdispOpenFont("LatoRegular36"));
 }
 
 static void createGearsStatus(void)
@@ -789,7 +904,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
-	gwinSetFont(labels[0], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular36"));
 
 	// create button widget: buttons[1]
 	wi.g.show = TRUE;
@@ -803,7 +918,7 @@ static void createGearsStatus(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[1] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[1], gdispOpenFont("Georgia24"));
+	gwinSetFont(buttons[1], gdispOpenFont("LatoRegular24"));
 	
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
@@ -819,7 +934,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	labels[1] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[1], TRUE);
-	gwinSetFont(labels[1], gdispOpenFont("Georgia24"));
+	gwinSetFont(labels[1], gdispOpenFont("LatoRegular24"));
 	gwinSetText(labels[1], gearsStatus, TRUE);
 	
 	// Create label widget: gearsChangesFrontGearLabel
@@ -838,7 +953,7 @@ static void createGearsStatus(void)
 		wi.text = gearBuffer;
 		gearsChangesFrontGearLabel[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(gearsChangesFrontGearLabel[i], TRUE);
-		gwinSetFont(gearsChangesFrontGearLabel[i], gdispOpenFont("Georgia24"));
+		gwinSetFont(gearsChangesFrontGearLabel[i], gdispOpenFont("LatoRegular24"));
 		gwinSetText(gearsChangesFrontGearLabel[i], gearBuffer, TRUE);
 		wi.g.x += 50;
 	}
@@ -857,7 +972,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	labels[2] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[2], TRUE);
-	gwinSetFont(labels[2], gdispOpenFont("Georgia24"));
+	gwinSetFont(labels[2], gdispOpenFont("LatoRegular24"));
 	gwinSetText(labels[2], gearsStatus, TRUE);
 	
 		// Create label widget: labels[1]
@@ -876,7 +991,7 @@ static void createGearsStatus(void)
 		wi.text = gearBuffer;
 		gearsChangesBackGearLabel[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(gearsChangesBackGearLabel[i], TRUE);
-		gwinSetFont(gearsChangesBackGearLabel[i], gdispOpenFont("Georgia24"));
+		gwinSetFont(gearsChangesBackGearLabel[i], gdispOpenFont("LatoRegular24"));
 		gwinSetText(gearsChangesBackGearLabel[i], gearBuffer, TRUE);
 		wi.g.x += 50;
 	}
@@ -907,7 +1022,7 @@ static void createGearsStatus(void)
 	wi.customStyle = &belize;
 	labels[3] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[3], TRUE);
-	gwinSetFont(labels[3], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[3], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[2]
 	wi.g.show = TRUE;
@@ -921,7 +1036,7 @@ static void createGearsStatus(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[2] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[2], gdispOpenFont("Georgia24"));
+	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular24"));
 	
 	// Create label widget: labels[4]
 	wi.g.show = TRUE;
@@ -930,36 +1045,15 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = containers[STATUS_CONTAINER];
-	formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontCurrent[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	labels[4] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[4], TRUE);
-	gwinSetFont(labels[4], gdispOpenFont("Georgia24"));
+	gwinSetFont(labels[4], gdispOpenFont("LatoRegular24"));
 	gwinSetText(labels[4], gearsStatus, TRUE);
-	
-	// Create label widget: gearsCurrentFrontGearLabel
-	wi.g.show = TRUE;
-	wi.g.x = 15;
-	wi.g.y = 335;
-	wi.g.width = 50;
-	wi.g.height = 50;
-	wi.g.parent = containers[STATUS_CONTAINER];
-	wi.customDraw = gwinLabelDrawJustifiedCenter;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	
-	for(int i = 1; i <= gearFrontSettings[0]; i++){
-		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontSettings[i]);
-		wi.text = gearBuffer;
-		gearsCurrentFrontGearLabel[i] = gwinLabelCreate(0, &wi);
-		gwinLabelSetBorder(gearsCurrentFrontGearLabel[i], TRUE);
-		gwinSetFont(gearsCurrentFrontGearLabel[i], gdispOpenFont("Georgia24"));
-		gwinSetText(gearsCurrentFrontGearLabel[i], gearBuffer, TRUE);
-		wi.g.x += 50;
-	}
 	
 	// Create label widget: labels[5]
 	wi.g.show = TRUE;
@@ -968,36 +1062,17 @@ static void createGearsStatus(void)
 	wi.g.width = 350;
 	wi.g.height = 30;
 	wi.g.parent = containers[STATUS_CONTAINER];
-	formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackSettings[0]);
+	formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackCurrent[0]);
 	wi.text = gearsStatus;
 	wi.customDraw = gwinLabelDrawJustifiedCenter;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	labels[5] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[5], TRUE);
-	gwinSetFont(labels[5], gdispOpenFont("Georgia24"));
+	gwinSetFont(labels[5], gdispOpenFont("LatoRegular24"));
 	gwinSetText(labels[5], gearsStatus, TRUE);
 	
-	// Create label widget: labels[4]
-	wi.g.show = TRUE;
-	wi.g.x = 15;
-	wi.g.y = 425;
-	wi.g.width = 50;
-	wi.g.height = 50;
-	wi.g.parent = containers[STATUS_CONTAINER];
-	wi.customDraw = gwinLabelDrawJustifiedCenter;
-	wi.customParam = 0;
-	wi.customStyle = &belize;
-	
-	for(int i = 1; i <= gearBackSettings[0]; i++){
-		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackSettings[i]);
-		wi.text = gearBuffer;
-		gearsCurrentBackGearLabel[i] = gwinLabelCreate(0, &wi);
-		gwinLabelSetBorder(gearsCurrentBackGearLabel[i], TRUE);
-		gwinSetFont(gearsCurrentBackGearLabel[i], gdispOpenFont("Georgia24"));
-		gwinSetText(gearsCurrentBackGearLabel[i], gearBuffer, TRUE);
-		wi.g.x += 50;
-	}
+	showCurrentGears();
 }
 
 static void createClockSettings(void)
@@ -1008,12 +1083,14 @@ static void createClockSettings(void)
 
 	clockChangeSelectedItem = 0;
 	previousClockSelection = 0;
-	clockChangesStruct.Year = 16;
-	clockChangesStruct.Month = 10;
-	clockChangesStruct.Day = 7;
-	clockChangesStruct.Hours = 12;
-	clockChangesStruct.Minutes = 15;
-	
+	getRTC(&RTCD, TM_RTC_Format_BIN);
+	clockChangesStruct.Year = RTCD.Year;
+	clockChangesStruct.Month = RTCD.Month;
+	clockChangesStruct.Day = RTCD.Day;
+	clockChangesStruct.Hours = RTCD.Hours;
+	clockChangesStruct.Minutes = RTCD.Minutes;
+	RTCD.Seconds = 0;
+		
 	// Create label widget: labels[0]
 	wi.g.show = TRUE;
 	wi.g.x = 15;
@@ -1027,7 +1104,7 @@ static void createClockSettings(void)
 	wi.customStyle = &belize;
 	labels[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[0], TRUE);
-	gwinSetFont(labels[0], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular36"));
 
 	// create button widget: buttons[1]
 	wi.g.show = TRUE;
@@ -1041,7 +1118,7 @@ static void createClockSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[1] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[1], gdispOpenFont("Georgia24"));
+	gwinSetFont(buttons[1], gdispOpenFont("LatoRegular24"));
 	
 	// Create label widget: clockChangesKey
 	wi.g.show = TRUE;
@@ -1056,7 +1133,7 @@ static void createClockSettings(void)
 	wi.customStyle = &belize;
 	clockChangesKey[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(clockChangesKey[0], TRUE);
-	gwinSetFont(clockChangesKey[0], gdispOpenFont("Georgia36"));
+	gwinSetFont(clockChangesKey[0], gdispOpenFont("LatoRegular36"));
 	
 	for(int i = 1; i < 5; i++){
 		wi.g.y += 55;
@@ -1076,7 +1153,7 @@ static void createClockSettings(void)
 		}
 		clockChangesKey[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(clockChangesKey[i], TRUE);
-		gwinSetFont(clockChangesKey[i], gdispOpenFont("Georgia36"));
+		gwinSetFont(clockChangesKey[i], gdispOpenFont("LatoRegular36"));
 	}
 	
 	// Create label widget: clockChangesValue
@@ -1092,7 +1169,7 @@ static void createClockSettings(void)
 	wi.customStyle = &belize;
 	clockChangesValue[0] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(clockChangesValue[0], TRUE);
-	gwinSetFont(clockChangesValue[0], gdispOpenFont("Georgia36"));
+	gwinSetFont(clockChangesValue[0], gdispOpenFont("LatoRegular36"));
 	gwinSetText(clockChangesValue[0], timeBuffer, TRUE);
 	
 	for(int i = 1; i < 5; i++){
@@ -1113,7 +1190,7 @@ static void createClockSettings(void)
 		}
 		clockChangesValue[i] = gwinLabelCreate(0, &wi);
 		gwinLabelSetBorder(clockChangesValue[i], TRUE);
-		gwinSetFont(clockChangesValue[i], gdispOpenFont("Georgia36"));
+		gwinSetFont(clockChangesValue[i], gdispOpenFont("LatoRegular36"));
 		gwinSetText(clockChangesValue[i], timeBuffer, TRUE);
 	}
 	
@@ -1132,7 +1209,7 @@ static void createClockSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[2] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[2], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[3]
 	wi.g.show = TRUE;
@@ -1146,7 +1223,7 @@ static void createClockSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[3] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[3], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[3], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[4]
 	wi.g.show = TRUE;
@@ -1160,7 +1237,7 @@ static void createClockSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[4] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[4], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[4], gdispOpenFont("LatoRegular36"));
 	
 	// create button widget: buttons[5]
 	wi.g.show = TRUE;
@@ -1174,7 +1251,7 @@ static void createClockSettings(void)
 	wi.customParam = 0;
 	wi.customStyle = &black;
 	buttons[5] = gwinButtonCreate(0, &wi);
-	gwinSetFont(buttons[5], gdispOpenFont("Georgia36"));
+	gwinSetFont(buttons[5], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[1]
 	wi.g.show = TRUE;
@@ -1189,7 +1266,7 @@ static void createClockSettings(void)
 	wi.customStyle = &belize;
 	labels[1] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[1], TRUE);
-	gwinSetFont(labels[1], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[1], gdispOpenFont("LatoRegular36"));
 	
 	// Create label widget: labels[2]
 	wi.g.show = TRUE;
@@ -1206,13 +1283,13 @@ static void createClockSettings(void)
 	wi.customStyle = &belize;
 	labels[2] = gwinLabelCreate(0, &wi);
 	gwinLabelSetBorder(labels[2], TRUE);
-	gwinSetFont(labels[2], gdispOpenFont("Georgia36"));
+	gwinSetFont(labels[2], gdispOpenFont("LatoRegular36"));
 }
 
 static void destroyMap(void)
 {
 	TRACE("destroyMap\n");
-	gwinDestroy(labels[3]);
+	gwinDestroy(labels[5]);
 }
 
 static void destroyData(void)
@@ -1221,7 +1298,9 @@ static void destroyData(void)
 	gwinDestroy(labels[0]);
 	gwinDestroy(labels[1]);
 	gwinDestroy(labels[2]);
+	gwinDestroy(labels[3]);
 	gwinDestroy(buttons[0]);
+	gdispImageClose(&settingsImage);
 }
 
 static void destroyMenu(void)
@@ -1229,6 +1308,7 @@ static void destroyMenu(void)
 	TRACE("destroyMenu\n");
 	gwinDestroy(lists[0]);
 	gwinDestroy(buttons[0]);
+	gdispImageClose(&returnImage);
 }
 
 static void destroyBluetooth(void)
@@ -1236,9 +1316,9 @@ static void destroyBluetooth(void)
 	TRACE("destroyBluetooth\n");
 	gwinDestroy(labels[0]);
 	gwinDestroy(lists[1]);
+	lists[1] = NULL;
 	gwinDestroy(buttons[1]);
-	gwinDestroy(containers[BLUETOOTH_DEVICE_CONTAINER]);
-	gwinDestroy(containers[BLUETOOTH_SEARCH_CONTAINER]);
+	gwinDestroy(buttons[2]);
 	gwinHide(containers[BLUETOOTH_CONTAINER]);
 }
 
@@ -1290,10 +1370,10 @@ static void destroyGearsStatus(void)
 	gwinDestroy(labels[1]);
 	gwinDestroy(labels[2]);
 	
-	for(int i = 1; i<= gearFrontSettings[0]; i++){
+	for(int i = 1; i<= gearFrontCurrent[0]; i++){
 		gwinDestroy(gearsCurrentFrontGearLabel[i]);
 	}
-	for(int i = 1; i<= gearBackSettings[0]; i++){
+	for(int i = 1; i<= gearBackCurrent[0]; i++){
 		gwinDestroy(gearsCurrentBackGearLabel[i]);
 	}
 	gwinDestroy(labels[3]);
@@ -1369,6 +1449,60 @@ void updateClockSelection(){
 	gwinSetStyle(clockChangesValue[clockChangeSelectedItem], &black);
 }
 
+void showCurrentGears(){
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+		
+	// Create label widget: gearsCurrentFrontGearLabel
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 335;
+	wi.g.width = 50;
+	wi.g.height = 50;
+	wi.g.parent = containers[STATUS_CONTAINER];
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	
+	for(int i = 1; i <= gearFrontCurrent[0]; i++){
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearFrontCurrent[i]);
+		wi.text = gearBuffer;
+		gearsCurrentFrontGearLabel[i] = gwinLabelCreate(0, &wi);
+		gwinLabelSetBorder(gearsCurrentFrontGearLabel[i], TRUE);
+		gwinSetFont(gearsCurrentFrontGearLabel[i], gdispOpenFont("LatoRegular24"));
+		gwinSetText(gearsCurrentFrontGearLabel[i], gearBuffer, TRUE);
+		wi.g.x += 50;
+	}
+	
+	// Create label widget
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 425;
+	wi.g.width = 50;
+	wi.g.height = 50;
+	wi.g.parent = containers[STATUS_CONTAINER];
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	
+	for(int i = 1; i <= gearBackCurrent[0]; i++){
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", gearBackCurrent[i]);
+		wi.text = gearBuffer;
+		gearsCurrentBackGearLabel[i] = gwinLabelCreate(0, &wi);
+		gwinLabelSetBorder(gearsCurrentBackGearLabel[i], TRUE);
+		gwinSetFont(gearsCurrentBackGearLabel[i], gdispOpenFont("LatoRegular24"));
+		gwinSetText(gearsCurrentBackGearLabel[i], gearBuffer, TRUE);
+		wi.g.x += 50;
+	}
+	
+	if(gwinGetVisible(containers[STATUS_CONTAINER])){
+		formatString(gearsStatus, sizeof(gearsStatus), "Number of Front Gears = %d", gearFrontCurrent[0]);
+		gwinSetText(labels[4], gearsStatus, TRUE);
+		formatString(gearsStatus, sizeof(gearsStatus), "Number of Back Gears = %d", gearBackCurrent[0]);
+		gwinSetText(labels[5], gearsStatus, TRUE);
+	}
+}
+
 void guiShowPage(unsigned pageIndex)
 {
 	// Hide all pages
@@ -1412,46 +1546,134 @@ void guiCreate(void)
 	
 	// Select the default display page
 	guiShowPage(0);
+	
+	displayDataIcons();
 }
 
 void guiEventLoop(void)
 {
 	GEvent* pe;
 	int count = 0;
-	uint8_t previousSeconds = 0;
-	my_GPS gpsData;
-	TM_GPS_Float_t GPS_Float_Lat;
-	TM_GPS_Float_t GPS_Float_Lon;
-	int tilex;
-	int tiley;
-	int tilexOffset;
-	int tileyOffset;
+	previousSeconds = 0;
+	previousBatt = 1;
+	interrupted = false;
 	
-//	int oldtilex=0;
-//	int oldtiley=0;
-	int oldtilexOffset=0;
-	int oldtileyOffset=0;
+	guiQueue = osMessageCreate(osMessageQ(guiQueue), NULL);
 	
+	char temp[20];
+	message_t *messageReceived;
+	message_t *messageSent;
 	while (1) {		
-		getRTC(&RTCD, TM_RTC_Format_BIN);
-		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
-		uint32_t fileSavedTime = TM_RTC_GetUnixTimeStamp(&fileTime);
-		if((rtcTime - fileSavedTime) > 300){
-			closeTraceFile();
-			openTraceFile();
+		osEvent evt = osMessageGet(guiQueue, 0);
+		if (evt.status == osEventMessage) {
+			messageReceived = (message_t*)evt.value.p;
+			if(messageReceived->msg_ID == GET_SPEED_MSG){
+				speedOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_CADENCE_MSG){
+				cadenceOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_DISTANCE_MSG){
+				distanceOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
+				heartrateOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
+				cadenceSetPointOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
+				batteryOutput = messageReceived->value;
+			}else if(messageReceived->msg_ID == GET_GEAR_COUNT_MSG){
+				// Update Current Front Gears
+				gearFrontCurrent[0] = messageReceived->frontGears[0];
+				for(int count = 1; count <= gearFrontCurrent[0]; count++){
+					gearFrontCurrent[count] = messageReceived->frontGears[count];
+				}
+				// Update Current Back Gears
+				gearBackCurrent[0] = messageReceived->backGears[0];
+				for(int count = 1; count <= gearBackCurrent[0]; count++){
+					gearBackCurrent[count] = messageReceived->backGears[count];
+				}
+				showCurrentGears();
+			}else if(messageReceived->msg_ID == NRF_SCAN_MSG){
+				gwinDestroy(lists[1]);
+				lists[1] = NULL;
+				devicesCount = messageReceived->value;
+				createBluetoothList();
+				gwinHide(containers[BLUETOOTH_SEARCH_CONTAINER]);
+				gwinShow(containers[BLUETOOTH_DEVICE_CONTAINER]);
+			}
+			osPoolFree(mpool, messageReceived);
 		}
 		
+		if(interrupted == true){
+			messageSent = (message_t*)osPoolAlloc(mpool);
+			messageSent->msg_ID = GET_AVAILABILITY_MSG;
+			osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+			interrupted = false;
+		}
+		
+		// MUST STAY THIS IS THE MAIN THING FOR THIS
+		getRTC(&RTCD, TM_RTC_Format_BIN);
+//		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
+//		if((rtcTime - fileSavedTime) > FILE_MAXIMUM_TIME){
+//			closeTraceFile();
+//			openTraceFile();
+//		}
+		
 		if(gwinGetVisible(containers[DATA_CONTAINER])){
-			if(count == 50){
-				count = 0;
-				speed++;
-				if(speed == 200){
-					speed = 0;
+			if(RTCD.Seconds != previousSeconds){
+				if(speedOutput == INVALID_DATA){
+					gwinSetText(labels[0], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d", speedOutput);
+					gwinSetText(labels[0], dataOutput, TRUE);
 				}
-				formatString(speedout, sizeof(speedout), "%d km/h", speed);
-				gwinSetText(labels[0], speedout, TRUE);
-			}else{
-				count++;
+				
+				if(cadenceOutput == INVALID_DATA){
+					gwinSetText(labels[1], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d", cadenceOutput);
+					gwinSetText(labels[1], dataOutput, TRUE);
+				}
+				
+				if(distanceOutput == INVALID_DATA){
+					gwinSetText(labels[2], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d", distanceOutput);
+					gwinSetText(labels[2], dataOutput, TRUE);
+				}
+				
+				if(heartrateOutput == INVALID_DATA){
+					gwinSetText(labels[3], "--", TRUE);
+				}else{
+					formatString(dataOutput, sizeof(dataOutput), "%d", heartrateOutput);
+					gwinSetText(labels[3], dataOutput, TRUE);
+				}
+				
+				if(batteryOutput == INVALID_DATA){
+					displayBattery(0);
+				}else{
+					displayBattery(batteryOutput);
+				}
+								
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_SPEED_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_CADENCE_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_DISTANCE_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_HEARTRATE_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_BATTERY_MSG;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+				
+				previousSeconds = RTCD.Seconds;
 			}
 		}
 		
@@ -1469,77 +1691,8 @@ void guiEventLoop(void)
 		
     if(gwinGetVisible(containers[MAP_CONTAINER])){
 			gfxSleepMilliseconds(3);
-			/*///gdispGClear(GDISP, (LUMA2COLOR(0)));
-			gwinClear(mapWindow);
-			x=x+2;y=y+2;
-			for(int tempx = x+4*256; tempx>-256; tempx=tempx-256)
-			{
-					while(tempx > 4*256)
-					{
-							tempx=tempx-256;
-					}
-					for(int tempy = y+4*256; tempy>-256; tempy=tempy-256)
-					{   
-							while(tempy > 4*256)
-							{
-									tempy=tempy-256;
-							}
-							//drawTile(tempx, tempy);
-							gwinDrawBox(mapWindow, tempx, tempy, 256, 256);
-							
-					}
-			}*/
-			gpsData = getGPS();	
-#ifdef MAP_TILE_TEST_CANAL
-			gpsData.Validity = true;
-			gpsData.Latitude = 45.384365;
-			gpsData.Longitude = -75.698600;
-#endif
-#ifdef MAP_TILE_TEST_MAYTHAM
-			gpsData.Validity = true;
-			gpsData.Latitude = 45.378962;
-			gpsData.Longitude = -75.667347;
-#endif
-#ifdef MAP_TILE_TEST_JON
-			gpsData.Validity = true;
-			gpsData.Latitude = 45.409269;
-			gpsData.Longitude = -75.706862;
-#endif
-			if(!gpsData.Validity){
-				if(RTCD.Seconds != previousSeconds){
-					formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
-					TRACE("GPS Data is Invalid\n");
-					gwinSetText(labels[3], gpsOutput, TRUE);
-					previousSeconds = RTCD.Seconds;
-				}
-			}else{
-				if(RTCD.Seconds != previousSeconds){
-					gwinHide(labels[3]);
-					/* Latitude */
-					/* Convert float to integer and decimal part, with 6 decimal places */
-					//TM_GPS_ConvertFloat(gpsData.Latitude, &GPS_Float_Lat, 6);
-					
-					/* Longitude */
-					/* Convert float to integer and decimal part, with 6 decimal places */
-					//TM_GPS_ConvertFloat(gpsData.Longitude, &GPS_Float_Lon, 6);
-					
-					tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
-					tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
-					
-					//formatString(gpsOutput, sizeof(gpsOutput), "Latitude=%d.%d,Longitude=%d.%d", GPS_Float_Lat.Integer, GPS_Float_Lat.Decimal, GPS_Float_Lon.Integer, GPS_Float_Lon.Decimal);
-					//formatString(gpsOutput, sizeof(gpsOutput), "Zoom=%d,TileX=%d,TileY=%d", ZOOM_LEVEL, tilex, tiley);
-					TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
-					if((tilex != oldtilex) && (tiley != oldtiley)){
-						drawTile(tilex, tiley, tilexOffset, tileyOffset);
-						oldtilex=tilex;
-						oldtiley=tiley;
-						oldtilexOffset=tilexOffset;
-						oldtileyOffset=tileyOffset;
-					}
-					
-					previousSeconds = RTCD.Seconds;
-				}
-			}
+			// ---------------------------------------
+			// DO GPS STUFF
 		}
 		
 		// Get an event
@@ -1594,21 +1747,23 @@ void button0Call(){
 		createMap();
 		gwinShow(containers[DATA_CONTAINER]);
 		gwinShow(containers[MAP_CONTAINER]);
+		
+		displayDataIcons();
+		
+		previousBatt+=1;
 		oldtilex=0;
 		oldtiley=0;
 	}
 }
 
 void button1Call(){
+	message_t *messageSent;
 	if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
 		// BLUETOOTH SEARCH
 		gwinHide(containers[BLUETOOTH_DEVICE_CONTAINER]);
 		gwinShow(containers[BLUETOOTH_SEARCH_CONTAINER]);
-		
-		gfxSleepMilliseconds(5000);
-		
-		gwinHide(containers[BLUETOOTH_SEARCH_CONTAINER]);
-		gwinShow(containers[BLUETOOTH_DEVICE_CONTAINER]);
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = NRF_SCAN_MSG;
 	}else if(gwinGetVisible(containers[GEARS_CONTAINER])){
 		// FRONT GEARS PLUS
 		if(gearFrontSettings[0] != MAXIMUM_FRONT_GEARS){
@@ -1631,6 +1786,14 @@ void button1Call(){
 		gwinSetText(labels[3], gearBuffer, TRUE);
 	}else if(gwinGetVisible(containers[STATUS_CONTAINER])){
 		// SUBMIT
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = SET_GEAR_COUNT_MSG;
+		for(int count = 0; count <= gearFrontSettings[0]; count++){
+			messageSent->frontGears[count] = gearFrontSettings[count];
+		}
+		for(int count = 0; count <= gearBackSettings[0]; count++){
+			messageSent->backGears[count] = gearBackSettings[count];
+		}
 		TRACE("Submit Gears\n");
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Submit
@@ -1644,8 +1807,8 @@ void button1Call(){
 		//deleteTraceFile();
 		closeTraceFile();
 		openTraceFile();
-
-	}	
+	}
+	osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 }
 
 void button2Call(){
@@ -1665,11 +1828,17 @@ void button2Call(){
 		gwinSetText(labels[3], gearBuffer, TRUE);
 	}else if(gwinGetVisible(containers[STATUS_CONTAINER])){
 		// READ
+		message_t *messageSent;
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = GET_GEAR_COUNT_MSG;
+		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 		TRACE("Read Gears\n");
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Selection Up
 		if(clockChangeSelectedItem != 0){clockChangeSelectedItem--;}
-	}	
+	}else if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
+		connectBluetooth();
+	}
 }
 
 void button3Call(){
@@ -1802,6 +1971,7 @@ void handleMenuSwitches(){
 		switch(gwinListGetSelected(lists[0])){
 			case 0:
 				createBluetooth();
+				createBluetoothList();
 				gwinShow(containers[BLUETOOTH_CONTAINER]);
 				break;
 			case 1:
@@ -1825,6 +1995,69 @@ void handleMenuSwitches(){
 		}
 		oldMenuSelectedItem = gwinListGetSelected(lists[0]);
 	}	
+}
+
+void displayBattery(uint8_t currentBatt){
+	if(currentBatt != previousBatt){
+		if(currentBatt == 0){
+			gdispImageOpenMemory(&battImage, battery0);
+		}else if(currentBatt == 10){
+			gdispImageOpenMemory(&battImage, battery10);
+		}else if(currentBatt == 20){
+			gdispImageOpenMemory(&battImage, battery20);
+		}else if(currentBatt == 30){
+			gdispImageOpenMemory(&battImage, battery30);
+		}else if(currentBatt == 40){
+			gdispImageOpenMemory(&battImage, battery40);
+		}else if(currentBatt == 50){
+			gdispImageOpenMemory(&battImage, battery50);
+		}else if(currentBatt == 60){
+			gdispImageOpenMemory(&battImage, battery60);
+		}else if(currentBatt == 70){
+			gdispImageOpenMemory(&battImage, battery70);
+		}else if(currentBatt == 80){
+			gdispImageOpenMemory(&battImage, battery80);
+		}else if(currentBatt == 90){
+			gdispImageOpenMemory(&battImage, battery90);
+		}else if(currentBatt == 100){
+			gdispImageOpenMemory(&battImage, battery100);
+		}
+		gdispImageDraw(&battImage, 28, 408, 62, 35, 0, 0);
+		gdispImageClose(&battImage);
+		previousBatt = currentBatt;
+	}
+}
+
+void connectBluetooth(){
+	message_t *messageSent;
+	if(lists[1] != NULL){
+		for(uint8_t count = 0; count < devicesCount; count++){
+			if(gwinListItemIsSelected(lists[1], count)){
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = NRF_CONNECT_MSG;
+				messageSent->value = count;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+			}
+		}
+	}
+}
+
+void displayDataIcons(){
+	gdispImageOpenMemory(&dataIcons, speedImageArray);
+	gdispImageDraw(&dataIcons, 23, 6, 90, 90, 0, 0);
+	gdispImageClose(&dataIcons);
+	
+	gdispImageOpenMemory(&dataIcons, cadenceImageArray);
+	gdispImageDraw(&dataIcons, 23, 123, 90, 80, 0, 0);
+	gdispImageClose(&dataIcons);
+	
+	gdispImageOpenMemory(&dataIcons, distanceImageArray);
+	gdispImageDraw(&dataIcons, 23, 221, 90, 66, 0, 0);
+	gdispImageClose(&dataIcons);
+	
+	gdispImageOpenMemory(&dataIcons, heartRateImageArray);
+	gdispImageDraw(&dataIcons, 23, 302, 90, 57, 0, 0);
+	gdispImageClose(&dataIcons);
 }
 
 void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset)
@@ -1922,5 +2155,52 @@ void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset)
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {
 		// handle failure code
+	}
+}
+
+void newGPSData(){
+	int tilex;
+	int tiley;
+	int tilexOffset;
+	int tileyOffset;
+	
+	gpsData = getGPS();	
+#ifdef MAP_TILE_TEST_CANAL
+	gpsData.Validity = true;
+	gpsData.Latitude = 45.384365;
+	gpsData.Longitude = -75.698600;
+#endif
+#ifdef MAP_TILE_TEST_MAYTHAM
+	gpsData.Validity = true;
+	gpsData.Latitude = 45.378962;
+	gpsData.Longitude = -75.667347;
+#endif
+#ifdef MAP_TILE_TEST_JON
+	gpsData.Validity = true;
+	gpsData.Latitude = 45.409269;
+	gpsData.Longitude = -75.706862;
+#endif
+	if(!gpsData.Validity){
+		if(RTCD.Seconds != previousSeconds){
+			formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
+			//TRACE("GPS Data is Invalid\n");
+			gwinSetText(labels[5], gpsOutput, TRUE);
+			previousSeconds = RTCD.Seconds;
+		}
+	}else{
+		if(RTCD.Seconds != previousSeconds){
+			gwinHide(labels[3]);
+			tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
+			tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
+			TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+			if((tilex != oldtilex) && (tiley != oldtiley)){
+				drawTile(tilex, tiley, tilexOffset, tileyOffset);
+				oldtilex=tilex;
+				oldtiley=tiley;
+				oldtilexOffset=tilexOffset;
+				oldtileyOffset=tileyOffset;
+			}
+			previousSeconds = RTCD.Seconds;
+		}
 	}
 }

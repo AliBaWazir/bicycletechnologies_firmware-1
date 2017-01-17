@@ -5,13 +5,13 @@
 #include "tm_stm32_rtc.h"
 #include "tm_stm32_gps.h"
 
-//#define DEBUG
-
 extern GFILE *myfile;
 
 extern osMutexId traceMutex;
 
-extern TM_RTC_t fileTime;
+extern uint32_t fileSavedTime;
+
+#define FILE_MAXIMUM_TIME 300
 
 typedef struct {
 	float Latitude;                                       /*!< Latitude position from GPS, -90 to 90 degrees response. */

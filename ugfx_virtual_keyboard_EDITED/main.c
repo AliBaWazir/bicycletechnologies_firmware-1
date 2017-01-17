@@ -9,6 +9,9 @@
 #include "tm_stm32_gps.h"
 #include "tm_stm32_delay.h"
 #include "gps.h"
+#include "spi.h"
+#include "tm_stm32_spi.h"
+#include "msg.h"
 
 #ifdef RTE_CMSIS_RTOS_RTX
 extern uint32_t os_time;
@@ -128,17 +131,20 @@ void DSI_IRQHandler()
 }
 #endif
 
-void Thread_1 (void const *arg)
+void spiThread (void const *arg)
 {
-	guiEventLoop();
-}		// function prototype for Thread_1
-osThreadDef (Thread_1, osPriorityNormal, 1, 0);            // define Thread_1
+	runSPI();
+}		// function prototype for spiThread
+osThreadDef (spiThread, osPriorityNormal, 1, 0);            // define spiThread
 
-void Thread_2 (void const *arg)
+void gpsThread (void const *arg)
 {
 	runGPS();
 }
-osThreadDef (Thread_2, osPriorityNormal, 1, 0);            // define Thread_2
+osThreadDef (gpsThread, osPriorityNormal, 1, 0);            // define gpsThread
+
+osPoolDef(mpool, 32, message_t);
+osPoolId mpool;
 
 int main (void)
 {			
@@ -153,7 +159,12 @@ int main (void)
 	osKernelInitialize();		// Initialize the KEIL RTX operating system
 	osKernelStart();			// Start the scheduler
 	gfxInit();					// Initialize the uGFX library
+	
+	geventListenerInit(&glistener);
+	gwinAttachListener(&glistener);
 
+	guiCreate();
+	
 #ifdef DEBUG
 	/* Initialize USART3 for debug */
 	/* TX = PB10 */
@@ -169,30 +180,20 @@ int main (void)
 			/* RTC was now initialized */
 			/* If you need to set new time, now is the time to do it */
 	}
-		
-	geventListenerInit(&glistener);
-	gwinAttachListener(&glistener);
-
-	guiCreate();
 
 	osMutexDef (MutexIsr);
 	traceMutex = osMutexCreate  (osMutex (MutexIsr));
   if (traceMutex != NULL)  {
     // Mutex object created
-  }   
-  //osThreadId guiThread;
-  //osThreadId gpsThread;
-  //guiThread = osThreadCreate (osThread (Thread_1), NULL);
-	//gpsThread = osThreadCreate (osThread (Thread_2), NULL);
+  }
+	
+	mpool = osPoolCreate(osPool(mpool));
+  
+	osThreadId spiThreadID;
+	//osThreadId gpsThreadID;
+	spiThreadID = osThreadCreate (osThread (spiThread), NULL);
+	//gpsThreadID = osThreadCreate (osThread (gpsThread), NULL);
 	
 	guiEventLoop();
-	
-//	while(1){
-//		i++;
-//		if(i > 100){
-//			i = 0;
-//		}
-//	}
-
 }
 
