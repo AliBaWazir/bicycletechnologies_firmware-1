@@ -50,7 +50,10 @@
  *SPI GETTER command definitions
  *************************************************/
 //Check Data Availabilable Flags 
-#define SPI_GET_AVAILABLE_DATA_FLAGS     0xDA
+#define SPI_GET_AVAILABLE_DATA_FLAGS   0xDA
+
+//Group Identity
+#define SPI_GET_DEVICE_NAME            0xDE
 
 //Group 0: Shifting Algorithm Parameters
 #define SPI_GET_SPEED                  0x01
@@ -204,6 +207,12 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				}
 
 			break;
+				
+			case SPI_GET_DEVICE_NAME:
+				m_tx_buf[0] = 'n';
+				m_tx_buf[1] = 'R';
+				m_tx_buf[2] = 'F';
+			break; //SPI_GET_DEVICE_NAME
 			
 			case SPI_GET_SPEED:
 				if (SPI_DRIVER_SIM_MODE){
