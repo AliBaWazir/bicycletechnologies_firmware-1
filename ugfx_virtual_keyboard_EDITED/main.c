@@ -148,6 +148,7 @@ osPoolId mpool;
 
 int main (void)
 {			
+	// RANDOM COMMENT
   int i = 0;
 	// Cached enabled in stm32f4xx_hal_conf.h
     // CPU_CACHE_Enable();			// Enable the CPU Cache
