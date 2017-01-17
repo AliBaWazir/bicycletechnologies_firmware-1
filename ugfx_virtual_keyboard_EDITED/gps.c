@@ -51,7 +51,7 @@ void runGPS(){
 	isRTCSet = false;
 		
 	while(1) {
-		
+		retrieveGPS();
 	}
 }
 

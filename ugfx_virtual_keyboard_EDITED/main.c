@@ -192,9 +192,9 @@ int main (void)
 	mpool = osPoolCreate(osPool(mpool));
   
 	osThreadId spiThreadID;
-	//osThreadId gpsThreadID;
+	osThreadId gpsThreadID;
 	spiThreadID = osThreadCreate (osThread (spiThread), NULL);
-	//gpsThreadID = osThreadCreate (osThread (gpsThread), NULL);
+	gpsThreadID = osThreadCreate (osThread (gpsThread), NULL);
 	
 	guiEventLoop();
 }
