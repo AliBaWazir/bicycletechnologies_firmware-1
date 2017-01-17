@@ -100,7 +100,7 @@
         <tRSysVw>1</tRSysVw>
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
-        <nTsel>11</nTsel>
+        <nTsel>5</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -226,6 +226,9 @@
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
       <bLintAuto>0</bLintAuto>
+      <Lin2Executable></Lin2Executable>
+      <Lin2ConfigFile></Lin2ConfigFile>
+      <bLin2Auto>0</bLin2Auto>
       <DebugDescription>
         <Enable>1</Enable>
         <EnableLog>0</EnableLog>
@@ -541,8 +544,6 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-<<<<<<< HEAD
-=======
     <File>
       <GroupNumber>1</GroupNumber>
       <FileNumber>26</FileNumber>
@@ -567,7 +568,6 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
->>>>>>> maytham/SPI
   </Group>
 
   <Group>
@@ -578,11 +578,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>2</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>26</FileNumber>
-=======
       <FileNumber>28</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -594,11 +590,7 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>27</FileNumber>
-=======
       <FileNumber>29</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -610,11 +602,7 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>28</FileNumber>
-=======
       <FileNumber>30</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -634,11 +622,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>29</FileNumber>
-=======
       <FileNumber>31</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -650,11 +634,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>30</FileNumber>
-=======
       <FileNumber>32</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -666,11 +646,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>31</FileNumber>
-=======
       <FileNumber>33</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -682,11 +658,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>32</FileNumber>
-=======
       <FileNumber>34</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -698,11 +670,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>33</FileNumber>
-=======
       <FileNumber>35</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -714,11 +682,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>34</FileNumber>
-=======
       <FileNumber>36</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -730,11 +694,7 @@
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>35</FileNumber>
-=======
       <FileNumber>37</FileNumber>
->>>>>>> maytham/SPI
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
