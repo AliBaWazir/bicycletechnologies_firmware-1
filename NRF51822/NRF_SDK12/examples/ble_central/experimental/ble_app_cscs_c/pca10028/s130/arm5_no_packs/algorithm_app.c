@@ -22,21 +22,30 @@
 #include "boards.h"
 #include "app_error.h"
 #include <string.h>
+#include <stdlib.h>
 #define NRF_LOG_MODULE_NAME "ALGORITHM APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_delay.h"
+#include "app_timer.h"
 #include "drivers_commons.h"
 #include "application_fds_app.h"
 
 #include "algorithm_app.h"
-
+#include "cscs_app.h"
 
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
+#define ALGORITHM_APP_IN_SIM_MODE      1   //this flag is sut to true if the algorithm is in sim mode only
+
+#define ALGORITHM_APP_SIM_ARRAY_SIZE   60 // size of arrays to store sim results
 #define DEFAULT_CADENCE_SETPOINT_RPM   80
 
+//Timer Defines
+#define APP_TIMER_PRESCALER            0               /**< Value of the RTC1 PRESCALER register. If changed, remember to change prescaler in main.c*/
+#define I2CAPP_MS_TO_TICK(MS) (APP_TIMER_TICKS(100, APP_TIMER_PRESCALER) * (MS / 100))
+#define ALGORITHM_TIMER_PERIOD_MS      1000            //time period in ms to run shifting algorithm
 /**********************************************************************************************
 * TYPE DEFINITIONS
 ***********************************************************************************************/
@@ -67,6 +76,14 @@ static float gear_ratios_array [1][MAX_GEARS_COUNT];  /*the ratios array has a d
 													   *actual gear indices will be populated. 
 													   *Currently, the algorithm supports a single crank gear 
 													   */
+													   
+static uint8_t current_wheel_gear_index  = 3; //initially cassete gear is at the middle
+static uint8_t sim_result_arrays_index   = 0; //indexer for simulation result arrays
+static uint8_t gear_index_after_shifting_array[ALGORITHM_APP_SIM_ARRAY_SIZE]; //array to store simulation results 
+static uint8_t cadence_after_shifting_array[ALGORITHM_APP_SIM_ARRAY_SIZE];    //array to store simulation results 
+
+/* IRQ toggling timer*/
+APP_TIMER_DEF(algorithm_app_timer_id);
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -125,6 +142,159 @@ static bool algorithmApp_gear_ratios_array_populate(void){
 	}
 	
 	return retcode;
+}
+
+//function to run the shifting algorithm given the current state
+static bool algorithmApp_run(void){
+	
+	int j                                          = 0;
+	float current_wheel_rpm                        = 0.0;
+	float current_cycling_cadence                  = 0.0;
+	float current_cycling_cadence_error            = 0.0;
+	float expected_cycling_cadence                 = 0.0;
+	float expected_cycling_cadence_error           = 0.0;
+	float expected_cycling_cadence_error_previous  = 0.0;
+	float cadence_after_shifting                   = 0.0;
+	uint8_t desired_gear_wheel_index               = 0.0;
+	bool looping_backword_in_ratios_array          = false;
+		
+    //if gear is locked keep the current state
+	if(gear_level_locked){
+		//for now, return false
+		return false;
+	}
+	
+	//NRF_LOG_DEBUG("algorithmApp_run: called\r\n");
+	
+	current_wheel_rpm = cscsApp_get_current_wheel_rpm();
+	//NRF_LOG_DEBUG("algorithmApp_run: current wheel rpm= %d\r\n", current_wheel_rpm);
+		
+	current_cycling_cadence = current_wheel_rpm/(gear_ratios_array[0][current_wheel_gear_index]);
+	//NRF_LOG_DEBUG("algorithmApp_run: current_cycling_cadence= %d\r\n", current_cycling_cadence);
+		
+	//calculate current cycling cadence relative error
+	current_cycling_cadence_error = (float) ((current_cycling_cadence - cadence_setpoint_rpm));
+	//NRF_LOG_DEBUG("algorithmApp_run: current_cycling_cadence_error= %d\r\n", current_cycling_cadence_error);
+		
+	if(current_cycling_cadence_error == 0){
+		//keep current gear index
+		desired_gear_wheel_index = current_wheel_gear_index;
+	} else{
+		    
+		if (current_cycling_cadence_error >= 0){
+			//loop backword throgh all wheel gears to select optimum gear
+			looping_backword_in_ratios_array= true;
+			//NRF_LOG_DEBUG("algorithmApp_run: loop backword ...\r\n");
+		} else{
+			//loop forward throgh all wheel gears to select optimum gear
+			looping_backword_in_ratios_array= false;
+			//NRF_LOG_DEBUG("algorithmApp_run: loop forward ...\r\n");
+		}
+    		
+    	for (j= current_wheel_gear_index; 
+			 (looping_backword_in_ratios_array&&(j>= 0)) || ((!looping_backword_in_ratios_array)&&(j< default_bike_config.wheel_gears_count));
+			 (looping_backword_in_ratios_array?j--:j++))
+		{
+				
+			//calculate expected cadence at gear index j
+			expected_cycling_cadence = current_wheel_rpm/gear_ratios_array[0][j];
+			//NRF_LOG_DEBUG("algorithmApp_run: expected_cycling_cadence for gear [%d]= %d\r\n",  j, expected_cycling_cadence);
+			//store previous expected cycling cadence error
+			expected_cycling_cadence_error_previous= expected_cycling_cadence_error;
+			//calculate expected cycling cadence relative error
+			expected_cycling_cadence_error = (float) (expected_cycling_cadence - cadence_setpoint_rpm);
+			//check for sign change in expected relative error
+			if ((expected_cycling_cadence_error>0 && current_cycling_cadence_error<0) || 
+				(expected_cycling_cadence_error<0 && current_cycling_cadence_error>0))
+			{
+				break;
+			}
+			
+		}
+    		
+		//NRF_LOG_DEBUG("algorithmApp_run: expected_cycling_cadence_error= %d. current_cycling_cadence_error= %d\r\n",  
+		//					expected_cycling_cadence_error, current_cycling_cadence_error);
+    	if (abs(expected_cycling_cadence_error) < abs(current_cycling_cadence_error)){
+    		//check boundary conditions
+    		if ( j>= default_bike_config.wheel_gears_count){
+				//NRF_LOG_DEBUG("algorithmApp_run: >debug>>>>>>>>> 1\r\n");
+				desired_gear_wheel_index = default_bike_config.wheel_gears_count-1;
+    		} else if(j< 0){
+				//NRF_LOG_DEBUG("algorithmApp_run: >debug>>>>>>>>> 2\r\n");
+    			desired_gear_wheel_index = 0;
+    		} else{
+				//loop break due to sign change in cadence error
+    			 if (abs(expected_cycling_cadence_error_previous) < abs(expected_cycling_cadence_error)){
+					if(looping_backword_in_ratios_array){
+						desired_gear_wheel_index = j+1;
+					} else{
+						desired_gear_wheel_index = j-1;
+    			    }
+    			 } else{
+					desired_gear_wheel_index = j;
+    			 }
+    			    
+    		}
+    	} else {
+    		//keep current gear index
+    		desired_gear_wheel_index = current_wheel_gear_index;
+    	}
+	}
+
+	//set current wheel gear with the desired gear
+	current_wheel_gear_index = desired_gear_wheel_index;
+	//NRF_LOG_DEBUG("algorithmApp_run: current_wheel_gear_index is set to gear with index[%d]\r\n", current_wheel_gear_index);
+	//set_phisical_desired_gears(desired_gear_pedal_index, desired_gear_wheel_index);
+		
+	cadence_after_shifting = (current_wheel_rpm/gear_ratios_array[0][current_wheel_gear_index]);
+	//NRF_LOG_DEBUG("algorithmApp_run: current_cadence after shifting= %d\r\n", cadence_after_shifting);
+	
+
+	if(ALGORITHM_APP_IN_SIM_MODE){
+		//store results in simulation vectors
+		gear_index_after_shifting_array[sim_result_arrays_index]= current_wheel_gear_index;
+		cadence_after_shifting_array[sim_result_arrays_index]= cadence_after_shifting;
+	}
+	
+	return true;
+}
+
+static void algorithmApp_timer_handler( void * callback_data){
+	
+	uint32_t* polling_request_id_p = (uint32_t*) callback_data;
+	uint32_t  nrf_err              = NRF_SUCCESS;   
+	
+	/*TODO: figure out if this is necessary*/
+	if (polling_request_id_p != NULL){
+		NRF_LOG_DEBUG("algorithmApp_timer_handler: polling request with ID=%d timed out\r\n", *polling_request_id_p);
+	}
+	
+	//stop timer
+
+	(void)app_timer_stop(algorithm_app_timer_id);
+
+	
+	//run the gear shifting algorithm if a new CSCS measurement is received
+	if(cscsApp_is_new_cscs_meas_received()){
+		
+		algorithmApp_run();
+		if(ALGORITHM_APP_IN_SIM_MODE){
+			//increment the inexer of simulation results if size allows
+			if((sim_result_arrays_index+1)<ALGORITHM_APP_SIM_ARRAY_SIZE){
+				sim_result_arrays_index++;
+			} else{
+				NRF_LOG_DEBUG("algorithmApp_timer_handler: sim_result_arrays_index reached maximum \r\n");
+			}
+		}
+		
+	}
+	
+	//start timer againg
+	nrf_err = app_timer_start(algorithm_app_timer_id, I2CAPP_MS_TO_TICK(ALGORITHM_TIMER_PERIOD_MS), (void*)NULL);
+	if (nrf_err != NRF_SUCCESS)
+	{
+		NRF_LOG_ERROR("algorithmApp_timer_handler: app_timer_start failed with error = %d\r\n", nrf_err);
+	}
 }
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
@@ -228,12 +398,16 @@ void algorithmApp_set_teeth_count (uint8_t gear_type, uint8_t gear_index, uint8_
 	
 }
 
+
 bool algorithmApp_init(void){
 	
-	bool ret_code  = true;
+	bool      ret_code  = true;
+	uint32_t  nrf_err   = NRF_SUCCESS;
 	
-	memset (&user_defined_bike_config_data, 0, sizeof(user_defined_bike_config_data_t));
-	memset (&default_bike_config, 0, sizeof(user_defined_bike_config_data_t));
+	memset (&gear_index_after_shifting_array, 0x00, ALGORITHM_APP_SIM_ARRAY_SIZE);
+	memset (&cadence_after_shifting_array, 0x00, ALGORITHM_APP_SIM_ARRAY_SIZE);
+	memset (&user_defined_bike_config_data, 0x00, sizeof(user_defined_bike_config_data_t));
+	memset (&default_bike_config, 0x00, sizeof(user_defined_bike_config_data_t));
 	default_bike_config.wheel_diameter_cm= 72;
 	default_bike_config.crank_gears_count= 1;
 	default_bike_config.crank_gears_teeth_count[0]= 32;
@@ -307,6 +481,29 @@ bool algorithmApp_init(void){
 			
 		}
 
+	}
+	
+	if(ret_code){
+		
+		//create and start the timer
+		nrf_err = app_timer_create(&algorithm_app_timer_id,
+									APP_TIMER_MODE_SINGLE_SHOT,
+									algorithmApp_timer_handler);
+		if (nrf_err != NRF_SUCCESS){
+			NRF_LOG_DEBUG("spisSimDriver_init: app_timer_create failed with error= %d\r\n", nrf_err);
+			ret_code = false;
+		} else{
+			
+			//start the timer
+			nrf_err = app_timer_start(algorithm_app_timer_id, I2CAPP_MS_TO_TICK(ALGORITHM_TIMER_PERIOD_MS), (void*)NULL);
+			if (nrf_err != NRF_SUCCESS)
+			{
+				NRF_LOG_ERROR("spisSimDriver_init: app_timer_start failed with error = %d\r\n", nrf_err);
+				ret_code = false;
+			}
+			
+		}
+		
 	}
 	
 	

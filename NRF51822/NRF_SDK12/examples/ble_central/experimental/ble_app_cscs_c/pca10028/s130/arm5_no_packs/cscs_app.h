@@ -30,6 +30,7 @@ uint8_t cscsApp_get_current_distance_km(void);
 float cscsApp_get_current_wheel_rpm(void);
 
 void cscsApp_assing_new_meas_callback(new_meas_callback_f cb);
+bool cscsApp_is_new_cscs_meas_received(void);
 bool cscsApp_cscs_c_init(void);
 
 #ifdef __cplusplus

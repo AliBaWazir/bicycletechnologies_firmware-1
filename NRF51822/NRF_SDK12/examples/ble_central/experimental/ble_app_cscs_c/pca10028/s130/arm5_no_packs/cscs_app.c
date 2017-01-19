@@ -17,13 +17,13 @@
 /**********************************************************************************************
 * INCLUDES
 ***********************************************************************************************/
-#include "cscs_app.h"
 #include "app_error.h"
 #define NRF_LOG_MODULE_NAME "CSCS APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "peer_manager.h"
 
+#include "cscs_app.h"
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
@@ -55,7 +55,7 @@ static cscs_instantanious_data_t    cscs_instantanious_data;
 /* TODO: create a function to update wheelCircumference by user data*/
 static double                       wheel_circumference_cm = 2*PI*DFAULT_WHEEL_DIAMETER_CM;  /*The circumfrance is calculated by wheel diameter specified by user*/
 static new_meas_callback_f          new_meas_cb            = NULL;    // Function pointer to the function to be called when a new measuremnt is obtained
-
+static bool                         new_cscs_meas_received = false;   // Boolean will be set to true once new measurement is received from BLE peripheral
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
@@ -280,6 +280,9 @@ static void cscsApp_cscs_c_evt_handler(ble_cscs_c_t * p_csc_c, ble_cscs_c_evt_t 
 			} else{
 				cscsApp_debug_print_inst_data();
 			}
+			
+			//set new_cscs_meas_received flag to true to allow the geear shifting algorithm to run
+			new_cscs_meas_received= true;
 					  /*
 					  NRF_LOG_INFO("\r\n");
             if(p_csc_c_evt->params.csc_meas.is_wheel_rev_data_present){
@@ -396,6 +399,10 @@ void cscsApp_assing_new_meas_callback(new_meas_callback_f cb){
 	
 	new_meas_cb= cb;
 	return;
+}
+
+bool cscsApp_is_new_cscs_meas_received(void){
+	return new_cscs_meas_received;
 }
 
 /**

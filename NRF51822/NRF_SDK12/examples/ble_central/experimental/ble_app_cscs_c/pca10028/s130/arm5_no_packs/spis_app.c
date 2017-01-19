@@ -320,6 +320,7 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 			break;//SPI_SET_CADENCE_SETPOINT
 				
 			case SPI_SET_GEAR_LEVEL_LOCKED:
+				/*TODO: figure out whether to keep using this command*/
 				algorithmApp_set_gear_level_locked ();
 			break;//SPI_SET_GEAR_LEVEL_LOCKED
 				
