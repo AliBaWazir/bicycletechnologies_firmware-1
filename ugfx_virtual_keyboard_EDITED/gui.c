@@ -130,8 +130,9 @@ int oldtileyOffset=0;
 my_GPS gpsData;
 static TM_GPS_Float_t GPS_Float_Lat;
 static TM_GPS_Float_t GPS_Float_Lon;
-	
-uint8_t previousSeconds;
+
+uint32_t oldRTCTime;
+uint32_t oldRTCTimeGPS;
 
 void drawTile(int tilex, int tiley, int tilexOffset, int tileyOffset);
 void drawTilePixmap(int tilex, int tiley, int tilexOffset, int tileyOffset);
@@ -1562,7 +1563,8 @@ void guiEventLoop(void)
 {
 	GEvent* pe;
 	int count = 0;
-	previousSeconds = 0;
+	oldRTCTime = 0;
+	oldRTCTimeGPS = 0;
 	previousBatt = 1;
 	interrupted = false;
 	
@@ -1608,6 +1610,11 @@ void guiEventLoop(void)
 				createBluetoothList();
 				gwinHide(containers[BLUETOOTH_SEARCH_CONTAINER]);
 				gwinShow(containers[BLUETOOTH_DEVICE_CONTAINER]);
+			}else if(messageReceived->msg_ID == GET_GPS_MSG){
+				gpsData.Validity = messageReceived->myGPSData.Validity;
+				gpsData.Latitude = messageReceived->myGPSData.Latitude;
+				gpsData.Longitude = messageReceived->myGPSData.Longitude;
+				newGPSData();
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -1621,14 +1628,14 @@ void guiEventLoop(void)
 		
 		// MUST STAY THIS IS THE MAIN THING FOR THIS
 		getRTC(&RTCD, TM_RTC_Format_BIN);
-//		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
+		uint32_t rtcTime = TM_RTC_GetUnixTimeStamp(&RTCD);
 //		if((rtcTime - fileSavedTime) > FILE_MAXIMUM_TIME){
 //			closeTraceFile();
 //			openTraceFile();
 //		}
 		
 		if(gwinGetVisible(containers[DATA_CONTAINER])){
-			if(RTCD.Seconds != previousSeconds){
+			if((rtcTime - oldRTCTime) > GUI_DATA_TIME){
 				if(speedOutput == INVALID_DATA){
 					gwinSetText(labels[0], "--", TRUE);
 				}else{
@@ -1683,15 +1690,15 @@ void guiEventLoop(void)
 				messageSent->msg_ID = GET_BATTERY_MSG;
 				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 				
-				previousSeconds = RTCD.Seconds;
+				oldRTCTime = rtcTime;
 			}
 		}
 		
 		if(gwinGetVisible(containers[CLOCK_CONTAINER])){
-			if(RTCD.Seconds != previousSeconds){
+			if((rtcTime - oldRTCTime) > GUI_DATA_TIME){
 				formatString(timeBuffer, sizeof(timeBuffer), "%d/%02d/%02d || %02d:%02d:%02d",RTCD.Year,RTCD.Month,RTCD.Day,RTCD.Hours,RTCD.Minutes,RTCD.Seconds);
 				gwinSetText(labels[2], timeBuffer, TRUE);
-				previousSeconds = RTCD.Seconds;
+				oldRTCTime = rtcTime;
 			}
 			if(clockChangeSelectedItem != previousClockSelection){
 				updateClockSelection();
@@ -1700,10 +1707,14 @@ void guiEventLoop(void)
 		}
 		
     if(gwinGetVisible(containers[MAP_CONTAINER])){
-			gfxSleepMilliseconds(3);
-			// ---------------------------------------
-			// DO GPS STUFF
-			newGPSData();
+			if((rtcTime - oldRTCTimeGPS) > GUI_GPS_TIME){
+				gfxSleepMilliseconds(3);
+				// Send GPS Message
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = GET_GPS_MSG;
+				osMessagePut(gpsQueue, (uint32_t)messageSent, 0);
+				oldRTCTimeGPS = rtcTime;
+			}
 		}
 		
 		// Get an event
@@ -2371,8 +2382,7 @@ void newGPSData(){
 	int tiley;
 	int tilexOffset;
 	int tileyOffset;
-	
-	gpsData = getGPS();	
+
 #ifdef MAP_TILE_TEST_CANAL
 	gpsData.Validity = true;
 	gpsData.Latitude = 45.384365;
@@ -2389,14 +2399,9 @@ void newGPSData(){
 	gpsData.Longitude = -75.706862;
 #endif
 	if(!gpsData.Validity){
-		//if(RTCD.Seconds != previousSeconds){
 			formatString(gpsOutput, sizeof(gpsOutput),"GPS Data is Invalid");
-			//TRACE("GPS Data is Invalid\n");
 			gwinSetText(labels[5], gpsOutput, TRUE);
-			//previousSeconds = RTCD.Seconds;
-		//}
 	}else{
-		//if(RTCD.Seconds != previousSeconds){
 			gwinHide(labels[5]);
 			tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
 			tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
@@ -2408,7 +2413,5 @@ void newGPSData(){
 				oldtilexOffset=tilexOffset;
 				oldtileyOffset=tileyOffset;
 			}
-			//previousSeconds = RTCD.Seconds;
-		//}
 	}
 }

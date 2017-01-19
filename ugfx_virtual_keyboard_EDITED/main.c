@@ -167,6 +167,10 @@ int main (void)
 
 	guiCreate();
 	
+	// TURN ON BACKLIGHT PIN
+	TM_GPIO_Init(GPIOA, GPIO_PIN_3, TM_GPIO_Mode_OUT, TM_GPIO_OType_PP, TM_GPIO_PuPd_NOPULL, TM_GPIO_Speed_Low);
+	TM_GPIO_SetPinHigh(GPIOA, GPIO_PIN_3);
+	
 #ifdef DEBUG
 	/* Initialize USART3 for debug */
 	/* TX = PB10 */

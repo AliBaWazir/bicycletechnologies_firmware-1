@@ -1,9 +1,14 @@
 #ifndef _MSG_H_
 #define _MSG_H_
 
+#include "gui.h"
+//#include "trace.h"
+
 //#define DEBUG
 
 #define INVALID_DATA 0xFF
+
+#define GET_GPS_MSG								0x45
 
 #define GET_AVAILABILITY_MSG			0xDA
 #define GET_DEVICE_NAME_MSG				0xDE
@@ -42,11 +47,13 @@ typedef struct {
 	uint8_t value;
 	uint8_t frontGears[MAXIMUM_FRONT_GEARS+1];
 	uint8_t backGears[MAXIMUM_BACK_GEARS+1];
+	my_GPS myGPSData;
 } message_t;
 
 extern osPoolId mpool;
 extern osMessageQId  spiQueue;
 extern osMessageQId  guiQueue;
+extern osMessageQId  gpsQueue;
 
 extern uint8_t devicesMAC[10][6];
 

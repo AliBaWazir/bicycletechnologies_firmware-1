@@ -2,6 +2,7 @@
 #include "trace.h"
 #include "tm_stm32_gps.h"
 #include "tm_stm32_delay.h"
+#include "msg.h"
 
 #define M_PI (3.141592653589793)
 
@@ -13,6 +14,10 @@ static TM_GPS_Distance_t GPS_Distance;
 bool isRTCSet;
 
 void retrieveGPS();
+void sendGPSMSG();
+	
+osMessageQDef(gpsQueue, 32, message_t);
+osMessageQId  gpsQueue;
 
 int long2tilex(double lon, int zoomlevel, int *tileOffset) 
 { 
@@ -49,9 +54,20 @@ void runGPS(){
 	TM_GPS_Init(&GPS_Data, 9600);
 	
 	isRTCSet = false;
-		
+	
+	gpsQueue = osMessageCreate(osMessageQ(gpsQueue), NULL);
+	
+	message_t *messageReceived;
 	while(1) {
-		retrieveGPS();
+		osEvent evt = osMessageGet(gpsQueue, osWaitForever);
+		if (evt.status == osEventMessage) {
+			messageReceived = (message_t*)evt.value.p;
+			if(messageReceived->msg_ID == GET_GPS_MSG){
+				TRACE("GPS:,GET_GPS_MSG\n");
+				retrieveGPS();
+			}
+			osPoolFree(mpool, messageReceived);
+		}
 	}
 }
 
@@ -75,9 +91,7 @@ void retrieveGPS(){
 	if (result == TM_GPS_Result_NewData) {
 		/* We received new packet of useful data from GPS */
 		current = TM_GPS_Result_NewData;
-		
-		saveGPS(&GPS_Data);
-		
+
 		/* Is GPS signal valid? */
 		if (GPS_Data.Validity) {
 			/* If you want to make a GPS tracker, now is the time to save your data on SD card */
@@ -125,15 +139,24 @@ void retrieveGPS(){
 			GPS_Data.Time.Hours, GPS_Data.Time.Minutes, GPS_Data.Time.Seconds, GPS_Data.Time.Hundredths, 
 			GPS_Data.Fix, GPS_Float_Alt.Integer, GPS_Float_Alt.Decimal); 
 #endif
+			sendGPSMSG();
 		} else {
 			/* GPS signal is not valid */
 			TRACE("GPS:,Data received is not valid\n");
 		}
 	} else if (result == TM_GPS_Result_FirstDataWaiting && current != TM_GPS_Result_FirstDataWaiting) {
 		current = TM_GPS_Result_FirstDataWaiting;
-		//TM_USART_Puts(USART3, "Waiting first data from GPS!\n");
 	} else if (result == TM_GPS_Result_OldData && current != TM_GPS_Result_OldData) {
 		current = TM_GPS_Result_OldData;
-		/* We already read data, nothing new was received from GPS */
 	}
+}
+
+void sendGPSMSG(){
+	message_t *messageSent;
+	messageSent = (message_t*)osPoolAlloc(mpool);
+	messageSent->msg_ID = GET_GPS_MSG;
+	messageSent->myGPSData.Validity = GPS_Data.Validity;
+	messageSent->myGPSData.Latitude = GPS_Data.Latitude;
+	messageSent->myGPSData.Longitude = GPS_Data.Longitude;
+	osMessagePut(guiQueue, (uint32_t)messageSent, 0);
 }
