@@ -99,6 +99,30 @@ void array_transfer(uint8_t *data, uint16_t *data2){
 			a = a+2;
 		}
 }
+
+void motor_direction(uint8_t direction){
+    if(direction == 1)
+    {
+        //Motor moves forward
+        //Motor PWM Bank A
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_SET);
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_RESET);
+    }
+    else if (direction == 2)
+    {
+        //Motor Moves backwards
+        //Motor PWM Bank A
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_RESET);
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_SET);
+    }
+    else
+    {
+        //Motor does not move and is turned off
+        //Motor PWM Bank A
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_RESET);
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_RESET);
+    }
+}
 /* USER CODE END 0 */
 
 int main(void)
@@ -155,23 +179,10 @@ int main(void)
 		array_transfer(data,data2);
 		
 		if(data2[5] > 2050)
-		{
-		//Motor PWM Bank A
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_RESET);
-		}
+		{motor_direction(1);}
 		else if(data2[5] < 1950)
-		{
-		//Motor PWM Bank A
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_SET);
-		}
-		else
-		{
-					//Motor PWM Bank A
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_RESET);
-		}
+		{motor_direction(2);}
+		else{motor_direction(0);}
 			 
 		while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY){ Error_Handler(); }		
 		
