@@ -230,6 +230,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>\\F4_Board\../Src/main.c\data2</ItemText>
         </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>data2</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\F4_Board\../Src/main.c\data2</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
