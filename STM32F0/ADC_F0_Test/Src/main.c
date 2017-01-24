@@ -66,6 +66,39 @@ static void MX_ADC_Init(void);
 
 /* USER CODE BEGIN 0 */
 
+//Read 6 ADC values that are 12 bit
+void Read_ADC(uint16_t *data2, ADC_HandleTypeDef* hadc){
+  HAL_ADC_Start(hadc);
+		while(flag == 0){
+			
+			if(__HAL_ADC_GET_FLAG(hadc, ADC_FLAG_EOC))
+			{
+				data2[i] = HAL_ADC_GetValue(hadc);
+				if(i == 5){
+					i = 0;
+					flag = 1;
+					HAL_ADC_Stop(hadc);
+				}
+				else { i++;}
+			}
+		}
+		
+		flag = 0;
+
+}
+
+//Convert 12 bit array into 8 bit array to send I2C
+void array_transfer(uint8_t *data, uint16_t *data2){
+    int a = 0;
+		for(int q=0;q<=6;q++){
+			most_sig = data2[q] >> 8;
+			least_sig = data2[q];
+
+			data[a] = most_sig;
+			data[a+1] = least_sig;
+			a = a+2;
+		}
+}
 /* USER CODE END 0 */
 
 int main(void)
@@ -115,39 +148,19 @@ int main(void)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10,GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11,GPIO_PIN_SET);
 		
-		HAL_ADC_Start(&hadc);
-		while(flag == 0){
-			
-			if(__HAL_ADC_GET_FLAG(&hadc, ADC_FLAG_EOC))
-			{
-				data2[i] = HAL_ADC_GetValue(&hadc);
-				if(i == 5){
-					i = 0;
-					flag = 1;
-					HAL_ADC_Stop(&hadc);
-				}
-				else { i++;}
-			}
-		}
 		
-		flag = 0;
-		int a = 0;
-		for(int q=0;q<=6;q++){
-			most_sig = data2[q] >> 8;
-			least_sig = data2[q];
-			
-			data[a] = most_sig;
-			data[a+1] = least_sig;
-			a = a+2;
-		}
-			
-		if(data2[5] > 2100)
+		
+
+		Read_ADC(data2,&hadc);
+		array_transfer(data,data2);
+		
+		if(data2[5] > 2050)
 		{
 		//Motor PWM Bank A
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9,GPIO_PIN_RESET);
 		}
-		else if(data2[5] < 1900)
+		else if(data2[5] < 1950)
 		{
 		//Motor PWM Bank A
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8,GPIO_PIN_RESET);
