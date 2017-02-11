@@ -47,7 +47,6 @@ typedef struct {
 	uint8_t value;
 	uint8_t frontGears[MAXIMUM_FRONT_GEARS+1];
 	uint8_t backGears[MAXIMUM_BACK_GEARS+1];
-	my_GPS myGPSData;
 } message_t;
 
 extern osPoolId mpool;
