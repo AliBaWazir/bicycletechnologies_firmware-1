@@ -18,7 +18,7 @@ extern GListener glistener;
 #define MINIMUM_TEETH 25
 
 #define GUI_DATA_TIME 1
-#define GUI_GPS_TIME	5
+#define GUI_GPS_TIME	30
 
 extern uint8_t gearFrontSettings[MAXIMUM_FRONT_GEARS+1];
 extern uint8_t gearBackSettings[MAXIMUM_BACK_GEARS+1];

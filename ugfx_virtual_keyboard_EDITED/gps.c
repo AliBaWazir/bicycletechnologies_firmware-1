@@ -74,6 +74,8 @@ void runGPS(){
 	
 	isRTCSet = false;
 	
+	pixmap = gdispPixmapCreate((coord_t)494,(coord_t)480);
+	
 	gpsQueue = osMessageCreate(osMessageQ(gpsQueue), NULL);
 	
 	message_t *messageReceived;
@@ -94,7 +96,7 @@ void retrieveGPS(){
 	TM_GPS_Result_t result, current;
 	char buffer[40];
 	float temp;
-	
+		
 	TM_DELAY_SetTime(0);
 	
 	/* Update GPR data */
@@ -229,8 +231,6 @@ void drawTilePixmap(int tilex, int tiley, int tilexOffset, int tileyOffset)
 	if (status != osOK){
 		// handle failure code
 	}
-
-	pixmap = gdispPixmapCreate((coord_t)494,(coord_t)480);
 	
 	coord_t leftX = 0;
 	coord_t centerX = 247-tilexOffset;
