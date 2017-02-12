@@ -53,7 +53,8 @@
 #define GEAR_CONT_BACK_GEARS_COUNT_COMMAND  0x02
 #define GEAR_CONT_FRONT_GEARS_POS_COMMAND   0x03    //Front Gear Positions
 #define GEAR_CONT_BACK_GEARS_POS_COMMAND    0x04    //Back Gear Positions
-#define GEAR_CONT_INIT_GEARS_POS_COMMAND    0x06    //Initial Gear Positions. This will be in gear number not ADC value			
+#define GEAR_CONT_INIT_GEARS_POS_COMMAND    0x06    //Initial Gear Positions. This will be in gear number not ADC value
+#define GEAR_CONT_WRITE_DES_GEARS_COMMAND   0x10
 #define GEAR_CONT_GEARSTATE_COMMAND         0x20
 
 //SOC
@@ -544,6 +545,25 @@ uint8_t i2cApp_get_battery_level(void){
 	return m_i2c_slaves_data_new.soc_state_of_charge;
 	
 }
+
+bool i2cApp_write_desired_gears(uint8_t gear_index_front, uint8_t gear_index_back){
+	bool   retcode = true;
+	uint8_t desired_gears_array[2];
+	
+	/*TODO: check byte order*/
+	desired_gears_array[0] = gear_index_front;
+	desired_gears_array[1] = gear_index_back;
+	
+	if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, GEAR_CONT_WRITE_DES_GEARS_COMMAND, 
+		&desired_gears_array[0], sizeof(desired_gears_array)))
+	{
+		NRF_LOG_ERROR("i2cApp_write_motor_controller_configs: i2cApp_i2c_write failed for GEAR_CONT_WRITE_DES_GEARS_COMMAND\r\n");
+		retcode = false;
+	}
+	
+	return retcode;
+}
+
 
 void i2cApp_wait(){
 	//nrf_delay_ms(500);

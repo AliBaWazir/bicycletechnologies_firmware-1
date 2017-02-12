@@ -33,11 +33,12 @@
 
 #include "algorithm_app.h"
 #include "cscs_app.h"
+#include "i2c_app.h"
 
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define ALGORITHM_APP_IN_SIM_MODE      1   //this flag is sut to true if the algorithm is in sim mode only
+#define ALGORITHM_APP_IN_SIM_MODE      0   //this flag is sut to true if the algorithm is in sim mode only. That means if no gear controller is used
 
 #define ALGORITHM_APP_SIM_ARRAY_SIZE   60 // size of arrays to store sim results
 #define DEFAULT_CADENCE_SETPOINT_RPM   80
@@ -147,6 +148,7 @@ static bool algorithmApp_gear_ratios_array_populate(void){
 //function to run the shifting algorithm given the current state
 static bool algorithmApp_run(void){
 	
+	bool retcode                                   = true;
 	int j                                          = 0;
 	float current_wheel_rpm                        = 0.0;
 	float current_cycling_cadence                  = 0.0;
@@ -160,6 +162,7 @@ static bool algorithmApp_run(void){
 		
     //if gear is locked keep the current state
 	if(gear_level_locked){
+		NRF_LOG_DEBUG("algorithmApp_run: gear level is locked\r\n");
 		//for now, return false
 		return false;
 	}
@@ -254,9 +257,15 @@ static bool algorithmApp_run(void){
 		//store results in simulation vectors
 		gear_index_after_shifting_array[sim_result_arrays_index]= current_wheel_gear_index;
 		cadence_after_shifting_array[sim_result_arrays_index]= cadence_after_shifting;
+	} else {
+		//send the new gear levels to the gear controller.
+		if(!i2cApp_write_desired_gears(0, current_wheel_gear_index)){
+			NRF_LOG_WARNING("algorithmApp_run: i2cApp_write_desired_gears failed\r\n");
+			retcode= false;
+		}
 	}
 	
-	return true;
+	return retcode;
 }
 
 static void algorithmApp_timer_handler( void * callback_data){
@@ -274,7 +283,7 @@ static void algorithmApp_timer_handler( void * callback_data){
 	(void)app_timer_stop(algorithm_app_timer_id);
 
 	
-	//run the gear shifting algorithm if a new CSCS measurement is received
+	//run the gear shifting algorithm if a new CSCS measurement is received since starting
 	if(cscsApp_is_new_cscs_meas_received()){
 		
 		algorithmApp_run();
