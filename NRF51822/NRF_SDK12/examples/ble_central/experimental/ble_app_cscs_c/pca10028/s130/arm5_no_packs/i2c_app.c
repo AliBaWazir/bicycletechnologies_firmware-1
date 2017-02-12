@@ -48,9 +48,13 @@
 #define TWI_INSTANCE_ID     0
 
 /* Common addresses definition I2C slaves*/
-#define GEAR_CONTROLLER_I2C_ADDR  (0x90U >> 1)
-
-#define GEAR_CONTROLLER_REG_GEARSTATUS      0x00U
+#define GEAR_CONT_I2C_ADDR                 (0x90U >> 1)
+#define GEAR_CONT_FRONT_GEARS_COUNT_COMMAND 0x01
+#define GEAR_CONT_BACK_GEARS_COUNT_COMMAND  0x02
+#define GEAR_CONT_FRONT_GEARS_POS_COMMAND   0x03    //Front Gear Positions
+#define GEAR_CONT_BACK_GEARS_POS_COMMAND    0x04    //Back Gear Positions
+#define GEAR_CONT_INIT_GEARS_POS_COMMAND    0x06    //Initial Gear Positions. This will be in gear number not ADC value			
+#define GEAR_CONT_GEARSTATE_COMMAND         0x20
 
 //SOC
 #define SOC_I2C_ADDR              (0xAA >> 1)
@@ -72,9 +76,24 @@
 typedef struct{
 	uint8_t bno055_id;
 	uint8_t soc_state_of_charge;
-	uint8_t gearContoller_front_gear;
-	uint8_t gearContoller_back_gear;
+	uint16_t gearContoller_gears_state;
 } i2c_slaves_data_t;
+
+typedef enum{
+	I2C_OPER_UNKNOWN = 0,
+	//bno055 operations
+	I2C_OPER_READ_BNO055_ID,
+	//SOC operations
+	I2C_OPER_READ_STATE_OF_CHARGE,
+	//motor controller operations
+	I2C_OPER_READ_SCREEN_ORIENT,
+	I2C_OPER_READ_CURR_GEARS_STATE,
+	I2C_OPER_READ_CURR_ADC_POSITION,
+	I2C_OPER_READ_MOTOR_TEMP,
+	I2C_OPER_READ_INT_FLAGS,
+	I2C_OPER_READ_LOG_SIZE, //number of bytes in a log
+	I2C_OPER_READ_LOG //log data
+} i2c_operation_type_e;
 
 /**********************************************************************************************
 * STATIC VARIABLES
@@ -90,7 +109,7 @@ static volatile bool m_xfer_done = false;
 static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
 
 /* Buffer for current gear status read from gear controller */
-static uint8_t m_gear_status;
+//static uint8_t m_gear_status;
 
 /* Struct to hold new data received from I2C slave devices*/
 i2c_slaves_data_t m_i2c_slaves_data_new;
@@ -99,6 +118,11 @@ i2c_slaves_data_t m_i2c_slaves_data_new;
 i2c_slaves_data_t m_i2c_slaves_data_old;
 
 static new_meas_callback_f    new_meas_cb    = NULL;    // Function pointer to the function to be called when a new measuremnt is obtained
+
+i2c_operation_type_e i2c_operation_type      = I2C_OPER_UNKNOWN;
+
+static uint8_t motor_cont_adc_pos_front_gears[MAX_GEARS_COUNT]= {100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static uint8_t motor_cont_adc_pos_back_gears[MAX_GEARS_COUNT]= {0, 20, 40, 60, 80, 100, 120, 140, 160, 0, 0, 0, 0, 0, 0, 0};
 
 /**********************************************************************************************
 * STATIC FUCNCTIONS
@@ -151,7 +175,7 @@ static bool i2cApp_i2c_scan_soc(uint8_t reg_addr, uint8_t* dest_array){
 /**
  * @brief Function for I2C read.
  */
-static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest_array){
+static bool i2cApp_i2c_read(uint8_t i2c_slave_address, uint8_t reg_addr, uint8_t* dest_array, uint8_t bytes_count){
 	
 	bool        ret        = true;
 	ret_code_t  err_code   = NRF_SUCCESS;
@@ -159,7 +183,7 @@ static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest
 
 	m_xfer_done = false;
 	//writing to pointer byte
-	err_code = nrf_drv_twi_tx(&m_twi, i2c_address, &reg_addr, sizeof(reg_addr), false);
+	err_code = nrf_drv_twi_tx(&m_twi, i2c_slave_address, &reg_addr, sizeof(reg_addr), false);
 	if (err_code != NRF_SUCCESS){
 		
 		NRF_LOG_ERROR("i2cApp_i2c_read: nrf_drv_twi_tx failed with err_code= %d\r\n", err_code);
@@ -184,9 +208,9 @@ static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest
 	
 	if(ret){
 		
-		//reading
+		//reading data
 		m_xfer_done = false;
-		err_code = nrf_drv_twi_rx(&m_twi, i2c_address, dest_array, sizeof(dest_array));
+		err_code = nrf_drv_twi_rx(&m_twi, i2c_slave_address, dest_array, bytes_count);
 		if (err_code != NRF_SUCCESS){
 			NRF_LOG_ERROR("i2cApp_i2c_read: nrf_drv_twi_rx failed with err_code= %d\r\n", err_code);
 			ret = false;
@@ -203,22 +227,66 @@ static bool i2cApp_i2c_read(uint8_t i2c_address, uint8_t reg_addr, uint8_t* dest
 /**
  * @brief Function for I2C read.
  */
-static void i2cApp_i2c_write(uint8_t i2c_address, uint8_t reg_addr, uint8_t* source_array){
+static bool i2cApp_i2c_write(uint8_t i2c_slave_address, uint8_t reg_addr, uint8_t* source_array, uint8_t bytes_count){
 	
-	/*TODO: modify this function to be similar to i2c_read*/
-	ret_code_t err_code;
+	bool        ret        = true;
+	ret_code_t  err_code   = NRF_SUCCESS;
 	
 	m_xfer_done = false;
 	//writing to pointer byte
-	err_code = nrf_drv_twi_tx(&m_twi, i2c_address, &reg_addr, 1, false);
-	APP_ERROR_CHECK(err_code);
-    while (m_xfer_done == false);
+	err_code = nrf_drv_twi_tx(&m_twi, i2c_slave_address, &reg_addr, sizeof(reg_addr), false);
+	if (err_code != NRF_SUCCESS){
+		
+		NRF_LOG_ERROR("i2cApp_i2c_write: nrf_drv_twi_tx failed to write to pointer byte. err_code= %d\r\n", err_code);
+		ret = false;
+		
+	} else{
+		
+		while (m_xfer_done == false);
+		/*
+		//run the waiting for acknowledgement counter
+		while ((!m_xfer_done) && (counter>0)){
+			counter--;
+		}
+		
+		if(counter == 0){
+			//no acknowldgement is received
+			NRF_LOG_ERROR("i2cApp_i2c_write: no acknowldgement is received for i2c slave adress= 0x%x\r\n", i2c_address);
+			ret = false; 
+		}
+		*/
+	}
 	
-	//writing data
-	m_xfer_done = false;
-	err_code = nrf_drv_twi_tx(&m_twi, i2c_address, source_array, sizeof(source_array), false);
-	APP_ERROR_CHECK(err_code);
-    while (m_xfer_done == false);
+	if(ret){
+		
+		//writing data
+		m_xfer_done = false;
+		err_code = nrf_drv_twi_tx(&m_twi, i2c_slave_address, source_array, bytes_count, false);
+		if (err_code != NRF_SUCCESS){
+			
+			NRF_LOG_ERROR("i2cApp_i2c_write: nrf_drv_twi_tx failed to write data. err_code= %d\r\n", err_code);
+			ret = false;
+			
+		} else{
+			
+			while (m_xfer_done == false);
+			/*
+			//run the waiting for acknowledgement counter
+			while ((!m_xfer_done) && (counter>0)){
+				counter--;
+			}
+			
+			if(counter == 0){
+				//no acknowldgement is received
+				NRF_LOG_ERROR("i2cApp_i2c_write: no acknowldgement is received for i2c slave adress= 0x%x\r\n", i2c_address);
+				ret = false; 
+			}
+			*/
+		}
+		
+	}
+	
+	return ret;
 }
 
 
@@ -287,10 +355,14 @@ static void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
         case NRF_DRV_TWI_EVT_DONE:
             if (p_event->xfer_desc.type == NRF_DRV_TWI_XFER_RX){
 				
-				if(p_event->xfer_desc.address == SOC_I2C_ADDR){
+				if((p_event->xfer_desc.address == SOC_I2C_ADDR) && (i2c_operation_type == I2C_OPER_READ_STATE_OF_CHARGE)){
 					soc_data_handler(m_i2c_slaves_data_new.soc_state_of_charge, m_i2c_slaves_data_old.soc_state_of_charge);
-				} else if(p_event->xfer_desc.address == BNO055_I2C_ADDR){
+					
+				} else if((p_event->xfer_desc.address == BNO055_I2C_ADDR) && (i2c_operation_type == I2C_OPER_READ_BNO055_ID)){
 					bno055_data_handler(m_i2c_slaves_data_new.bno055_id, m_i2c_slaves_data_old.bno055_id);
+					
+				} else if((p_event->xfer_desc.address == GEAR_CONT_I2C_ADDR) && (i2c_operation_type == I2C_OPER_READ_CURR_GEARS_STATE)){
+					;
 				} else{
 					/*TODO: add else if statements to handle other adresses*/
 					//data_handler(m_gear_status);
@@ -331,29 +403,52 @@ static bool i2cApp_poll_data(){
 	bool   retcode     = true;
 	
 	// save the recent values as old value for comparison
-	m_i2c_slaves_data_old.soc_state_of_charge = m_i2c_slaves_data_new.soc_state_of_charge;
-	m_i2c_slaves_data_old.bno055_id = m_i2c_slaves_data_new.bno055_id;
+	m_i2c_slaves_data_old.soc_state_of_charge      = m_i2c_slaves_data_new.soc_state_of_charge;
+	m_i2c_slaves_data_old.bno055_id                = m_i2c_slaves_data_new.bno055_id;
+	m_i2c_slaves_data_old.gearContoller_gears_state = m_i2c_slaves_data_new.gearContoller_gears_state;
 	
-	// read new values
-	if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, &(m_i2c_slaves_data_new.soc_state_of_charge))){
-		NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for SOC_I2C_ADDR\r\n");
+	/* read new values */
+	// read state of charge from SOC
+	i2c_operation_type = I2C_OPER_READ_STATE_OF_CHARGE;
+	if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, 
+		&(m_i2c_slaves_data_new.soc_state_of_charge), sizeof(m_i2c_slaves_data_new.soc_state_of_charge)))
+	{
+		NRF_LOG_ERROR("i2cApp_poll_data: i2cApp_i2c_read failed for SOC_I2C_ADDR\r\n");
+		i2c_operation_type= I2C_OPER_UNKNOWN;
 		retcode = false;
 	}
 	
 	/*
-	nrf_delay_ms(1);
+	// read BNO inclination angles
+	*TODO: create a function to read BNO inclination angles instead of ID*
 	if(retcode){
+		nrf_delay_ms(1);
+		i2c_operation_type = I2C_OPER_READ_BNO055_ID;
 		if(!i2cApp_i2c_read(BNO055_I2C_ADDR, BNO_ID_REG, &(m_i2c_slaves_data_new.bno055_id))){
-			NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for BNO055_I2C_ADDR\r\n");
+			NRF_LOG_ERROR("i2cApp_poll_data: i2cApp_i2c_read failed for BNO055_I2C_ADDR\r\n");
 			retcode = false;
 		}
 	}
 	*/
+	
+	// read gear status
+	if(retcode){
+		nrf_delay_ms(1);
+		i2c_operation_type = I2C_OPER_READ_CURR_GEARS_STATE;
+		if(!i2cApp_i2c_read(GEAR_CONT_I2C_ADDR, GEAR_CONT_GEARSTATE_COMMAND, 
+			(uint8_t*)(&(m_i2c_slaves_data_new.gearContoller_gears_state)), sizeof(m_i2c_slaves_data_new.gearContoller_gears_state)))
+		{
+			NRF_LOG_ERROR("i2cApp_poll_data: i2cApp_i2c_read failed for GEAR_CONTROLLER_I2C_ADDR\r\n");
+			retcode = false;
+		}
+	}
+	
+	
 	return retcode;
 	
 }
 
-static void polling_timer_handler( void * callback_data){
+static void i2cApp_polling_timer_handler( void * callback_data){
 	
 	uint32_t* polling_request_id_p = (uint32_t*) callback_data;
 	uint32_t  nrf_err              = NRF_SUCCESS;   
@@ -382,6 +477,59 @@ static void polling_timer_handler( void * callback_data){
 	}
 }
 
+
+static bool i2cApp_write_motor_controller_configs(){
+	
+	bool    retcode             = true;
+	uint8_t front_gears_count   = user_defined_bike_config_data.crank_gears_count;
+	uint8_t back_gears_count    = user_defined_bike_config_data.wheel_gears_count;
+	uint8_t init_gears_state[2] = {0, 3}; //0 for front gear because there is only one gear supported right now, 3 is for the back gear index
+	
+	if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, GEAR_CONT_FRONT_GEARS_COUNT_COMMAND, 
+		&front_gears_count, sizeof(front_gears_count)))
+	{
+		NRF_LOG_ERROR("i2cApp_write_motor_controller_configs: i2cApp_i2c_write failed for GEAR_CONT_FRONT_GEARS_COUNT_COMMAND\r\n");
+		retcode = false;
+	}
+	
+	if(retcode){
+		if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, GEAR_CONT_BACK_GEARS_COUNT_COMMAND, 
+			&back_gears_count, sizeof(back_gears_count)))
+		{
+			NRF_LOG_ERROR("i2cApp_write_motor_controller_configs: i2cApp_i2c_write failed for GEAR_CONT_BACK_GEARS_COUNT_COMMAND\r\n");
+			retcode = false;
+		}
+	}
+	
+	if(retcode){
+		if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, GEAR_CONT_FRONT_GEARS_POS_COMMAND, 
+			&motor_cont_adc_pos_front_gears[0], front_gears_count))
+		{
+			NRF_LOG_ERROR("i2cApp_write_motor_controller_configs: i2cApp_i2c_write failed for GEAR_CONT_FRONT_GEARS_POS_COMMAND\r\n");
+			retcode = false;
+		}
+	}
+	
+	if(retcode){
+		if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, GEAR_CONT_BACK_GEARS_POS_COMMAND, 
+			&motor_cont_adc_pos_back_gears[0], back_gears_count))
+		{
+			NRF_LOG_ERROR("i2cApp_write_motor_controller_configs: i2cApp_i2c_write failed for GEAR_CONT_BACK_GEARS_POS_COMMAND\r\n");
+			retcode = false;
+		}
+	}
+	
+	if(retcode){
+		if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, GEAR_CONT_INIT_GEARS_POS_COMMAND, 
+			&init_gears_state[0], sizeof(init_gears_state)))
+		{
+			NRF_LOG_ERROR("i2cApp_write_motor_controller_configs: i2cApp_i2c_write failed for GEAR_CONT_INIT_GEARS_POS_COMMAND\r\n");
+			retcode = false;
+		}
+	}
+	
+	return retcode;
+}
 /**********************************************************************************************
 * PUBLIC FUCNCTIONS
 ***********************************************************************************************/
@@ -414,7 +562,7 @@ void i2cApp_wait(){
  */
 bool i2cApp_init(void){
 	
-	bool         ret                = true;
+	bool         ret              = true;
 	ret_code_t   nrf_err          = NRF_SUCCESS;
 	
 	twi_init();
@@ -425,31 +573,37 @@ bool i2cApp_init(void){
 	
 	if (I2C_IN_SIMULATION_MODE){
 		
-		//read id register of BNO055. For testing purpose only
-		//i2cApp_i2c_read(BNO055_I2C_ADDR, 0xAB, &m_gear_status);
-		
 		//read stateOfCharge register of SOC. For testing purpose only
 		m_i2c_slaves_data_old.soc_state_of_charge= m_i2c_slaves_data_new.soc_state_of_charge;
-		if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, &(m_i2c_slaves_data_new.soc_state_of_charge))){
+		i2c_operation_type = I2C_OPER_READ_STATE_OF_CHARGE;
+		if(!i2cApp_i2c_read(SOC_I2C_ADDR, STATE_OF_CHARGE_REG, 
+			&(m_i2c_slaves_data_new.soc_state_of_charge), sizeof(m_i2c_slaves_data_new.soc_state_of_charge)))
+		{
 			NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_read failed for SOC_I2C_ADDR\r\n");
+			i2c_operation_type = I2C_OPER_UNKNOWN;
 		}
 	
 		ret = i2cSimDriver_init(&m_twi, (bool*)&m_xfer_done);
 		
 	} else{
 		
+		//write config data to motor controller
+		if(!i2cApp_write_motor_controller_configs()){
+			NRF_LOG_ERROR("i2cApp_init: i2cApp_write_motor_controller_configs failed\r\n");
+		}
+		
 		//use timer to poll data from SOC after the specified time interval
 		nrf_err = app_timer_create(&i2c_polling_timer_id,
 									APP_TIMER_MODE_SINGLE_SHOT,
-									polling_timer_handler);
+									i2cApp_polling_timer_handler);
 		if (nrf_err != NRF_SUCCESS){
-			NRF_LOG_DEBUG("i2cApp_init: app_timer_create failed with error= %d\r\n", nrf_err);
+			NRF_LOG_ERROR("i2cApp_init: app_timer_create failed with error= %d\r\n", nrf_err);
 			ret = false;
 		}
 		
 	    if(ret){
 			//pull data then start the timer
-			polling_timer_handler(NULL);
+			i2cApp_polling_timer_handler(NULL);
 		}
 		
 	}
