@@ -37,7 +37,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define I2C_IN_SIMULATION_MODE   0        /*This is set to 1 only if the I2C app is running in debugging mode 
+#define I2C_IN_SIMULATION_MODE   1        /*This is set to 1 only if the I2C app is running in debugging mode 
                                            *to charecterize the I2C link between nRF module and gear controller
 										   */
 

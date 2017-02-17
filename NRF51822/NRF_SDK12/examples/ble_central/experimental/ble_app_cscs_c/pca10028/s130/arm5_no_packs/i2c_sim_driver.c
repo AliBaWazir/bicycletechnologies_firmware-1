@@ -103,7 +103,7 @@ bool i2cSimDriver_init(const nrf_drv_twi_t* twi, bool* xfer_done_p){
 	bool         ret_code         = true;
 	ret_code_t   nrf_err          = NRF_SUCCESS;
 	
-	i2cSimDriver_scan_avail_slave_addr(twi, xfer_done_p, 0x00);
+	//i2cSimDriver_scan_avail_slave_addr(twi, xfer_done_p, 0x00);
 		
 	return ret_code;	
 }
