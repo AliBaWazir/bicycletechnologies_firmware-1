@@ -14,8 +14,8 @@ extern "C" {
 #define CRANK_IDENTIFIER 0xCA
 #define WHEEL_IDENTIFIER 0xEE
 	
-#define MAX_GEARS_COUNT  16    //defines max of number of gears in crank/wheel
-
+#define MAX_GEARS_COUNT     16    //defines max of number of gears in crank/wheel
+#define MAX_BLE_SENSOR_MEAS 0xEF  // max BLE sensor measuremnt
 /**********************************************************************************************
 * CSCS and HR
 ***********************************************************************************************/

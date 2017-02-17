@@ -78,8 +78,13 @@ static void hrsApp_hrs_c_evt_handler(ble_hrs_c_t * p_hrs_c, ble_hrs_c_evt_t * p_
         }break; //BLE_HRS_C_EVT_DISCOVERY_COMPLETE
 
         case BLE_HRS_C_EVT_HRM_NOTIFICATION:
-        {
-            inst_hr_value.value = p_hrs_c_evt->params.hrm.hr_value;
+        {	
+			if(p_hrs_c_evt->params.hrm.hr_value > MAX_BLE_SENSOR_MEAS){
+				inst_hr_value.value = MAX_BLE_SENSOR_MEAS;
+			} else{
+				inst_hr_value.value = p_hrs_c_evt->params.hrm.hr_value;
+			}
+            
 			inst_hr_value.is_read= false;
 			
 			NRF_LOG_INFO("New Heart Rate reading= %d (bpm)\r\n", inst_hr_value.value);
