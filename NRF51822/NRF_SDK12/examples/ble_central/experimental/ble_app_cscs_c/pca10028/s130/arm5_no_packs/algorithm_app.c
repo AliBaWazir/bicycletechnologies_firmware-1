@@ -38,7 +38,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define ALGORITHM_APP_IN_SIM_MODE      0   //this flag is sut to true if the algorithm is in sim mode only. That means if no gear controller is used
+#define ALGORITHM_APP_IN_SIM_MODE      1   //this flag is sut to true if the algorithm is in sim mode only. That means if no gear controller is used
 
 #define ALGORITHM_APP_SIM_ARRAY_SIZE   60 // size of arrays to store sim results
 #define DEFAULT_CADENCE_SETPOINT_RPM   80
