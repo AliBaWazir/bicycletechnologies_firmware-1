@@ -23,6 +23,7 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_delay.h"
+#include "ble_hci.h"
 
 #include "cscs_app.h"
 #include "spis_sim_driver.h"
@@ -182,6 +183,8 @@ static void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool dat
  */
 static void spisApp_event_handler(nrf_drv_spis_event_t event)
 {
+	uint32_t nrf_refcode = NRF_SUCCESS;
+	
     if (event.evt_type == NRF_DRV_SPIS_XFER_DONE){
 		
 		uint8_t command = m_rx_buf[0];
@@ -348,7 +351,16 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 								   m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX]);
 				}
 			break;//SPI_CONNECT_DEVICE
-						
+			
+			case SPI_FORGET_DEVICE:
+				nrf_refcode= sd_ble_gap_disconnect(m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX],
+												BLE_HCI_LOCAL_HOST_TERMINATED_CONNECTION);
+				if(nrf_refcode != NRF_SUCCESS){
+					NRF_LOG_ERROR("spisApp_event_handler:  failed to diconnect from device with index=%d\r\n",
+									m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX]);
+				}
+			break;//SPI_FORGET_DEVICE
+				
 			default:
 				NRF_LOG_ERROR("spisApp_event_handler: command in rx buffer is unknown. command= 0x%x\r\n",command);
 			break;
