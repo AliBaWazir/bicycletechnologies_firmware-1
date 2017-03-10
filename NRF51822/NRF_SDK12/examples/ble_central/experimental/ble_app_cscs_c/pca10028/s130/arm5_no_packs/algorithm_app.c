@@ -67,7 +67,7 @@ static bool  gear_level_locked = false;                     /*TODO: this boolean
 															 */
 
 static user_defined_bike_config_data_t default_bike_config;      //Struct will be initialized in the init function
-static uint32_t cadence_setpoint_value = DEFAULT_CADENCE_SETPOINT_RPM;  //For now, if cadence setpoint is not already set, set it to default value
+static uint32_t default_cadence_setpoint_value = DEFAULT_CADENCE_SETPOINT_RPM;  //For now, if cadence setpoint is not already set, set it to default value
 
 /*              | wheel gears -->
  *crankset gears|-------------------------------
@@ -444,7 +444,7 @@ bool algorithmApp_init(void){
 			
 			//TODO: figure out a way to ask user to enter cadence setpoint for fisrt time use.
 			
-			if(!applicationFdsApp_fds_store(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*)&cadence_setpoint_value)){
+			if(!applicationFdsApp_fds_store(USER_DEFINED_CADENCE_SETPOINT, (uint8_t*)&default_cadence_setpoint_value)){
 				NRF_LOG_ERROR("algorithmApp_init: applicationFdsApp_fds_store() failed to write cadence_setpoint_rpm\r\n");
 				ret_code= false;
 			} else{
