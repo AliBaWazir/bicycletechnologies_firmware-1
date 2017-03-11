@@ -530,6 +530,8 @@ void nrfSetCadenceSetPoint(){
 	command[0] = SET_CADENCE_SETPOINT_MSG;
 	command[1] = spi_Data.cadenceSetPoint.value;
 	nrfSend(&command[0], 2);
+	getRTC(&RTCD_SPI, TM_RTC_Format_BIN);
+	spi_Data.cadenceSetPoint.age = TM_RTC_GetUnixTimeStamp(&RTCD_SPI);
 }
 
 void nrfScan(){

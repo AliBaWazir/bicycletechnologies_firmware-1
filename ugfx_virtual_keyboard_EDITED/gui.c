@@ -1736,9 +1736,9 @@ void guiEventLoop(void)
 				heartrateOutput = messageReceived->value;
 			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
 				cadenceSetPointCurrent = messageReceived->value;
-				if(gwinGetVisible(containers[CLOCK_CONTAINER])){
+				if(gwinGetVisible(containers[CADENCE_SETPOINT_CONTAINER])){
 					formatString(gearBuffer, sizeof(gearBuffer), "%d", cadenceSetPointCurrent);
-					gwinSetText(labels[3], dataOutput, TRUE);
+					gwinSetText(labels[3], gearBuffer, TRUE);
 				}
 			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
 				batteryOutput = messageReceived->value;
