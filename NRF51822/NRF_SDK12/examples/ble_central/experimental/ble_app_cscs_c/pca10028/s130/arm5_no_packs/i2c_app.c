@@ -432,6 +432,7 @@ static bool i2cApp_poll_data(){
 	}
 	*/
 	
+	/*
 	// read gear status
 	if(retcode){
 		nrf_delay_ms(1);
@@ -443,7 +444,7 @@ static bool i2cApp_poll_data(){
 			retcode = false;
 		}
 	}
-	
+	*/
 	
 	return retcode;
 	
