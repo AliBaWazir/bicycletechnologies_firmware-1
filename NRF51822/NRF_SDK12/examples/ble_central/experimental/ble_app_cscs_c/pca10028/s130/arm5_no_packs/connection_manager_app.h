@@ -38,6 +38,7 @@ bool connManagerApp_advertised_device_store(advertised_device_type_e device_type
 advertised_device_type_e connManagerApp_get_device_type (const ble_gap_addr_t *peer_addr);
 void connManagerApp_on_connection(const ble_gap_evt_t* evt);
 void connManagerApp_on_disconnection (ble_gap_evt_t* evt);
+bool connManagerApp_is_hr_periph_connected(void);
 bool connManagerApp_init(void);
 
 

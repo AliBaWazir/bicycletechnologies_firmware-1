@@ -31,6 +31,8 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
+//[http://www.heart.org/HEARTORG/HealthyLiving/PhysicalActivity/FitnessBasics/Target-Heart-Rates_UCM_434341_Article.jsp#.WMMsC_nyuUk] 
+#define AVERAGE_HR_READING_BPM         80   //This is the average human heart rate during rest
 
 
 /**********************************************************************************************
@@ -196,6 +198,7 @@ void hrsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 }
 
 //function to return current instantanious heart rate
+//note: this function is only called by SPI app
 uint8_t hrsApp_get_current_hr_bpm(void){
 	
 	uint8_t ret_value = 0;
@@ -208,6 +211,12 @@ uint8_t hrsApp_get_current_hr_bpm(void){
 		inst_hr_value.is_read= true;
 	}		
 	return ret_value;
+}
+
+//function to return deviation of current HR reading relative to the average value
+float hrsApp_get_curr_hr_deviation(void){
+	
+	return (inst_hr_value.value-AVERAGE_HR_READING_BPM)/(AVERAGE_HR_READING_BPM);
 }
 
 void hrsApp_assing_new_meas_callback(new_meas_callback_f cb){

@@ -32,16 +32,20 @@
 #include "application_fds_app.h"
 
 #include "algorithm_app.h"
+#include "connection_manager_app.h"
 #include "cscs_app.h"
+#include "hrs_app.h"
 #include "i2c_app.h"
 
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define ALGORITHM_APP_IN_SIM_MODE      1   //this flag is sut to true if the algorithm is in sim mode only. That means if no gear controller is used
+#define ALGORITHM_APP_IN_SIM_MODE      1   //this flag is set to true if the algorithm is in sim mode only. That means if no gear controller is used
+#define ALGORITHM_USES_HR_READING      1   //this flag is set to true only if alogrithm app uses HR reading to offset cadence_setpoint_rpm set by user
 
-#define ALGORITHM_APP_SIM_ARRAY_SIZE   60 // size of arrays to store sim results
+#define ALGORITHM_APP_SIM_ARRAY_SIZE   60  //size of arrays to store sim results
 #define DEFAULT_CADENCE_SETPOINT_RPM   80
+#define MAX_CADENCE_SETPOINT_OFFSET    10  //max offset for cadence setpoint
 
 //Timer Defines
 #define APP_TIMER_PRESCALER            0               /**< Value of the RTC1 PRESCALER register. If changed, remember to change prescaler in main.c*/
@@ -145,11 +149,40 @@ static bool algorithmApp_gear_ratios_array_populate(void){
 	return retcode;
 }
 
+static float algorithmApp_get_cadence_setpoint_rpm(){
+	
+	float result             = 0.0;
+	float curr_hr_deviation  = 0.0;
+		
+	if(ALGORITHM_USES_HR_READING && connManagerApp_is_hr_periph_connected()){
+		//offset the user-set cadence_setpoint_rpm at normal HR by the HR reading offset
+		curr_hr_deviation= hrsApp_get_curr_hr_deviation();
+		//bondary condition
+		if (curr_hr_deviation < 1.0 && curr_hr_deviation > -1.0){
+			result= cadence_setpoint_rpm - (hrsApp_get_curr_hr_deviation()*MAX_CADENCE_SETPOINT_OFFSET);
+		} else if (curr_hr_deviation > 0){
+			//poitive offset
+			result= cadence_setpoint_rpm - MAX_CADENCE_SETPOINT_OFFSET;
+		} else if (curr_hr_deviation < 0){
+			//negative offset
+			result= cadence_setpoint_rpm + MAX_CADENCE_SETPOINT_OFFSET;
+		} else{
+			//this should not be reached
+			result= cadence_setpoint_rpm;
+		}
+	} else{
+		result= cadence_setpoint_rpm;
+	}
+	
+	return result;
+}
+
 //function to run the shifting algorithm given the current state
 static bool algorithmApp_run(void){
 	
 	bool retcode                                   = true;
 	int j                                          = 0;
+	float current_cadence_setpoint_rpm             = 0;
 	float current_wheel_rpm                        = 0.0;
 	float current_cycling_cadence                  = 0.0;
 	float current_cycling_cadence_error            = 0.0;
@@ -169,6 +202,9 @@ static bool algorithmApp_run(void){
 	
 	//NRF_LOG_DEBUG("algorithmApp_run: called\r\n");
 	
+	//calculate current cadence setpoint
+	current_cadence_setpoint_rpm= algorithmApp_get_cadence_setpoint_rpm();
+	
 	current_wheel_rpm = cscsApp_get_current_wheel_rpm();
 	//NRF_LOG_DEBUG("algorithmApp_run: current wheel rpm= %d\r\n", current_wheel_rpm);
 		
@@ -176,7 +212,7 @@ static bool algorithmApp_run(void){
 	//NRF_LOG_DEBUG("algorithmApp_run: current_cycling_cadence= %d\r\n", current_cycling_cadence);
 		
 	//calculate current cycling cadence relative error
-	current_cycling_cadence_error = (float) ((current_cycling_cadence - cadence_setpoint_rpm));
+	current_cycling_cadence_error = (float) ((current_cycling_cadence - current_cadence_setpoint_rpm));
 	//NRF_LOG_DEBUG("algorithmApp_run: current_cycling_cadence_error= %d\r\n", current_cycling_cadence_error);
 		
 	if(current_cycling_cadence_error == 0){
@@ -205,7 +241,7 @@ static bool algorithmApp_run(void){
 			//store previous expected cycling cadence error
 			expected_cycling_cadence_error_previous= expected_cycling_cadence_error;
 			//calculate expected cycling cadence relative error
-			expected_cycling_cadence_error = (float) (expected_cycling_cadence - cadence_setpoint_rpm);
+			expected_cycling_cadence_error = (float) (expected_cycling_cadence - current_cadence_setpoint_rpm);
 			//check for sign change in expected relative error
 			if ((expected_cycling_cadence_error>0 && current_cycling_cadence_error<0) || 
 				(expected_cycling_cadence_error<0 && current_cycling_cadence_error>0))

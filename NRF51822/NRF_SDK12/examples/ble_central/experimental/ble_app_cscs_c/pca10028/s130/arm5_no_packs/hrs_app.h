@@ -26,6 +26,7 @@ void hrsApp_on_db_disc_evt(const ble_db_discovery_evt_t *p_evt);
 void hrsApp_on_ble_event(const ble_evt_t *p_ble_evt);
 
 uint8_t hrsApp_get_current_hr_bpm(void);
+float hrsApp_get_curr_hr_deviation(void);
 
 void hrsApp_assing_new_meas_callback(new_meas_callback_f cb);
 

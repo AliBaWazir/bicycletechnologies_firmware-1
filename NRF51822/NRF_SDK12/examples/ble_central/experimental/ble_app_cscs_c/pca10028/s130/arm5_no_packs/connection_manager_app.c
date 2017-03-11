@@ -742,6 +742,9 @@ void connManagerApp_on_disconnection(ble_gap_evt_t* evt){
 	*/
 }
 
+bool connManagerApp_is_hr_periph_connected(){
+	return hr_peripheral_connected;
+}
 
 /**
  * @brief Connection Manager App initialization.
