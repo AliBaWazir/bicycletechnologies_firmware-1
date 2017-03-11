@@ -37,7 +37,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define I2C_IN_SIMULATION_MODE   1        /*This is set to 1 only if the I2C app is running in debugging mode 
+#define I2C_IN_SIMULATION_MODE   0        /*This is set to 1 only if the I2C app is running in debugging mode 
                                            *to charecterize the I2C link between nRF module and gear controller
 										   */
 
@@ -608,10 +608,13 @@ bool i2cApp_init(void){
 		
 	} else{
 		
+		//un-comment if motor controller is used
+		/*
 		//write config data to motor controller
 		if(!i2cApp_write_motor_controller_configs()){
 			NRF_LOG_ERROR("i2cApp_init: i2cApp_write_motor_controller_configs failed\r\n");
 		}
+		*/
 		
 		//use timer to poll data from SOC after the specified time interval
 		nrf_err = app_timer_create(&i2c_polling_timer_id,
