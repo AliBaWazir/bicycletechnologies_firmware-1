@@ -38,7 +38,7 @@
 
 #define NRF_SCAN_MSG							0x2A
 #define NRF_CONNECT_MSG						0x2B
-#define	NRF_FORGET_MSG						0x2C
+#define	NRF_DISCONNECT_MSG				0x2C
 
 #define MAXIMUM_BLUETOOTH					0x0A
 
@@ -54,6 +54,6 @@ extern osMessageQId  spiQueue;
 extern osMessageQId  guiQueue;
 extern osMessageQId  gpsQueue;
 
-extern uint8_t devicesMAC[10][6];
+extern uint8_t devicesMAC[10][7];
 
 #endif /* _MSG_H_ */

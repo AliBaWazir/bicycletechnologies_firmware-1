@@ -14,6 +14,8 @@
 #include "msg.h"
 #include "romfs_files.h"
 
+//#define NO_MAPS
+
 #define MAP_CENTERX 552
 #define MAP_CENTERY 240
 
@@ -48,8 +50,8 @@ gdispImage returnImage;
 static gdispImage dataIcons;
 
 uint8_t devicesCount;
-uint8_t devicesMAC[10][6];
-char bluetoothDevices[18];
+uint8_t devicesMAC[10][7];
+char bluetoothDevices[25];
 
 // GEAR STATUS SPECIALS
 GHandle gearsChangesFrontGearLabel[MAXIMUM_FRONT_GEARS+1];
@@ -119,6 +121,7 @@ void handleMenuSwitches();
 void displayBattery(uint8_t currentBatt);
 void showCurrentGears();
 void connectBluetooth();
+void disconnectBluetooth();
 void displayDataIcons();
 
 bool interrupted;
@@ -443,7 +446,7 @@ static void createBluetooth(void)
 	wi.g.show = TRUE;
 	wi.g.x = 40;
 	wi.g.y = 25;
-	wi.g.width = 200;
+	wi.g.width = 135;
 	wi.g.height = 100;
 	wi.g.parent = containers[BLUETOOTH_CONTAINER];
 	wi.text = "Scan";
@@ -455,17 +458,31 @@ static void createBluetooth(void)
 	
 	// create button widget: buttons[2]
 	wi.g.show = TRUE;
-	wi.g.x = 255;
+	wi.g.x = 180;
 	wi.g.y = 25;
-	wi.g.width = 200;
+	wi.g.width = 135;
 	wi.g.height = 100;
 	wi.g.parent = containers[BLUETOOTH_CONTAINER];
-	wi.text = "Connect";
+	wi.text = "Conn.";
 	wi.customDraw = gwinButtonDraw_Rounded;
 	wi.customParam = 0;
 	wi.customStyle = &belize;
 	buttons[2] = gwinButtonCreate(0, &wi);
 	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular40"));
+	
+	// create button widget: buttons[3]
+	wi.g.show = TRUE;
+	wi.g.x = 320;
+	wi.g.y = 25;
+	wi.g.width = 135;
+	wi.g.height = 100;
+	wi.g.parent = containers[BLUETOOTH_CONTAINER];
+	wi.text = "disCon.";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	buttons[3] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[3], gdispOpenFont("LatoRegular40"));
 }
 
 static void createBluetoothList(void){
@@ -500,6 +517,13 @@ static void createBluetoothList(void){
 																																												devicesMAC[count][3],
 																																												devicesMAC[count][4],
 																																												devicesMAC[count][5]);
+			if(devicesMAC[count][6] == 0){
+				strcat(bluetoothDevices, " (N/A)");
+			}else if(devicesMAC[count][6] == 1){
+				strcat(bluetoothDevices, " (CSCS)");
+			}else if(devicesMAC[count][6] == 2){
+				strcat(bluetoothDevices, " (HR)");
+			}
 			gwinListAddItem(lists[1], bluetoothDevices, TRUE);
 			gwinListSetSelected(lists[1], count, FALSE);
 		}
@@ -1297,6 +1321,7 @@ static void destroyBluetooth(void)
 	lists[1] = NULL;
 	gwinDestroy(buttons[1]);
 	gwinDestroy(buttons[2]);
+	gwinDestroy(buttons[3]);
 	gwinHide(containers[BLUETOOTH_CONTAINER]);
 }
 
@@ -1675,11 +1700,13 @@ void guiEventLoop(void)
     if(gwinGetVisible(containers[MAP_CONTAINER])){
 			if((rtcTime - oldRTCTimeGPS) > GUI_GPS_TIME){
 				gfxSleepMilliseconds(3);
+#ifndef NO_MAPS
 				// Send GPS Message
 				mapUpdateInProgress = true;
 				messageSent = (message_t*)osPoolAlloc(mpool);
 				messageSent->msg_ID = GET_GPS_MSG;
 				osMessagePut(gpsQueue, (uint32_t)messageSent, 0);
+#endif
 				oldRTCTimeGPS = rtcTime;
 			}
 		}
@@ -1848,7 +1875,9 @@ void button3Call(){
 	}else if(gwinGetVisible(containers[CLOCK_CONTAINER])){
 		// Clock Changes Selection Down
 		if(clockChangeSelectedItem != 4){clockChangeSelectedItem++;}
-	}	
+	}else if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
+		disconnectBluetooth();
+	}
 }
 
 void button4Call(){
@@ -2024,6 +2053,20 @@ void connectBluetooth(){
 			if(gwinListItemIsSelected(lists[1], count)){
 				messageSent = (message_t*)osPoolAlloc(mpool);
 				messageSent->msg_ID = NRF_CONNECT_MSG;
+				messageSent->value = count;
+				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+			}
+		}
+	}
+}
+
+void disconnectBluetooth(){
+	message_t *messageSent;
+	if(lists[1] != NULL){
+		for(uint8_t count = 0; count < devicesCount; count++){
+			if(gwinListItemIsSelected(lists[1], count)){
+				messageSent = (message_t*)osPoolAlloc(mpool);
+				messageSent->msg_ID = NRF_DISCONNECT_MSG;
 				messageSent->value = count;
 				osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 			}

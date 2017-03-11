@@ -34,7 +34,7 @@ void nrfSetCadenceSetPoint();
 
 void nrfScan();
 void nrfConnect(uint8_t device);
-void nrfForget(uint8_t device);
+void nrfDisconnect(uint8_t device);
 bool nrfGetAdvertisingCount();
 void nrfGetMacAddress();
 
@@ -148,12 +148,12 @@ void runSPI(){
 #endif
 				TRACE("SPI:,NRF_CONNECT_MSG\n");
 				nrfConnect(messageReceived->value);
-			}else if(messageReceived->msg_ID == NRF_FORGET_MSG){
+			}else if(messageReceived->msg_ID == NRF_DISCONNECT_MSG){
 #ifdef DEBUG
 				TM_USART_Puts(USART3, "SPI:,NRF_FORGET_MSG\n");
 #endif
 				TRACE("SPI:,NRF_FORGET_MSG\n");
-				nrfForget(messageReceived->value);
+				nrfDisconnect(messageReceived->value);
 			}
 			osPoolFree(mpool, messageReceived);
 		}
@@ -476,7 +476,7 @@ void nrfGetMacAddress(){
 	for(uint8_t count = 0; count < spi_Data.bluetooth.deviceCount; count++){
 		command[1] = count;
 		nrfSend(&command[0], 2);
-		nrfReceive(&devicesMAC[count][0], 6);
+		nrfReceive(&devicesMAC[count][0], 7);
 		TRACE("SPI:,Device %d,MAC Address; %02X:%02X:%02X:%02X:%02X:%02X\n", count, devicesMAC[count][0], 
 																																		devicesMAC[count][1], 
 																																		devicesMAC[count][2], 
@@ -542,9 +542,9 @@ void nrfConnect(uint8_t device){
 	nrfSend(&command[0], 2);
 }
 
-void nrfForget(uint8_t device){
+void nrfDisconnect(uint8_t device){
 	uint8_t command[2];
-	command[0] = NRF_FORGET_MSG;
+	command[0] = NRF_DISCONNECT_MSG;
 	command[1] = device;
 	nrfSend(&command[0], 2);
 }

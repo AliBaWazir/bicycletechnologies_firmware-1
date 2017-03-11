@@ -5,11 +5,9 @@
 #include "msg.h"
 #include "gps.h"
 
-#define M_PI (3.141592653589793)
+#define SIMULATE_GPS
 
-#define MAP_TILE_TEST_CANAL
-//#define MAP_TILE_TEST_MAYTHAM
-//#define MAP_TILE_TEST_JON
+#define M_PI (3.141592653589793)
 
 my_GPS gpsData;
 static TM_GPS_Data_t GPS_Data;
@@ -37,6 +35,12 @@ int oldtilex=0;
 int oldtiley=0;
 int oldtilexOffset=0;
 int oldtileyOffset=0;
+
+int zoom_level = 14;
+
+#ifdef SIMULATE_GPS
+int mapDisplayCount = 0;
+#endif
 
 int long2tilex(double lon, int zoomlevel, int *tileOffset) 
 { 
@@ -96,7 +100,10 @@ void retrieveGPS(){
 	TM_GPS_Result_t result, current;
 	char buffer[40];
 	float temp;
-		
+	
+#ifdef SIMULATE_GPS
+	sendGPSMSG();
+#else	
 	TM_DELAY_SetTime(0);
 	
 	/* Update GPR data */
@@ -170,7 +177,7 @@ void retrieveGPS(){
 	} else if (result == TM_GPS_Result_OldData && current != TM_GPS_Result_OldData) {
 		current = TM_GPS_Result_OldData;
 	}
-	sendGPSMSG();
+#endif
 }
 
 void sendGPSMSG(){
@@ -193,27 +200,36 @@ void newGPSData(){
 	int tilexOffset;
 	int tileyOffset;
 
-#ifdef MAP_TILE_TEST_CANAL
+#ifdef SIMULATE_GPS
 	gpsData.Validity = true;
-	gpsData.Latitude = 45.384365;
-	gpsData.Longitude = -75.698600;
-#endif
-#ifdef MAP_TILE_TEST_MAYTHAM
-	gpsData.Validity = true;
-	gpsData.Latitude = 45.378962;
-	gpsData.Longitude = -75.667347;
-#endif
-#ifdef MAP_TILE_TEST_JON
-	gpsData.Validity = true;
-	gpsData.Latitude = 45.409269;
-	gpsData.Longitude = -75.706862;
+	if(mapDisplayCount == 0){
+		gpsData.Latitude = 45.384365;
+		gpsData.Longitude = -75.698600;
+	}else if(mapDisplayCount == 1){
+		gpsData.Latitude = 45.424616;
+		gpsData.Longitude = -75.699481;
+	}else if(mapDisplayCount == 2){
+		gpsData.Latitude = 45.416566;
+		gpsData.Longitude = -75.717012;
+	}else if(mapDisplayCount == 3){
+		gpsData.Latitude = 45.398792;
+		gpsData.Longitude = -75.685871;
+	}
+	mapDisplayCount++;
+	if(mapDisplayCount == 4){
+		mapDisplayCount = 0;
+		zoom_level++;
+		if(zoom_level == 17){
+			zoom_level = 12;
+		}
+	}
 #endif
 	if(!gpsData.Validity){
 			//
 	}else{
-			tilex = long2tilex(gpsData.Longitude, ZOOM_LEVEL, &tilexOffset);
-			tiley = lat2tiley(gpsData.Latitude, ZOOM_LEVEL, &tileyOffset);
-			TRACE("Zoom=%d,TileX=%d,TileY=%d\n", ZOOM_LEVEL, tilex, tiley);
+			tilex = long2tilex(gpsData.Longitude, zoom_level, &tilexOffset);
+			tiley = lat2tiley(gpsData.Latitude, zoom_level, &tileyOffset);
+			TRACE("Zoom=%d,TileX=%d,TileY=%d\n", zoom_level, tilex, tiley);
 			if((tilex != oldtilex) && (tiley != oldtiley)){
 				drawTilePixmap(tilex, tiley, tilexOffset, tileyOffset);
 				oldtilex=tilex;
@@ -247,77 +263,88 @@ void drawTilePixmap(int tilex, int tiley, int tilexOffset, int tileyOffset)
 	
 	
 	// X11
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex-1, tiley-1);
-	gdispImageOpenFile(&myImage[0], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[0], leftX, topY, xShowMap, yShowMap, xTileStartOffset, yTileStartOffset);
-	gdispImageClose(&myImage[0]);
-	//gdispImageCache(&myImage[0]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex-1, tiley-1);
+	if(gdispImageOpenFile(&myImage[0], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[0], leftX, topY, xShowMap, yShowMap, xTileStartOffset, yTileStartOffset);
+		gdispImageClose(&myImage[0]);
+		//gdispImageCache(&myImage[0]);
+	}
 	
 	// X9
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex-1, tiley);
-	gdispImageOpenFile(&myImage[1], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[1], leftX, middleY, xShowMap, 256, xTileStartOffset, 0);
-	gdispImageClose(&myImage[1]);
-	//gdispImageCache(&myImage[1]);
-	
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex-1, tiley);
+	if(gdispImageOpenFile(&myImage[1], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[1], leftX, middleY, xShowMap, 256, xTileStartOffset, 0);
+		gdispImageClose(&myImage[1]);
+		//gdispImageCache(&myImage[1]);
+	}
+
 	// X10
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex-1, tiley+1);
-	gdispImageOpenFile(&myImage[2], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[2], leftX, bottomY, xShowMap, yTileStartOffset, xTileStartOffset, 0);
-	gdispImageClose(&myImage[2]);
-	//gdispImageCache(&myImage[2]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex-1, tiley+1);
+	if(gdispImageOpenFile(&myImage[2], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[2], leftX, bottomY, xShowMap, yTileStartOffset, xTileStartOffset, 0);
+		gdispImageClose(&myImage[2]);
+		//gdispImageCache(&myImage[2]);
+	}
 	
 	// X5
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex, tiley-1);
-	gdispImageOpenFile(&myImage[3], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[3], centerX, topY, 256, yShowMap, 0, yTileStartOffset);
-	gdispImageClose(&myImage[3]);
-	//gdispImageCache(&myImage[3]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex, tiley-1);
+	if(gdispImageOpenFile(&myImage[3], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[3], centerX, topY, 256, yShowMap, 0, yTileStartOffset);
+		gdispImageClose(&myImage[3]);
+		//gdispImageCache(&myImage[3]);
+	}
 	
 	// X1
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex, tiley);
-	gdispImageOpenFile(&myImage[4], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[4], centerX, middleY, 256, 256, 0, 0);
-	gdispImageClose(&myImage[4]);
-	//gdispImageCache(&myImage[4]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex, tiley);
+	if(gdispImageOpenFile(&myImage[4], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[4], centerX, middleY, 256, 256, 0, 0);
+		gdispImageClose(&myImage[4]);
+		//gdispImageCache(&myImage[4]);
+	}
 	
 	// X2
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex, tiley+1);
-	gdispImageOpenFile(&myImage[5], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[5], centerX, bottomY, 256, yTileStartOffset, 0, 0);
-	gdispImageClose(&myImage[5]);
-	//gdispImageCache(&myImage[5]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex, tiley+1);
+	if(gdispImageOpenFile(&myImage[5], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[5], centerX, bottomY, 256, yTileStartOffset, 0, 0);
+		gdispImageClose(&myImage[5]);
+		//gdispImageCache(&myImage[5]);
+	}
 	
 	// X7
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex+1, tiley-1);
-	gdispImageOpenFile(&myImage[6], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[6], rightX, topY, xTileStartOffset, yShowMap, 0, yTileStartOffset);
-	gdispImageClose(&myImage[6]);
-	//gdispImageCache(&myImage[6]);
-
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex+1, tiley-1);
+	if(gdispImageOpenFile(&myImage[6], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[6], rightX, topY, xTileStartOffset, yShowMap, 0, yTileStartOffset);
+		gdispImageClose(&myImage[6]);
+		//gdispImageCache(&myImage[6]);
+	}
+	
 	// X3
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex+1, tiley);
-	gdispImageOpenFile(&myImage[7], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[7], rightX, middleY, xTileStartOffset, gdispGetHeight(), 0, 0);
-	gdispImageClose(&myImage[7]);
-	//gdispImageCache(&myImage[7]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex+1, tiley);
+	if(gdispImageOpenFile(&myImage[7], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[7], rightX, middleY, xTileStartOffset, gdispGetHeight(), 0, 0);
+		gdispImageClose(&myImage[7]);
+		//gdispImageCache(&myImage[7]);
+	}
 	
 	// X4
-	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", ZOOM_LEVEL, tilex+1, tiley+1);
-	gdispImageOpenFile(&myImage[8], gpsOutput);
-	gdispGImageDraw(pixmap, &myImage[8], rightX, bottomY, xTileStartOffset, yTileStartOffset, 0, 0);
-	gdispImageClose(&myImage[8]);
-	//gdispImageCache(&myImage[8]);
+	formatString(gpsOutput, sizeof(gpsOutput), "Tiles/%d/%d/%d.png", zoom_level, tilex+1, tiley+1);
+	if(gdispImageOpenFile(&myImage[8], gpsOutput) == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &myImage[8], rightX, bottomY, xTileStartOffset, yTileStartOffset, 0, 0);
+		gdispImageClose(&myImage[8]);
+		//gdispImageCache(&myImage[8]);
+	}
 	
-	gdispImageOpenFile(&marker, "Tiles/marker32.png");
-	gdispGImageDraw(pixmap, &marker, 247-16, 240-32, gdispGetWidth(), gdispGetHeight(), 0, 0);
-	gdispImageCache(&marker);
-	//gdispImageClose(&marker);
+	if(gdispImageOpenFile(&marker, "Tiles/marker32.png") == GDISP_IMAGE_ERR_OK){
+		gdispGImageDraw(pixmap, &marker, 247-16, 240-32, gdispGetWidth(), gdispGetHeight(), 0, 0);
+		gdispImageCache(&marker);
+		//gdispImageClose(&marker);
+	}
 	
 	surface = gdispPixmapGetBits(pixmap);
-		
-	gdispBlitAreaEx(305,0,494,480,0,0,494,surface);
-
+	if(surface != NULL){
+		gdispBlitAreaEx(305,0,494,480,0,0,494,surface);
+	}
+	
 	status = osMutexRelease(traceMutex);
 	if (status != osOK)  {
 		// handle failure code

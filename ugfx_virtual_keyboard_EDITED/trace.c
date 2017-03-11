@@ -51,6 +51,10 @@ void openTraceFile(void)
 
 void TRACE(const char *fmt, ...)
 {
+	if(myfile == NULL || myfile == 0){
+		return;
+	}
+	
 	TM_RTC_t rtcd;
 	osStatus status;
 	status  = osMutexWait(traceMutex, 0);
