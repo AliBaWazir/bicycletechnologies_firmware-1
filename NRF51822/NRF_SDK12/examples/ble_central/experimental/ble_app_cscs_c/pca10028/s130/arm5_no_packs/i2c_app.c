@@ -48,7 +48,7 @@
 #define TWI_INSTANCE_ID     0
 
 /* Common addresses definition I2C slaves*/
-#define GEAR_CONT_I2C_ADDR                 (0x90U >> 1)
+#define GEAR_CONT_I2C_ADDR                 (16)
 #define GEAR_CONT_FRONT_GEARS_COUNT_COMMAND 0x01
 #define GEAR_CONT_BACK_GEARS_COUNT_COMMAND  0x02
 #define GEAR_CONT_FRONT_GEARS_POS_COMMAND   0x03    //Front Gear Positions
@@ -593,6 +593,22 @@ bool i2cApp_init(void){
 
 	
 	if (I2C_IN_SIMULATION_MODE){
+		/*
+		while (1){
+			uint8_t source_array [1]= {26};
+			//test i2c connection with motor controller
+			i2c_operation_type = I2C_OPER_READ_STATE_OF_CHARGE;
+			if(!i2cApp_i2c_write(GEAR_CONT_I2C_ADDR, 0, source_array, 1))
+			{
+				NRF_LOG_ERROR("i2cApp_init: i2cApp_i2c_write failed for GEAR_CONT_I2C_ADDR\r\n");
+				i2c_operation_type = I2C_OPER_UNKNOWN;
+			} else{
+				NRF_LOG_INFO("i2cApp_init: i2cApp_i2c_write to GEAR_CONT_I2C_ADDR suceeded\r\n");
+			}
+			
+			nrf_delay_ms(500);
+		}
+		*/
 		
 		//read stateOfCharge register of SOC. For testing purpose only
 		m_i2c_slaves_data_old.soc_state_of_charge= m_i2c_slaves_data_new.soc_state_of_charge;
