@@ -210,7 +210,7 @@ static void createmainContainer(void)
 	
 	// create container widget: containers[BLUETOOTH_CONTAINER]
 	wi.g.x = 305;
-	wi.g.width = 495;
+	wi.g.width = 491;
 	wi.text = "containers[BLUETOOTH_CONTAINER]";
 	containers[BLUETOOTH_CONTAINER] = gwinContainerCreate(0, &wi, 0);
 	
