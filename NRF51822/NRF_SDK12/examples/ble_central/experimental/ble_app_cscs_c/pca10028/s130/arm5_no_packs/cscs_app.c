@@ -20,6 +20,7 @@
 #include "app_error.h"
 #define NRF_LOG_MODULE_NAME "CSCS APP"
 #include "nrf_log.h"
+#include <stdlib.h>
 #include "nrf_log_ctrl.h"
 #include "peer_manager.h"
 
@@ -68,6 +69,12 @@ static int32_t process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t n
     
     int32_t wheel_revolutions_diff   = 0;
     double wheel_event_time_diff_s   = 0.0;
+	
+	//update the old revolution and envent time fields with new data
+    cscs_instantanious_data.oldWheelRevolutions.value = new_cumulative_wheel_revs;
+	cscs_instantanious_data.oldWheelRevolutions.is_read = false;
+    cscs_instantanious_data.oldWheelEventTime.value = new_wheel_event_time;
+	cscs_instantanious_data.oldWheelEventTime.is_read = false;
     
 	if (cscs_instantanious_data.first_wheel_revolutions <=0){
 		cscs_instantanious_data.first_wheel_revolutions = new_cumulative_wheel_revs;
@@ -77,8 +84,8 @@ static int32_t process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t n
         // Assuming that the comulative wheel revolutions will never exceed the max value 4,294,967,295
 		wheel_revolutions_diff = new_cumulative_wheel_revs - cscs_instantanious_data.oldWheelRevolutions.value;
 		if (wheel_revolutions_diff < 0){
-			NRF_LOG_ERROR("Sensor error: new wheel revolutions < old wheel revolutions \r\n");
-			return wheel_revolutions_diff;
+			NRF_LOG_WARNING("Sensor error: new wheel revolutions < old wheel revolutions \r\n");
+			return abs(wheel_revolutions_diff);
 		} else {
 			/*TODO: create static function for updating*/
 			cscs_instantanious_data.travelDistance_m.value = cscs_instantanious_data.travelDistance_m.value + ((wheel_revolutions_diff * wheel_circumference_cm)/100.0);
@@ -124,12 +131,6 @@ static int32_t process_wheel_data(uint32_t new_cumulative_wheel_revs, uint16_t n
 		new_meas_cb(SPI_AVAIL_FLAG_SPEED, true);
 	}
     
-	//update the old revolution and envent time fields with new data
-    cscs_instantanious_data.oldWheelRevolutions.value = new_cumulative_wheel_revs;
-	cscs_instantanious_data.oldWheelRevolutions.is_read = false;
-    cscs_instantanious_data.oldWheelEventTime.value = new_wheel_event_time;
-	cscs_instantanious_data.oldWheelEventTime.is_read = false;
-    
 	return wheel_revolutions_diff;
 }
 
@@ -142,13 +143,19 @@ static int32_t process_crank_data(uint16_t new_cumulative_crank_revs, uint16_t n
     int32_t     crank_revolutions_diff   = 0;
     double      crank_event_time_diff_s = 0.0;
     double      cadence_rpm             = 0.0;
+	
+	//store old crank revulotions and event time
+    cscs_instantanious_data.oldCrankRevolutions.value = new_cumulative_crank_revs;
+	cscs_instantanious_data.oldCrankRevolutions.is_read = false;
+    cscs_instantanious_data.oldCrankEventTime.value = new_crank_event_time;
+	cscs_instantanious_data.oldCrankEventTime.is_read= false;
 
 	if (cscs_instantanious_data.oldCrankRevolutions.value > 0) {
         // Assuming that the comulative crank revolutions will never exceed the max value 65,535
 		crank_revolutions_diff = new_cumulative_crank_revs - cscs_instantanious_data.oldCrankRevolutions.value;
 		if (crank_revolutions_diff <0){
-			NRF_LOG_ERROR("Sensor error: new crank revolutions < old crank revolutions \r\n");
-			return crank_revolutions_diff;
+			NRF_LOG_WARNING("Sensor error: new crank revolutions < old crank revolutions \r\n");
+			return abs(crank_revolutions_diff);
 		}
     }
 		
@@ -159,17 +166,13 @@ static int32_t process_crank_data(uint16_t new_cumulative_crank_revs, uint16_t n
 		} else{
 			crank_event_time_diff_s = (new_crank_event_time - cscs_instantanious_data.oldCrankEventTime.value)/1024.0;
 		}
-    } 
+    }
     
     if (crank_event_time_diff_s > 0) {
         //cadence is in rpm
 		cadence_rpm = (crank_revolutions_diff /(crank_event_time_diff_s/60) );
     }
 
-    cscs_instantanious_data.oldCrankRevolutions.value = new_cumulative_crank_revs;
-	cscs_instantanious_data.oldCrankRevolutions.is_read = false;
-    cscs_instantanious_data.oldCrankEventTime.value = new_crank_event_time;
-	cscs_instantanious_data.oldCrankEventTime.is_read= false;
 	cscs_instantanious_data.crank_cadence_rpm.value = cadence_rpm;
 	cscs_instantanious_data.crank_cadence_rpm.is_read = false;
 	
@@ -196,35 +199,36 @@ static cscsApp_ret_code_e cscsApp_decode_cscs_meas_data ( ble_cscs_c_meas_t *csc
     
     if (csc_meas_data->is_wheel_rev_data_present){
         wheel_rev_diff = process_wheel_data(csc_meas_data->cumulative_wheel_revs, csc_meas_data->last_wheel_event_time);
-		if (wheel_rev_diff < 0){
-			// sensor error
-			ret_code = CSCS_APP_RET_CODE_SENSOR_ERROR;
-		} else {
-			
-			if (csc_meas_data->is_crank_rev_data_present)
-			{
-				crank_rev_diff = process_crank_data(csc_meas_data->cumulative_crank_revs, csc_meas_data->last_crank_event_time);
-				if (crank_rev_diff < 0) {
-					// sensor error
-					ret_code = CSCS_APP_RET_CODE_SENSOR_ERROR;
-				} else {
-					wheel_to_crank_diff_ratio = wheel_rev_diff/crank_rev_diff;
-					NRF_LOG_INFO("Wheel to crank diff ratio = %d \r\n",wheel_to_crank_diff_ratio);
-				}
+		
+		if (csc_meas_data->is_crank_rev_data_present)
+		{
+			crank_rev_diff = process_crank_data(csc_meas_data->cumulative_crank_revs, csc_meas_data->last_crank_event_time);
+			//not needed
+			/*
+			if (crank_rev_diff < 0) {
+				// sensor error
+				ret_code = CSCS_APP_RET_CODE_SENSOR_ERROR;
+			} else {
+				wheel_to_crank_diff_ratio = wheel_rev_diff/crank_rev_diff;
+				NRF_LOG_INFO("Wheel to crank diff ratio = %d \r\n",wheel_to_crank_diff_ratio);
 			}
-			
+			*/
 		}
     }
     else{
         if (csc_meas_data->is_crank_rev_data_present)
         {
 			crank_rev_diff = process_crank_data(csc_meas_data->cumulative_crank_revs, csc_meas_data->last_crank_event_time);
+			//not needed
+			/*
 			if (crank_rev_diff < 0){
 				// sensor error
 				ret_code = CSCS_APP_RET_CODE_SENSOR_ERROR;
 			} else {
-				NRF_LOG_INFO("Crank revolution diff = %d \r\n",crank_rev_diff);
+				//not needed
+				//NRF_LOG_INFO("Crank revolution diff = %d \r\n",crank_rev_diff);
 			}
+			*/
         }
     }
 	
