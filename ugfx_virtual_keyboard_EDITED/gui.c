@@ -14,7 +14,7 @@
 #include "msg.h"
 #include "romfs_files.h"
 
-//#define NO_MAPS
+#define NO_MAPS
 
 #define MAP_CENTERX 552
 #define MAP_CENTERY 240
@@ -34,11 +34,12 @@
 #define CADENCE_CONTAINER 12
 #define DISTANCE_CONTAINER 13
 #define HEART_RATE_CONTAINER 14
+#define CADENCE_SETPOINT_CONTAINER 15
 
 // GListeners
 GListener glistener;
 
-GHandle containers[15];
+GHandle containers[16];
 GHandle labels[6];
 GHandle buttons[8];
 GHandle lists[2];
@@ -95,11 +96,13 @@ uint8_t oldMenuSelectedItem;
 
 uint8_t speedOutput;
 uint8_t cadenceOutput;
-uint8_t cadenceSetPointOutput;
 uint8_t distanceOutput;
 uint8_t heartrateOutput;
 uint8_t batteryOutput;
 char dataOutput[10];
+
+uint8_t cadenceSetPointCurrent = 0;
+uint8_t cadenceSetPointSetting = 80;
 
 bool mapUpdateInProgress;
 
@@ -243,6 +246,10 @@ static void createmainContainer(void)
 	// create container widget: containers[CLOCK_CONTAINER]
 	wi.text = "containers[CLOCK_CONTAINER]";
 	containers[CLOCK_CONTAINER] = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
+	
+	// create container widget: containers[CADENCE_SETPOINT_CONTAINER]
+	wi.text = "containers[CADENCE_SETPOINT_CONTAINER]";
+	containers[CADENCE_SETPOINT_CONTAINER] = gwinContainerCreate(0, &wi, GWIN_CONTAINER_BORDER);
 }
 
 static void createMap(void)
@@ -397,12 +404,14 @@ static void createMenu(void)
 	gwinListAddItem(lists[0], "Gears Settings", FALSE);
 	gwinListAddItem(lists[0], "Teeth Settings", FALSE);
 	gwinListAddItem(lists[0], "Gears Status", FALSE);
+	gwinListAddItem(lists[0], "Cadence Setpoint", FALSE);
 	gwinListAddItem(lists[0], "Clock Settings", FALSE);
 	gwinListSetSelected(lists[0], 0, TRUE);
 	gwinListSetSelected(lists[0], 1, FALSE);
 	gwinListSetSelected(lists[0], 2, FALSE);
 	gwinListSetSelected(lists[0], 3, FALSE);
   gwinListSetSelected(lists[0], 4, FALSE);
+	gwinListSetSelected(lists[0], 5, FALSE);
 	oldMenuSelectedItem = -1;
 	
 	gdispImageOpenMemory(&returnImage, returnImageArray);
@@ -1077,6 +1086,133 @@ static void createGearsStatus(void)
 	showCurrentGears();
 }
 
+static void createCadenceSetPoint(void)
+{
+	TRACE("createCadenceSetPoint\n");
+	GWidgetInit wi;
+	gwinWidgetClearInit(&wi);
+	
+	// Create label widget: labels[0]
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 5;
+	wi.g.width = 160;
+	wi.g.height = 50;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	wi.text = "Changes";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	labels[0] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[0], TRUE);
+	gwinSetFont(labels[0], gdispOpenFont("LatoRegular36"));
+
+	// create button widget: buttons[1]
+	wi.g.show = TRUE;
+	wi.g.x = 390;
+	wi.g.y = 5;
+	wi.g.width = 90;
+	wi.g.height = 90;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	wi.text = "Submit";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	buttons[1] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[1], gdispOpenFont("LatoRegular24"));
+
+	// create button widget: buttons[1]
+	wi.g.show = TRUE;
+	wi.g.x = 105;
+	wi.g.y = 68;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	wi.text = "+";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	buttons[2] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[2], gdispOpenFont("LatoRegular36"));
+
+	// create button widget: buttons[2]
+	wi.g.show = TRUE;
+	wi.g.x = 105;
+	wi.g.y = 153;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	wi.text = "-";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	buttons[3] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[3], gdispOpenFont("LatoRegular36"));
+	
+	// Create label widget: labels[1]
+	wi.g.show = TRUE;
+	wi.g.x = 190;
+	wi.g.y = 110;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	formatString(gearBuffer, sizeof(gearBuffer), "%d", cadenceSetPointSetting);
+	wi.text = gearBuffer;
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	labels[1] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[1], TRUE);
+	gwinSetFont(labels[1], gdispOpenFont("LatoRegular36"));
+	gwinSetText(labels[1], gearBuffer, TRUE);
+	
+	// Create label widget: labels[2]
+	wi.g.show = TRUE;
+	wi.g.x = 15;
+	wi.g.y = 245;
+	wi.g.width = 160;
+	wi.g.height = 50;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	wi.text = "Current";
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	labels[2] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[2], TRUE);
+	gwinSetFont(labels[2], gdispOpenFont("LatoRegular36"));
+	
+	// create button widget: buttons[2]
+	wi.g.show = TRUE;
+	wi.g.x = 390;
+	wi.g.y = 245;
+	wi.g.width = 90;
+	wi.g.height = 90;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	wi.text = "Read";
+	wi.customDraw = gwinButtonDraw_Rounded;
+	wi.customParam = 0;
+	wi.customStyle = &black;
+	buttons[4] = gwinButtonCreate(0, &wi);
+	gwinSetFont(buttons[4], gdispOpenFont("LatoRegular24"));
+	
+	// Create label widget: labels[3]
+	wi.g.show = TRUE;
+	wi.g.x = 190;
+	wi.g.y = 320;
+	wi.g.width = 80;
+	wi.g.height = 80;
+	wi.g.parent = containers[CADENCE_SETPOINT_CONTAINER];
+	formatString(gearBuffer, sizeof(gearBuffer), "%d", cadenceSetPointCurrent);
+	wi.text = gearBuffer;
+	wi.customDraw = gwinLabelDrawJustifiedCenter;
+	wi.customParam = 0;
+	wi.customStyle = &belize;
+	labels[3] = gwinLabelCreate(0, &wi);
+	gwinLabelSetBorder(labels[3], TRUE);
+	gwinSetFont(labels[3], gdispOpenFont("LatoRegular36"));
+	gwinSetText(labels[3], gearBuffer, TRUE);
+}
+
 static void createClockSettings(void)
 {
 	TRACE("createClockSettings\n");
@@ -1387,6 +1523,20 @@ static void destroyGearsStatus(void)
 	gwinHide(containers[STATUS_CONTAINER]);
 }
 
+static void destroyCadenceSetPoint(void)
+{
+	TRACE("destroyCadenceSetPoint\n");
+	gwinDestroy(labels[0]);
+	gwinDestroy(buttons[1]);
+	gwinDestroy(labels[1]);
+	gwinDestroy(labels[2]);
+	gwinDestroy(labels[3]);
+	gwinDestroy(buttons[2]);
+	gwinDestroy(buttons[3]);
+	gwinDestroy(buttons[4]);
+	gwinHide(containers[CADENCE_SETPOINT_CONTAINER]);
+}
+
 static void destroyClockSsettings(void)
 {
 	TRACE("destroyClockStatus\n");
@@ -1425,6 +1575,9 @@ static void destroyOldMenuSelectedItem(void)
 		destroyGearsStatus();
 		break;
 	case 4:
+		destroyCadenceSetPoint();
+		break;
+	case 5:
 		destroyClockSsettings();
 		break;
 	default:
@@ -1582,7 +1735,11 @@ void guiEventLoop(void)
 			}else if(messageReceived->msg_ID == GET_HEARTRATE_MSG){
 				heartrateOutput = messageReceived->value;
 			}else if(messageReceived->msg_ID == GET_CADENCE_SETPOINT_MSG){
-				cadenceSetPointOutput = messageReceived->value;
+				cadenceSetPointCurrent = messageReceived->value;
+				if(gwinGetVisible(containers[CLOCK_CONTAINER])){
+					formatString(gearBuffer, sizeof(gearBuffer), "%d", cadenceSetPointCurrent);
+					gwinSetText(labels[3], dataOutput, TRUE);
+				}
 			}else if(messageReceived->msg_ID == GET_BATTERY_MSG){
 				batteryOutput = messageReceived->value;
 			}else if(messageReceived->msg_ID == GET_GEAR_COUNT_MSG){
@@ -1823,6 +1980,11 @@ void button1Call(){
 		//deleteTraceFile();
 		closeTraceFile();
 		openTraceFile();
+	}else if(gwinGetVisible(containers[CADENCE_SETPOINT_CONTAINER])){
+		// SUBMIT CADENCE_SETPOINT
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = SET_CADENCE_SETPOINT_MSG;
+		messageSent->value = cadenceSetPointSetting;
 	}
 	osMessagePut(spiQueue, (uint32_t)messageSent, 0);
 }
@@ -1854,6 +2016,12 @@ void button2Call(){
 		if(clockChangeSelectedItem != 0){clockChangeSelectedItem--;}
 	}else if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
 		connectBluetooth();
+	}else if(gwinGetVisible(containers[CADENCE_SETPOINT_CONTAINER])){
+		if(cadenceSetPointSetting != 150){
+			cadenceSetPointSetting++;
+		}
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", cadenceSetPointSetting);
+		gwinSetText(labels[1], gearBuffer, TRUE);
 	}
 }
 
@@ -1877,10 +2045,17 @@ void button3Call(){
 		if(clockChangeSelectedItem != 4){clockChangeSelectedItem++;}
 	}else if(gwinGetVisible(containers[BLUETOOTH_CONTAINER])){
 		disconnectBluetooth();
+	}else if(gwinGetVisible(containers[CADENCE_SETPOINT_CONTAINER])){
+		if(cadenceSetPointSetting != 10){
+			cadenceSetPointSetting--;
+		}
+		formatString(gearBuffer, sizeof(gearBuffer), "%d", cadenceSetPointSetting);
+		gwinSetText(labels[1], gearBuffer, TRUE);
 	}
 }
 
 void button4Call(){
+	message_t *messageSent;
 	if(gwinGetVisible(containers[GEARS_CONTAINER])){
 		// BACK GEARS MINUS
 		if(gearBackSettings[0] != 1){
@@ -1921,7 +2096,12 @@ void button4Call(){
 				break;
 		}
 		gwinSetText(clockChangesValue[clockChangeSelectedItem], timeBuffer, TRUE);
-	}	
+	}else if(gwinGetVisible(containers[CADENCE_SETPOINT_CONTAINER])){
+		// READ CADENCE_SETPOINT
+		messageSent = (message_t*)osPoolAlloc(mpool);
+		messageSent->msg_ID = GET_CADENCE_SETPOINT_MSG;
+		osMessagePut(spiQueue, (uint32_t)messageSent, 0);
+	}
 }
 
 void button5Call(){
@@ -2005,6 +2185,10 @@ void handleMenuSwitches(){
 				gwinShow(containers[STATUS_CONTAINER]);
 				break;
 			case 4:
+				createCadenceSetPoint();
+				gwinShow(containers[CADENCE_SETPOINT_CONTAINER]);
+				break;
+			case 5:
 				createClockSettings();
 				gwinShow(containers[CLOCK_CONTAINER]);
 				break;

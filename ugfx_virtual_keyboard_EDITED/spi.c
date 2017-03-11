@@ -154,6 +154,10 @@ void runSPI(){
 #endif
 				TRACE("SPI:,NRF_FORGET_MSG\n");
 				nrfDisconnect(messageReceived->value);
+			}else if(messageReceived->msg_ID == SET_CADENCE_SETPOINT_MSG){
+				TRACE("SPI:,SET_CADENCE_SETPOINT_MSG\n");
+				spi_Data.cadenceSetPoint.value = messageReceived->value;
+				nrfSetCadenceSetPoint();
 			}
 			osPoolFree(mpool, messageReceived);
 		}
