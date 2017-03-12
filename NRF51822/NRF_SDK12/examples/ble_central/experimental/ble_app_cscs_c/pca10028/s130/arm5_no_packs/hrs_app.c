@@ -54,7 +54,7 @@ static void hrsApp_debug_print_inst_data(){
 		
 		NRF_LOG_INFO("------------------------- HR ----------------------------\r\n");
 		NRF_LOG_INFO("New Heart Rate reading= %d (bpm)\r\n", inst_hr_value.value);
-		NRF_LOG_INFO("------------------------------------------------------\r\n\r\n");
+		NRF_LOG_INFO("------------------------------------------------------------\r\n\r\n");
 }
 
 /**@brief Heart Rate Collector Handler.
@@ -93,7 +93,10 @@ static void hrsApp_hrs_c_evt_handler(ble_hrs_c_t * p_hrs_c, ble_hrs_c_evt_t * p_
 			} else{
 				inst_hr_value.value = p_hrs_c_evt->params.hrm.hr_value;
 			}
-            
+			
+			//print the new HR value
+			hrsApp_debug_print_inst_data();
+           
 			inst_hr_value.is_read= false;
 
 			//call the new measurement callback 

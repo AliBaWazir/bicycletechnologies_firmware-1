@@ -176,6 +176,7 @@ static void applicationFdsApp_evt_handler(fds_evt_t const * const p_fds_evt)
 
         case FDS_EVT_GC:
 			fds_app_running_gc= false;
+			NRF_LOG_INFO("applicationFdsApp_evt_handler: fds_gc() finished\r\n");
         break;
 
         default:
@@ -408,10 +409,13 @@ bool applicationFdsApp_init(algorithmApp_ratios_poulate_f cb){
 			fds_app_running_gc= true;
 		}
 		
+		//commented out because it was observed that FDS_EVT_GC is fired after restart
+		/*
 		if(fds_app_running_gc){
 			NRF_LOG_INFO("applicationFdsApp_init: waiting for fds_gc() to finish ..\r\n");
 			while(fds_app_running_gc);
 		}
+		*/
 		
 	}
 	

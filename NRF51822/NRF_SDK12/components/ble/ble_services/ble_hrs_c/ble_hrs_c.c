@@ -133,7 +133,7 @@ static void on_hvx(ble_hrs_c_t * p_ble_hrs_c, const ble_evt_t * p_ble_evt)
             p_ble_evt->evt.gattc_evt.conn_handle);
         return;
     }
-    NRF_LOG_INFO("received HVX on handle 0x%x, hrm_handle 0x%x\r\n",
+    NRF_LOG_DEBUG("received HVX on handle 0x%x, hrm_handle 0x%x\r\n",
         p_ble_evt->evt.gattc_evt.params.hvx.handle,
         p_ble_hrs_c->peer_hrs_db.hrm_handle);
     // Check if this is a heart rate notification.
