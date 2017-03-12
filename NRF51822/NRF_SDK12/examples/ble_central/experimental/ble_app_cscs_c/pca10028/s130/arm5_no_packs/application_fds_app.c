@@ -398,19 +398,19 @@ bool applicationFdsApp_init(algorithmApp_ratios_poulate_f cb){
 			if(ret != NRF_SUCCESS){
 				NRF_LOG_ERROR("applicationFdsApp_init: deleting FDS file= %x failed with ret= %d\r\n", USER_DEFINED_PROPERTIES_FILE_ID, ret);
 			}
-			
-			ret= fds_gc();
-			if(ret != NRF_SUCCESS){
-				NRF_LOG_ERROR("applicationFdsApp_init: fds_gc() failed with ret= %d\r\n", USER_DEFINED_PROPERTIES_FILE_ID, ret);
-			} else{
-				fds_app_running_gc= true;
-			}
-			
-			if(fds_app_running_gc){
-				NRF_LOG_INFO("applicationFdsApp_init: waiting for fds_gc() to finish\r\n");
-				while(fds_app_running_gc);
-			}
 
+		}
+		
+		ret= fds_gc();
+		if(ret != NRF_SUCCESS){
+			NRF_LOG_ERROR("applicationFdsApp_init: fds_gc() failed with ret= %d\r\n", USER_DEFINED_PROPERTIES_FILE_ID, ret);
+		} else{
+			fds_app_running_gc= true;
+		}
+		
+		if(fds_app_running_gc){
+			NRF_LOG_INFO("applicationFdsApp_init: waiting for fds_gc() to finish ..\r\n");
+			while(fds_app_running_gc);
 		}
 		
 	}
