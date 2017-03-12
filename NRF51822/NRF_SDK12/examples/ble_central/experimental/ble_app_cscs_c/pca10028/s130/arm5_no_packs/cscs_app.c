@@ -238,14 +238,14 @@ static void cscsApp_debug_print_inst_data(){
 		
 		NRF_LOG_INFO("------------------------ CSCS ---------------------------\r\n");
 		NRF_LOG_INFO("travel distance             = %d (m)\r\n", (uint32_t)cscs_instantanious_data.travelDistance_m.value);
-		NRF_LOG_INFO("wheel rpm                     = %d (rpm)\r\n", (uint32_t)cscs_instantanious_data.wheel_rpm.value);
+		//NRF_LOG_INFO("wheel rpm                     = %d (rpm)\r\n", (uint32_t)cscs_instantanious_data.wheel_rpm.value);
 		NRF_LOG_INFO("wheel speed                = %d (km/h)\r\n", (uint32_t)cscs_instantanious_data.wheel_speed_kmph.value);
 		NRF_LOG_INFO("crank cadence            = %d (rpm)\r\n", (uint32_t)cscs_instantanious_data.crank_cadence_rpm.value);
 		//NRF_LOG_INFO("old wheel revolution  = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelRevolutions.value);
 		//NRF_LOG_INFO("old crank revolution   = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankRevolutions.value);
 		//NRF_LOG_INFO("old wheel event time = %d \r\n", (uint32_t)cscs_instantanious_data.oldWheelEventTime.value);
 		//NRF_LOG_INFO("old crank event time  = %d \r\n", (uint32_t)cscs_instantanious_data.oldCrankEventTime.value);
-		NRF_LOG_INFO("------------------------------------------------------\r\n\r\n");
+		NRF_LOG_INFO("-------------------------------------------------------------\r\n\r\n");
 }
 
 

@@ -154,7 +154,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
     {
         case PM_EVT_BONDED_PEER_CONNECTED:
         {
-            NRF_LOG_DEBUG("Bonded device connected!.\r\n");
+            NRF_LOG_INFO("Bonded device connected!.\r\n");
             err_code = pm_peer_rank_highest(p_evt->peer_id);
             if (err_code != NRF_ERROR_BUSY)
             {
