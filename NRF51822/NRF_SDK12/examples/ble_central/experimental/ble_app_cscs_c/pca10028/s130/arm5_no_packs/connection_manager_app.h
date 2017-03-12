@@ -26,7 +26,7 @@ typedef enum{
 
 void connManagerApp_debug_print_conn_params(const ble_gap_conn_params_t* conn_params);
 uint8_t connManagerApp_get_adv_devices_count(void);
-uint8_t* connManagerApp_get_adv_device_mac(uint8_t adv_device_index);
+ble_gap_addr_t* connManagerApp_get_adv_device_mac(uint8_t adv_device_index);
 void connManagerApp_map_conn_handler_to_device_type (advertised_device_type_e device_type, const uint16_t conn_handle);
 void connManagerApp_conn_params_update (const uint16_t conn_handle, const ble_gap_conn_params_t* conn_params);
 bool connManagerApp_get_memory_access_in_progress (void);

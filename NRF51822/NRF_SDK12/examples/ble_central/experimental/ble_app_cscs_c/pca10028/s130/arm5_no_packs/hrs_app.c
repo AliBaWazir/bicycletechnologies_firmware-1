@@ -50,6 +50,14 @@ static new_meas_callback_f    new_meas_cb    = NULL;    // Function pointer to t
 /**********************************************************************************************
 * STATIC FUCNCTIONS
 ***********************************************************************************************/
+static void hrsApp_debug_print_inst_data(){
+		
+		NRF_LOG_INFO("------------------------- HR ----------------------------\r\n");
+		NRF_LOG_INFO("New Heart Rate reading= %d (bpm)\r\n", inst_hr_value.value);
+		NRF_LOG_INFO("travel distance             = %d (m)\r\n", (uint32_t)cscs_instantanious_data.travelDistance_m.value);
+		NRF_LOG_INFO("------------------------------------------------------\r\n\r\n");
+}
+
 /**@brief Heart Rate Collector Handler.
  */
 static void hrsApp_hrs_c_evt_handler(ble_hrs_c_t * p_hrs_c, ble_hrs_c_evt_t * p_hrs_c_evt)
@@ -88,8 +96,6 @@ static void hrsApp_hrs_c_evt_handler(ble_hrs_c_t * p_hrs_c, ble_hrs_c_evt_t * p_
 			}
             
 			inst_hr_value.is_read= false;
-			
-			NRF_LOG_INFO("New Heart Rate reading= %d (bpm)\r\n", inst_hr_value.value);
 
 			//call the new measurement callback 
 			if(new_meas_cb != NULL){

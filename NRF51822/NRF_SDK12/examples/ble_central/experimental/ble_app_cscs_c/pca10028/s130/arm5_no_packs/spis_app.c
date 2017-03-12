@@ -41,9 +41,10 @@
 							   *This flag is set to 1 only if SPI slave interaction
 							   *is in simulation mode.
 							   ***************************************************/
+#define SPI_INT_ENABLED  	0 //set to 1 if data availability inturrupts to the UI are enabled						   
 
 #define SPI_INSTANCE        1 /**< SPIS instance index. */
-#define SPI_TX_BUFFER_SIZE  6
+#define SPI_TX_BUFFER_SIZE  7
 
 #define SPI_DUMMY_COMMAND   0xF0       //this command is received when SPI master reads a response
 
@@ -74,7 +75,7 @@
 #define SPI_GET_ADV_DEVICE_DATA_BY_INDEX    0x21
 #define SPI_GET_PAIRED_DEVICES              0x22
 #define SPI_GET_CONNECTED_DEVICES           0x23
-#define SPI_GET_ADV_DEVICE_MAC_ADDR         0x24
+#define SPI_GET_ADV_DEVICE_MAC_ADDR_AND_ID  0x24
 #define SPI_GET_CSC_DEVICE_NAME             0x27
 #define SPI_GET_HR_DEVICE_NAME              0x28
 #define SPI_GET_PHONE_DEVICE_NAME           0x29
@@ -162,12 +163,12 @@ static void spisApp_update_data_avail_flags(spi_data_avail_flag_e flag, bool dat
 	if (data_available){
 		
 		data_availability_flags|= (flag);
-		//clear SPI IRQ
-		//spisApp_irq_set_low();
-		//nrf_delay_ms(100);
-		//set SPI IRQ HIGH
-		spisApp_irq_set_high();
-		spisApp_irq_set_low();
+		
+		if(SPI_INT_ENABLED){
+			//set SPI IRQ HIGH
+			spisApp_irq_set_high();
+			spisApp_irq_set_low();	
+		}
 		
 		NRF_LOG_DEBUG("spisApp_update_data_avail_flags: IRQ is set high due to flag change= %d\r\n", flag);
 		
@@ -296,25 +297,31 @@ static void spisApp_event_handler(nrf_drv_spis_event_t event)
 				m_tx_buf[0] = connManagerApp_get_adv_devices_count();
 			break;//SPI_GET_ADV_DEVICE_COUNT
 			
-			case SPI_GET_ADV_DEVICE_MAC_ADDR:
+			case SPI_GET_ADV_DEVICE_MAC_ADDR_AND_ID:
 			{
-				uint8_t* mac_addr_p  = NULL;
+				uint8_t*        mac_addr_p  = NULL;
+				ble_gap_addr_t* gap_addr    = NULL;
 				
-				mac_addr_p= connManagerApp_get_adv_device_mac(m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX]);
-				if (mac_addr_p == NULL){
-					NRF_LOG_ERROR("spisApp_event_handler: connManagerApp_get_adv_device_mac returned NULL\r\n");
+				gap_addr= connManagerApp_get_adv_device_mac(m_rx_buf[INDEX_ARG_ADV_DEVICE_INDEX]);
+				if (gap_addr == NULL){
+					NRF_LOG_ERROR("spisApp_event_handler: connManagerApp_get_adv_device_mac returned gap_addr=NULL\r\n");
 				} else{
-					
-					m_tx_buf[0] = *(mac_addr_p);
-					m_tx_buf[1] = *(mac_addr_p+1);
-					m_tx_buf[2] = *(mac_addr_p+2);
-					m_tx_buf[3] = *(mac_addr_p+3);
-					m_tx_buf[4] = *(mac_addr_p+4);
-					m_tx_buf[5] = *(mac_addr_p+5);
+					mac_addr_p= gap_addr->addr;
+					if(mac_addr_p == NULL){
+						NRF_LOG_ERROR("spisApp_event_handler: connManagerApp_get_adv_device_mac returned mac_addr_p=NULL\r\n");
+					} else{
+						m_tx_buf[0] = *(mac_addr_p);
+						m_tx_buf[1] = *(mac_addr_p+1);
+						m_tx_buf[2] = *(mac_addr_p+2);
+						m_tx_buf[3] = *(mac_addr_p+3);
+						m_tx_buf[4] = *(mac_addr_p+4);
+						m_tx_buf[5] = *(mac_addr_p+5);
+						m_tx_buf[6] = (uint8_t)connManagerApp_get_device_type(gap_addr);
+					}
 					
 				}
 			}
-			break;//SPI_GET_ADV_DEVICE_MAC_ADDR
+			break;//SPI_GET_ADV_DEVICE_MAC_ADDR_AND_ID
 			
 			
 			/**************************** SETTERS ********************************/

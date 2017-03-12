@@ -286,16 +286,16 @@ uint8_t connManagerApp_get_adv_devices_count(void){
 }
 
 //function to get pointer to an advertised device MAC address
-uint8_t* connManagerApp_get_adv_device_mac(uint8_t adv_device_index){
+ble_gap_addr_t* connManagerApp_get_adv_device_mac(uint8_t adv_device_index){
 	
-	uint8_t*   ret = NULL;
+	ble_gap_addr_t*   ret = NULL;
 	
 	//check if the index is valid
 	if (adv_device_index >= advertised_devices.count){
 		NRF_LOG_WARNING("connManagerApp_get_adv_device_mac: adv_device_index =%d is greater than adv devices count= %d\r\n", 
 						 adv_device_index, advertised_devices.count);
 	} else{
-		ret= (uint8_t*) advertised_devices.advertised_devices_data[adv_device_index].peer_addr.addr;
+		ret= (ble_gap_addr_t*) &(advertised_devices.advertised_devices_data[adv_device_index].peer_addr);
 	}
 	
 	return ret;
