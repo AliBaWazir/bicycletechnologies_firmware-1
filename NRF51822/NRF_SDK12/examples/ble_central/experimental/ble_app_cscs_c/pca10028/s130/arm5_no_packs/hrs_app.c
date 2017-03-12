@@ -54,7 +54,6 @@ static void hrsApp_debug_print_inst_data(){
 		
 		NRF_LOG_INFO("------------------------- HR ----------------------------\r\n");
 		NRF_LOG_INFO("New Heart Rate reading= %d (bpm)\r\n", inst_hr_value.value);
-		NRF_LOG_INFO("travel distance             = %d (m)\r\n", (uint32_t)cscs_instantanious_data.travelDistance_m.value);
 		NRF_LOG_INFO("------------------------------------------------------\r\n\r\n");
 }
 
