@@ -23,6 +23,8 @@
 #include "app_error.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 #define NRF_LOG_MODULE_NAME "ALGORITHM APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -40,7 +42,7 @@
 /**********************************************************************************************
 * MACRO DEFINITIONS
 ***********************************************************************************************/
-#define ALGORITHM_APP_IN_SIM_MODE      1   //this flag is set to true if the algorithm is in sim mode only. That means if no gear controller is used
+#define OUTPUT_TO_MOTOR_CONTROLLER     0   //this flag is set to true if the algorithm output is to be sent to motor controller.
 #define ALGORITHM_USES_HR_READING      1   //this flag is set to true only if alogrithm app uses HR reading to offset cadence_setpoint_rpm set by user
 
 #define ALGORITHM_APP_SIM_ARRAY_SIZE   60  //size of arrays to store sim results
@@ -149,7 +151,7 @@ static bool algorithmApp_gear_ratios_array_populate(void){
 	return retcode;
 }
 
-static float algorithmApp_get_cadence_setpoint_rpm(){
+static float algorithmApp_get_inst_cadence_setpoint_rpm(){
 	
 	float result             = 0.0;
 	float curr_hr_deviation  = 0.0;
@@ -175,6 +177,15 @@ static float algorithmApp_get_cadence_setpoint_rpm(){
 	}
 	
 	return result;
+}
+
+static void algorithmApp_debug_print_algorithm_outputs(uint8_t wheel_gear_index, float cadence){
+	
+	NRF_LOG_INFO("--------------------- ALGORITHM OUTPUT ------------------------\r\n");
+	NRF_LOG_INFO("rear gear index= %d \r\n", wheel_gear_index);
+	NRF_LOG_INFO("cadence        = %d \r\n", round(cadence));
+	NRF_LOG_INFO("---------------------------------------------------------------------------------\r\n\r\n");
+	
 }
 
 //function to run the shifting algorithm given the current state
@@ -203,7 +214,7 @@ static bool algorithmApp_run(void){
 	//NRF_LOG_DEBUG("algorithmApp_run: called\r\n");
 	
 	//calculate current cadence setpoint
-	current_cadence_setpoint_rpm= algorithmApp_get_cadence_setpoint_rpm();
+	current_cadence_setpoint_rpm= algorithmApp_get_inst_cadence_setpoint_rpm();
 	
 	current_wheel_rpm = cscsApp_get_current_wheel_rpm();
 	//NRF_LOG_DEBUG("algorithmApp_run: current wheel rpm= %d\r\n", current_wheel_rpm);
@@ -289,10 +300,21 @@ static bool algorithmApp_run(void){
 	//NRF_LOG_DEBUG("algorithmApp_run: current_cadence after shifting= %d\r\n", cadence_after_shifting);
 	
 
-	if(ALGORITHM_APP_IN_SIM_MODE){
+	//print the gear index after shifting and cadence after shifting
+	algorithmApp_debug_print_algorithm_outputs(current_wheel_gear_index, cadence_after_shifting);
+	
+	if(!OUTPUT_TO_MOTOR_CONTROLLER){
+		
 		//store results in simulation vectors
 		gear_index_after_shifting_array[sim_result_arrays_index]= current_wheel_gear_index;
 		cadence_after_shifting_array[sim_result_arrays_index]= cadence_after_shifting;
+		//increment the inexer of simulation results if size allows
+		if((sim_result_arrays_index+1)<ALGORITHM_APP_SIM_ARRAY_SIZE){
+			sim_result_arrays_index++;
+		} else{
+			NRF_LOG_DEBUG("algorithmApp_timer_handler: sim_result_arrays_index reached maximum \r\n");
+		}
+		
 	} else {
 		//send the new gear levels to the gear controller.
 		if(!i2cApp_write_desired_gears(0, current_wheel_gear_index)){
@@ -323,14 +345,6 @@ static void algorithmApp_timer_handler( void * callback_data){
 	if(cscsApp_is_new_cscs_meas_received()){
 		
 		algorithmApp_run();
-		if(ALGORITHM_APP_IN_SIM_MODE){
-			//increment the inexer of simulation results if size allows
-			if((sim_result_arrays_index+1)<ALGORITHM_APP_SIM_ARRAY_SIZE){
-				sim_result_arrays_index++;
-			} else{
-				NRF_LOG_DEBUG("algorithmApp_timer_handler: sim_result_arrays_index reached maximum \r\n");
-			}
-		}
 		
 	}
 	
