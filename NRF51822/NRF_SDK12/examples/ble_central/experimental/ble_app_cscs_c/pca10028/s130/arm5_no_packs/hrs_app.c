@@ -94,8 +94,10 @@ static void hrsApp_hrs_c_evt_handler(ble_hrs_c_t * p_hrs_c, ble_hrs_c_evt_t * p_
 				inst_hr_value.value = p_hrs_c_evt->params.hrm.hr_value;
 			}
 			
-			//print the new HR value
-			hrsApp_debug_print_inst_data();
+			//print the new HR value if it is not printed by algorithm app output
+			if(!ALGORITHM_PRINTS_ALL_DATA){
+				hrsApp_debug_print_inst_data();
+			}
            
 			inst_hr_value.is_read= false;
 
@@ -203,6 +205,11 @@ void hrsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 	 * specify which sensor was disconnected
 	 */
 	ble_bas_c_on_ble_evt(&m_ble_bas_c, p_ble_evt);
+}
+
+//note: this function is NOT called by SPI app
+uint32_t hrsApp_copy_current_hr_bpm(void){
+	return (uint32_t)inst_hr_value.value;
 }
 
 //function to return current instantanious heart rate

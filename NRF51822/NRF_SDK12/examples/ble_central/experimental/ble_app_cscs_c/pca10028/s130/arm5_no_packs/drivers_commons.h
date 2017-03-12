@@ -10,6 +10,7 @@
 extern "C" {
 #endif
 
+#define ALGORITHM_PRINTS_ALL_DATA 1  //if set to 1, algorithm app will print data for all sensors and algorithm output    
 	
 #define CRANK_IDENTIFIER 0xCA
 #define WHEEL_IDENTIFIER 0xEE

@@ -24,10 +24,18 @@ void cscsApp_on_ble_evt(const ble_evt_t *p_ble_evt);
 void cscsApp_on_db_disc_evt(const ble_db_discovery_evt_t *p_evt);
 void cscsApp_on_ble_event(const ble_evt_t *p_ble_evt);
 
+uint32_t cscsApp_copy_current_speed_kmph(void);
 uint8_t cscsApp_get_current_speed_kmph(void);
+
+uint32_t cscsApp_copy_current_cadence_rpm(void);
 uint8_t cscsApp_get_current_cadence_rpm(void);
+
+float cscsApp_copy_current_distance_m(void);
 uint8_t cscsApp_get_current_distance_km(void);
+
+/*TODO: change this to copy instead of get*/
 float cscsApp_get_current_wheel_rpm(void);
+
 
 void cscsApp_assing_new_meas_callback(new_meas_callback_f cb);
 bool cscsApp_is_new_cscs_meas_received(void);

@@ -281,7 +281,9 @@ static void cscsApp_cscs_c_evt_handler(ble_cscs_c_t * p_csc_c, ble_cscs_c_evt_t 
 			if (ret_code != CSCS_APP_RET_CODE_SUCCESS){
 				NRF_LOG_ERROR("cscsApp_decode_cscs_meas_data returned error= %d \r\n", ret_code);
 			} else{
-				cscsApp_debug_print_inst_data();
+				if(!ALGORITHM_PRINTS_ALL_DATA){
+					cscsApp_debug_print_inst_data();
+				}
 			}
 			
 			//set new_cscs_meas_received flag to true to allow the geear shifting algorithm to run
@@ -340,6 +342,13 @@ void cscsApp_on_ble_event(const ble_evt_t * p_ble_evt)
 	ble_cscs_c_on_ble_evt(&m_ble_cscs_c, p_ble_evt);
 }
 
+
+//not called by SPI app
+uint32_t cscsApp_copy_current_speed_kmph(void){
+	return (uint32_t)cscs_instantanious_data.wheel_speed_kmph.value;
+}
+
+//called by SPI app only 
 uint8_t cscsApp_get_current_speed_kmph(void){
 	
 	uint8_t ret_value = 0;
@@ -355,6 +364,13 @@ uint8_t cscsApp_get_current_speed_kmph(void){
 	return ret_value; 
 }
 
+
+//not called by SPI app
+uint32_t cscsApp_copy_current_cadence_rpm(void){
+	return (uint32_t)cscs_instantanious_data.crank_cadence_rpm.value;
+}
+
+//called by SPI app only 
 uint8_t cscsApp_get_current_cadence_rpm(void){
 	
 	uint8_t ret_value = 0;
@@ -370,6 +386,14 @@ uint8_t cscsApp_get_current_cadence_rpm(void){
 	return ret_value; 
 }
 
+
+//not called by SPI app
+float cscsApp_copy_current_distance_m(void){
+	//returned distance is in m
+	return (float)(cscs_instantanious_data.travelDistance_m.value);
+}
+
+//called by SPI app only 
 uint8_t cscsApp_get_current_distance_km(void){
 	
 	uint8_t ret_value = 0;

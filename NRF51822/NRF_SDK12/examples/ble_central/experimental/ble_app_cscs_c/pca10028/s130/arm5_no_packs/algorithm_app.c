@@ -52,7 +52,7 @@
 //Timer Defines
 #define APP_TIMER_PRESCALER            0               /**< Value of the RTC1 PRESCALER register. If changed, remember to change prescaler in main.c*/
 #define I2CAPP_MS_TO_TICK(MS) (APP_TIMER_TICKS(100, APP_TIMER_PRESCALER) * (MS / 100))
-#define ALGORITHM_TIMER_PERIOD_MS      1000            //time period in ms to run shifting algorithm
+#define ALGORITHM_TIMER_PERIOD_MS      500            //time period in ms to run shifting algorithm
 /**********************************************************************************************
 * TYPE DEFINITIONS
 ***********************************************************************************************/
@@ -61,6 +61,13 @@ typedef enum{
 	BIKE_CONFIG_DATA_UPDATE
 	
 } algorithmApp_event_e;
+
+typedef struct{
+	float distance_traveled_m;
+	uint32_t speed_kmh;
+	uint32_t cadence_rpm;
+	uint32_t hr_bpm;
+} inst_sensors_metrics_t;
 
 /**********************************************************************************************
 * STATIC AND GLOBAL VARIABLES
@@ -88,6 +95,9 @@ static uint8_t current_wheel_gear_index  = 3; //initially cassete gear is at the
 static uint8_t sim_result_arrays_index   = 0; //indexer for simulation result arrays
 static uint8_t gear_index_after_shifting_array[ALGORITHM_APP_SIM_ARRAY_SIZE]; //array to store simulation results 
 static uint8_t cadence_after_shifting_array[ALGORITHM_APP_SIM_ARRAY_SIZE];    //array to store simulation results 
+
+//istantanious metrics to be processed by the algorithm and printed
+inst_sensors_metrics_t inst_sensors_metrics;
 
 /* IRQ toggling timer*/
 APP_TIMER_DEF(algorithm_app_timer_id);
@@ -181,11 +191,37 @@ static float algorithmApp_get_inst_cadence_setpoint_rpm(){
 
 static void algorithmApp_debug_print_algorithm_outputs(uint8_t wheel_gear_index, float cadence){
 	
-	NRF_LOG_INFO("--------------------- ALGORITHM OUTPUT ------------------------\r\n");
-	NRF_LOG_INFO("rear gear index= %d \r\n", wheel_gear_index);
-	NRF_LOG_INFO("cadence        = %d \r\n", round(cadence));
-	NRF_LOG_INFO("---------------------------------------------------------------------------------\r\n\r\n");
+	if(!ALGORITHM_PRINTS_ALL_DATA){
+		//print data of algorithm outputs only
+		NRF_LOG_INFO("--------------------- ALGORITHM OUTPUT ------------------------\r\n");
+		NRF_LOG_INFO("rear gear index= %d \r\n", wheel_gear_index);
+		NRF_LOG_INFO("cadence        = %d \r\n", round(cadence));
+		NRF_LOG_INFO("---------------------------------------------------------------------------------\r\n\r\n");
+		
+	} else{
+		//print data from algorithm outputs and sensors data
+		NRF_LOG_INFO("--------------------- CURRENT STATE ------------------------\r\n");
+		NRF_LOG_INFO("distance travelled= %d (m)\r\n", inst_sensors_metrics.distance_traveled_m);
+		NRF_LOG_INFO("bike speed= %d (kmph)\r\n", inst_sensors_metrics.speed_kmh);
+		NRF_LOG_INFO("cadence before shifring= %d (rpm)\r\n", inst_sensors_metrics.cadence_rpm);
+		NRF_LOG_INFO("heart rate= %d (bpm)\r\n\r\n", inst_sensors_metrics.hr_bpm);
+		
+		NRF_LOG_INFO("rear gear index= %d \r\n", wheel_gear_index);
+		NRF_LOG_INFO("cadence after shifting= %d \r\n", round(cadence));
+		NRF_LOG_INFO("----------------------------------------------------------------------------\r\n\r\n");
+		
+	}
 	
+
+	
+}
+
+static void algorithmApp_store_inst_sensors_metrics(){
+	
+	inst_sensors_metrics.distance_traveled_m    = cscsApp_copy_current_distance_m();
+	inst_sensors_metrics.speed_kmh              = cscsApp_copy_current_speed_kmph();
+	inst_sensors_metrics.cadence_rpm            = cscsApp_copy_current_cadence_rpm();
+	inst_sensors_metrics.hr_bpm                 = hrsApp_copy_current_hr_bpm();
 }
 
 //function to run the shifting algorithm given the current state
@@ -212,6 +248,11 @@ static bool algorithmApp_run(void){
 	}
 	
 	//NRF_LOG_DEBUG("algorithmApp_run: called\r\n");
+	
+	//store current sensors metrics if needed for later log printing
+	if(ALGORITHM_PRINTS_ALL_DATA){
+		algorithmApp_store_inst_sensors_metrics();
+	}
 	
 	//calculate current cadence setpoint
 	current_cadence_setpoint_rpm= algorithmApp_get_inst_cadence_setpoint_rpm();
