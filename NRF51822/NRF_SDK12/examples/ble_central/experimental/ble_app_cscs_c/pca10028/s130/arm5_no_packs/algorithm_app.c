@@ -43,7 +43,7 @@
 * MACRO DEFINITIONS
 ***********************************************************************************************/
 #define OUTPUT_TO_MOTOR_CONTROLLER     0   //this flag is set to true if the algorithm output is to be sent to motor controller.
-#define ALGORITHM_USES_HR_READING      1   //this flag is set to true only if alogrithm app uses HR reading to offset cadence_setpoint_rpm set by user
+#define ALGORITHM_USES_HR_READING      0   //this flag is set to true only if alogrithm app uses HR reading to offset cadence_setpoint_rpm set by user
 
 #define ALGORITHM_APP_SIM_ARRAY_SIZE   60  //size of arrays to store sim results
 #define DEFAULT_CADENCE_SETPOINT_RPM   80
